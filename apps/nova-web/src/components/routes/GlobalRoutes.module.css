@@ -1,0 +1,288 @@
+.page {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: var(--n-space-28) var(--n-space-32) var(--n-space-48);
+  color: var(--n-color-text);
+}
+
+.header,
+.headerWithAction {
+  margin-bottom: var(--n-space-24);
+}
+
+.headerWithAction {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--n-space-20);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--n-font-size-24);
+  line-height: var(--n-line-height-130);
+  letter-spacing: var(--n-letter-spacing-neg-035);
+}
+
+.subtitle {
+  margin: var(--n-space-8) 0 0;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-13);
+}
+
+.filters {
+  display: flex;
+  gap: var(--n-space-24);
+  margin-bottom: var(--n-space-24);
+  border-bottom: 1px solid var(--n-color-border);
+  overflow-x: auto;
+}
+
+.filter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--n-space-8);
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 0 var(--n-space-12);
+  border: 0;
+  background: transparent;
+  color: var(--n-color-text-secondary);
+  font: inherit;
+  font-size: var(--n-font-size-13);
+  cursor: pointer;
+}
+
+.filter[aria-pressed='true'] {
+  color: var(--n-color-text);
+  font-weight: var(--n-font-weight-semibold);
+}
+
+.filter[aria-pressed='true']::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: var(--n-radius-pill);
+  background: var(--n-color-action);
+  content: '';
+}
+
+.filterCount {
+  display: inline-grid;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--n-space-4);
+  place-items: center;
+  border-radius: var(--n-radius-pill);
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-11);
+}
+
+.decisionList,
+.deliverableList {
+  display: grid;
+  gap: var(--n-space-12);
+}
+
+.decisionCard {
+  display: block;
+  width: 100%;
+  padding: var(--n-space-20);
+  border: 1px solid var(--n-color-border);
+  border-left: 3px solid var(--n-color-border-strong);
+  border-radius: var(--n-radius-12);
+  background: var(--n-color-surface);
+  box-shadow: var(--n-shadow-card);
+  color: inherit;
+  text-align: left;
+}
+
+.decisionCard[role='link'] {
+  cursor: pointer;
+}
+
+.decisionCard[role='link']:hover {
+  border-color: var(--n-color-action);
+  box-shadow: var(--n-shadow-card-hover);
+}
+
+.decisionCard[role='link']:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--n-color-action) 24%, transparent);
+  outline-offset: 2px;
+}
+
+.pending {
+  border-left-color: var(--n-color-warning);
+}
+
+.waiting {
+  border-left-color: var(--n-color-action);
+}
+
+.decided {
+  border-left-color: var(--n-color-success);
+}
+
+.heroSentence {
+  margin: 0;
+  font-size: var(--n-font-size-13);
+  font-weight: var(--n-font-weight-semibold);
+  line-height: var(--n-line-height-145);
+}
+
+.decisionMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-8);
+  margin-top: var(--n-space-10);
+}
+
+.statement {
+  margin: var(--n-space-16) 0 0;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-13);
+  line-height: var(--n-line-height-160);
+}
+
+.outcome {
+  display: inline-flex;
+  margin-top: var(--n-space-12);
+  padding: var(--n-space-4) var(--n-space-12);
+  border-radius: var(--n-radius-pill);
+  background: var(--n-color-success-bg);
+  color: var(--n-color-success);
+  font-size: var(--n-font-size-11);
+  font-weight: var(--n-font-weight-semibold);
+}
+
+.confidenceWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.confidenceChip {
+  min-height: 24px;
+  padding: 0 var(--n-space-8);
+  border: 0;
+  border-radius: var(--n-radius-pill);
+  background: var(--n-color-success-bg);
+  color: var(--n-color-success);
+  font: inherit;
+  font-size: var(--n-font-size-11);
+  font-weight: var(--n-font-weight-semibold);
+  cursor: pointer;
+}
+
+.confidencePopover {
+  position: absolute;
+  z-index: var(--n-z-popover);
+  top: calc(100% + var(--n-space-8));
+  right: 0;
+  width: 220px;
+  padding: var(--n-space-12);
+  border: 1px solid var(--n-color-border);
+  border-radius: var(--n-radius-8);
+  background: var(--n-color-surface);
+  box-shadow: var(--n-shadow-overlay);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-11);
+  line-height: var(--n-line-height-160);
+}
+
+.deliverableRow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--n-space-16);
+  padding: var(--n-space-16) var(--n-space-20);
+  border: 1px solid var(--n-color-border);
+  border-radius: var(--n-radius-12);
+  background: var(--n-color-surface);
+  box-shadow: var(--n-shadow-card);
+}
+
+.fileIcon {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--n-color-action);
+}
+
+.deliverableTitle {
+  margin: 0;
+  font-size: var(--n-font-size-13);
+  font-weight: var(--n-font-weight-semibold);
+  line-height: var(--n-line-height-145);
+}
+
+.deliverableMetadata {
+  margin: var(--n-space-4) 0 0;
+  color: var(--n-color-text-disabled);
+  font-size: var(--n-font-size-11);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-4);
+}
+
+.iconButton {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--n-radius-8);
+  background: transparent;
+  color: var(--n-color-text-secondary);
+  cursor: default;
+}
+
+.iconButton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.emptyState {
+  padding: var(--n-space-32);
+  border: 1px dashed var(--n-color-border);
+  border-radius: var(--n-radius-12);
+  color: var(--n-color-text-secondary);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding-inline: var(--n-space-20);
+  }
+
+  .headerWithAction {
+    flex-direction: column;
+  }
+
+  .deliverableRow {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .deliverableRow > .confidenceWrap {
+    grid-column: 2;
+  }
+
+  .rowActions {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}

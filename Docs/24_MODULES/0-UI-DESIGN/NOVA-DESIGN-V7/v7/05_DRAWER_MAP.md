@@ -1,0 +1,199 @@
+# 05 — CARTE DES DRAWERS
+## NOVA V7 — Reconstruction à partir des maquettes existantes
+
+> Règle : Aucune invention. Toute relation incertaine est marquée ⚠ À confirmer.
+> Source de vérité : `/workspaces/default/code/src/app/App.tsx`
+
+---
+
+## PRÉSENTATION
+
+NOVA V7 utilise un composant `Drawer` unique réutilisé pour 6 instances distinctes. Toutes les instances partagent les mêmes propriétés structurelles.
+
+**Propriétés communes à tous les drawers :**
+- Largeur : 460px
+- Position : fixed, right: 0, top: 0, height: 100vh
+- Backdrop : `rgba(15,23,42,.20)` + `blur(2px)`
+- Fermeture : bouton X (header) OU clic sur le backdrop
+- Scroll interne : overflow-y auto sur le body
+- Ordre des sections : **Summary → Why it matters → What is blocking → Key evidence → History → Technical details**
+
+---
+
+## DRAWER 1 — Work Detail (HomeView)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `home` |
+| **Composant hôte** | `HomeView` |
+| **Déclencheur** | Bouton "Details" sur un work item row |
+| **État** | `detailOpen: boolean` (local à HomeView) |
+| **Titre** | `item.outcome` (outcome du work item actif) |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `heroGain` du work item |
+| Why it matters | `heroSentence` du work item |
+| What is blocking | `blockers[]` (liste) |
+| Key evidence | Progress %, confidence, deadline, phase N of M |
+| Later actions | `laterActions[]` |
+| Background actions | `backgroundActions[]` |
+
+---
+
+## DRAWER 2 — Full Analysis (WorkOverviewTab)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `work` [tab: overview] |
+| **Composant hôte** | `WorkOverviewTab` |
+| **Déclencheur** | Lien "Full analysis" (chevron droit, bas du focal card) |
+| **État** | `detailOpen: boolean` (local à WorkOverviewTab) |
+| **Titre** | "Full analysis" |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `item.heroGain` |
+| Why it matters | `item.heroSentence` |
+| What is blocking | `item.blockers[]` |
+| Key evidence | Confidence current, confidence after action, confReasons[], confPositive[] |
+| Later actions | `item.laterActions[]` |
+| Background | `item.backgroundActions[]` |
+
+---
+
+## DRAWER 3 — Person (WorkPeopleTab)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `work` [tab: people] |
+| **Composant hôte** | `WorkPeopleTab` |
+| **Déclencheur** | Bouton "Details" sur une carte personne |
+| **État** | `drawer: PersonData | null` (local à WorkPeopleTab) |
+| **Titre** | `person.name` |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `contribution`. Texte conditionnel selon `type` (ai/human) : NOVA → "cannot be reassigned", human → pendingRequests + responseTime |
+| Why it matters | Texte conditionnel : ai → rôle validation cross-source, human → docsReviewed + validationCount + mention CFO |
+| Current reasoning | `novaState` (section absente si `novaState === null`) |
+| Key evidence | Availability, Workload (coloré), Response time, Docs reviewed, Validations, Trust score (si > 0) |
+| Technical details | `expertise[]` (tags pill, borderRadius 999) |
+
+**Note :** La section "Current reasoning" est insérée entre "Why it matters" et "Key evidence" si `novaState` est non-null. L'ordre narratif standard est légèrement modifié pour cette instance.
+
+---
+
+## DRAWER 4 — Source (WorkSourcesTab)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `work` [tab: sources] |
+| **Composant hôte** | `WorkSourcesTab` |
+| **Déclencheur** | Bouton "Details" sur une carte source |
+| **État** | `drawer: SourceData | null` (local à WorkSourcesTab) |
+| **Titre** | `source.name` |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `source.aiComment` |
+| Why it matters | `decisionsImpacted[]` (Supports: …) + `referencedBy[]` (Used in: …) — texte "Not yet referenced" si les deux sont vides |
+| Key evidence | Type, Quality score (coloré), Reliability (coloré), Evidence score (coloré), Conflicts (rouge si > 0) |
+| History | Last verified, Freshness, Usage (N sections ou "Unused") |
+
+---
+
+## DRAWER 5 — Deliverable (WorkDeliverablesTab)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `work` [tab: deliverables] |
+| **Composant hôte** | `WorkDeliverablesTab` |
+| **Déclencheur** | Bouton "Details" sur une carte livrable |
+| **État** | `drawer: DeliverableData | null` (local à WorkDeliverablesTab) |
+| **Titre** | `deliverable.name` |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `deliverable.aiSummary` |
+| Why it matters | Audience + publicationScore + mention "ready/not ready for distribution" |
+| What is blocking | `missingInfo[]` (liste avec AlertTriangle icon, couleur crit) |
+| Key evidence | Evidence coverage (coloré), Completeness (coloré), Publication score (coloré), Pending comments (amber si > 0), Outstanding reviews (amber si > 0) |
+| History | `versionHistory[]` (v, date, note — format tableau avec MONO pour version) |
+| Technical details | Generated by, Reviewed by, Validated by, Format, Audience |
+
+---
+
+## DRAWER 6 — Decision Package (DecisionPackageView)
+
+| Attribut | Valeur |
+|---|---|
+| **Écran d'origine** | `decision-package` |
+| **Composant hôte** | `DecisionPackageView` |
+| **Déclencheur** | Lien "Full package" (chevron droit, dans le hero block) |
+| **État** | `detailOpen: boolean` (local à DecisionPackageView) |
+| **Titre** | "Decision package" |
+
+**Sections de contenu :**
+
+| Section | Contenu |
+|---|---|
+| Summary | `recommendation` + `rationale` (concaténés) |
+| Why it matters | `businessImpact` |
+| What is blocking | `uncertainty` (amber) + `dissent` en italique (si non-vide) |
+| Key evidence | Financial impact, Risk impact, `sources[]` (liens bleus) |
+| Technical details | `expertsConsulted[]` (absente si tableau vide) |
+
+---
+
+## MATRICE DES DRAWERS × ÉCRANS
+
+| Drawer | home | work:overview | work:people | work:sources | work:deliverables | decision-package |
+|---|---|---|---|---|---|---|
+| Work detail | ● | — | — | — | — | — |
+| Full analysis | — | ● | — | — | — | — |
+| Person | — | — | ● | — | — | — |
+| Source | — | — | — | ● | — | — |
+| Deliverable | — | — | — | — | ● | — |
+| Decision package | — | — | — | — | — | ● |
+
+---
+
+## COMPORTEMENT COMMUN
+
+### Ouverture
+```
+setDrawer(data) ou setDetailOpen(true)
+→ Drawer open={true}
+→ Backdrop render
+→ Panel slide-in depuis la droite ⚠ À confirmer (animation non visible dans le code — aucune transition CSS sur le panel)
+```
+
+### Fermeture
+```
+[X button] → onClose() → setDrawer(null) ou setDetailOpen(false)
+[Backdrop click] → e.target === e.currentTarget → onClose()
+[Escape] → ⚠ À confirmer — aucun handler Escape sur les drawers dans le code
+```
+
+### Scrollbar interne
+```css
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+```
+
+---
+
+## INSTANCES MULTIPLES SIMULTANÉES
+
+⚠ À confirmer : L'architecture de l'état ne prévoit qu'un seul drawer ouvert par écran (un seul `drawer` state ou `detailOpen` par composant). Aucune logique d'empilement de drawers n'est présente dans le code.

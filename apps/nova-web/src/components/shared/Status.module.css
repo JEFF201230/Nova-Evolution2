@@ -1,0 +1,32 @@
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--n-space-6);
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-130);
+  color: var(--n-color-text-secondary);
+}
+
+.dot {
+  width: var(--n-status-size);
+  height: var(--n-status-size);
+  border-radius: var(--n-radius-circle);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.label {
+  min-width: 0;
+}
+
+.available {
+  color: var(--n-color-success);
+}
+
+.busy {
+  color: var(--n-color-warning);
+}
+
+.away {
+  color: var(--n-color-critical);
+}

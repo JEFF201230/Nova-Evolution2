@@ -1,0 +1,168 @@
+.peoplePage,
+.peopleList {
+  display: grid;
+}
+
+.peoplePage {
+  gap: var(--n-space-20);
+}
+
+.peopleHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--n-space-20);
+}
+
+.peopleHeading h2 {
+  margin: 0;
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-18);
+  font-weight: var(--n-font-weight-bold);
+  line-height: var(--n-line-height-130);
+}
+
+.peopleList {
+  gap: var(--n-space-10);
+}
+
+.personCard {
+  display: grid;
+  grid-template-columns: var(--n-avatar-size-36) minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--n-space-12);
+  min-height: 100px;
+  padding: var(--n-space-16) var(--n-space-20);
+  border-radius: var(--n-radius-12);
+}
+
+.novaCard {
+  min-height: 168px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: var(--n-avatar-size-36);
+  height: var(--n-avatar-size-36);
+  border: var(--n-border-width-1) solid var(--n-color-border);
+  border-radius: var(--n-radius-circle);
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-10);
+}
+
+.novaAvatar {
+  border-color: var(--n-color-nova-border);
+  background: var(--n-color-nova-bg);
+  color: var(--n-color-nova);
+  font-size: var(--n-font-size-14);
+}
+
+.personContent {
+  display: grid;
+  gap: var(--n-space-6);
+  min-width: 0;
+}
+
+.personNameRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--n-space-8);
+}
+
+.personNameRow h2,
+.personContent p,
+.reasoning p {
+  margin: 0;
+}
+
+.personNameRow h2 {
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-14);
+  font-weight: var(--n-font-weight-semibold);
+  line-height: var(--n-line-height-140);
+}
+
+.statusDot {
+  width: var(--n-status-size);
+  height: var(--n-status-size);
+  border-radius: var(--n-radius-circle);
+  background: var(--n-color-border);
+}
+
+.statusDotActive {
+  background: var(--n-color-success);
+}
+
+.personMeta,
+.responsibility {
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-145);
+}
+
+.responsibilityCritical {
+  color: var(--n-color-warning);
+}
+
+.reasoning {
+  display: grid;
+  gap: var(--n-space-6);
+  margin-top: var(--n-space-2);
+  padding: var(--n-space-10);
+  border: var(--n-border-width-1) solid var(--n-color-nova-border);
+  border-radius: var(--n-radius-8);
+  background: var(--n-color-nova-bg);
+  color: var(--n-color-nova);
+}
+
+.reasoning strong {
+  font-size: var(--n-font-size-10);
+  font-weight: var(--n-font-weight-semibold);
+  letter-spacing: var(--n-letter-spacing-040);
+}
+
+.reasoning p {
+  font-size: var(--n-font-size-11);
+  line-height: var(--n-line-height-145);
+}
+
+.detailsButton {
+  justify-self: end;
+}
+
+.drawerReasoning {
+  color: var(--n-color-nova);
+}
+
+.skillList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-6);
+}
+
+.critical {
+  color: var(--n-color-critical);
+}
+
+.success {
+  color: var(--n-color-success);
+}
+
+.warning {
+  color: var(--n-color-warning);
+}
+
+.loading {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.loadingStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-10);
+  color: var(--n-color-text-secondary);
+}

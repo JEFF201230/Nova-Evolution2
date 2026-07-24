@@ -1,0 +1,378 @@
+# 02 — USER FLOW
+## NOVA V6.1 — Complete User Flow
+
+---
+
+## FLOW 1: NEW WORK CREATION
+
+### Entry
+User lands on Home screen. Composer is collapsed (placeholder state).
+
+### Step 1: Open Composer
+- **Trigger:** Click anywhere on collapsed composer
+- **Action:** Expand composer (border color → N.action, box-shadow → overlay + 4px action ring)
+- **State:** `composerOpen = true`
+- **Auto-focus:** textarea ref
+- **Transition:** 280ms cubic-bezier(.2,0,0,1)
+
+### Step 2: Enter Objective
+- **Input:** Textarea — free text OR suggestion pill click
+- **Suggestion pill click:** Sets textarea value + focuses textarea
+- **Keyboard shortcut:** Cmd+Enter → submits
+- **Validation:** `val.trim()` must be non-empty to enable CTA
+- **CTA state when empty:** `disabled = true`, opacity 0.4
+- **CTA state when filled:** enabled, action color
+
+### Step 3: Continue → Clarify
+- **Trigger:** Primary CTA click OR Cmd+Enter
+- **Action:** `loading = true` → 500ms delay → `setView("clarify")`
+- **Loading state:** Spinner icon + "Working…" label on button
+- **Cancel:** Resets `composerOpen = false`, clears `val`
+
+### Conditions
+- Empty textarea → CTA disabled
+- Suggestion pill click → fills textarea + focuses
+- Cancel → composer collapse, val cleared
+- Cmd+Enter with empty → no action (same guard)
+
+---
+
+## FLOW 2: CLARIFY (3 STEPS)
+
+### Entry
+Arrives from Composer with objective set. Step = 0.
+
+### Step 1 (index 0): Who needs to act and by when?
+- **Choices:** Board/18 Jul | CFO only | Full exec team
+- **Selection:** Button click → `current = suggestion`
+- **Custom:** Textarea below, `current = textarea value`
+- **Progress bar:** 33% filled
+- **Back:** Step 0 → Home
+- **Continue:** Disabled if `!current`, enabled when `current` set
+- **Skip:** Advances without setting current
+
+### Step 2 (index 1): What would success look like?
+- Same pattern as Step 1
+- **Progress bar:** 66%
+- **Back:** → Step 0
+
+### Step 3 (index 2): Constraints?
+- **Progress bar:** 100%
+- **Back:** → Step 1
+- **CTA label:** "Review understanding" (not "Continue")
+- **Submit:** → `canvas`
+
+### Cancelled states
+- Back on Step 0 → Home (composer state cleared)
+- Browser back → same
+
+### Error states
+- None (skip is always available)
+
+---
+
+## FLOW 3: CANVAS (UNDERSTANDING REVIEW)
+
+### Entry
+Arrives from Clarify step 3. 6 understanding sections visible.
+
+### Read mode (default)
+- All 6 cards rendered in read-only state
+- Edit button (pencil icon) on each card
+
+### Edit mode (per card)
+- **Trigger:** Edit button click → `editing = index`
+- **State:** Textarea replaces `<p>` with defaultValue = current text
+- **Auto-focus:** textarea
+- **Save:** Click "Save" button → `editing = null`
+- **Multiple edits:** Only one card can be in edit mode at a time (editing state is index, not boolean)
+
+### Warning section
+- Assumptions card has amber warning block if `warn: true`
+- Not editable via button — always visible
+
+### Navigation
+- Back → `clarify`
+- CTA "Prepare a plan" → `plan`
+
+### Cancelled state
+- Back without editing → no confirmation, direct navigation
+- Edit without saving → textarea abandoned (no auto-save)
+
+---
+
+## FLOW 4: PLAN (PHASE REVIEW)
+
+### Entry
+4 phases rendered. Phase 3 (index 2) expanded by default (`exp = 2`).
+
+### Expand / Collapse phases
+- **Trigger:** Click on phase row button
+- **Toggle:** `exp === i ? null : i`
+- **Only one expanded at a time**
+- **Expanded content:** AI contribution / Human contribution / task checklist
+
+### Phase states
+| Phase | Status | Icon | Color |
+|---|---|---|---|
+| 0 | complete | CheckCircle | success |
+| 1 | complete | CheckCircle | success |
+| 2 | active | RefreshCw | action |
+| 3 | future | Circle | textDis |
+
+### Blocker display
+- Only shown if `blocker !== null`
+- AlertTriangle + warn text
+
+### Navigation
+- Back → `canvas`
+- CTA → `confirm`
+
+---
+
+## FLOW 5: CONFIRM (AUTONOMY SELECTION)
+
+### Entry
+Default `aut = 1` (A1 Guided execution).
+
+### Level selection
+- **Trigger:** Click on any of 4 grid buttons
+- **State:** `aut = level.level`
+- **Visual:** Selected → actionBg background, action border, action text
+- **Unselected:** surface background, borderMd border
+
+### Detail card
+- Dynamically reflects selected level
+- "NOVA will" section: only rendered if `will.length > 0`
+- A0: no "NOVA will" section (all items are "ask")
+
+### Navigation
+- Back → `plan`
+- CTA → `work` (sets `activeWork = "w1"`)
+
+---
+
+## FLOW 6: WORK — OVERVIEW TAB
+
+### Entry
+Default tab = "overview". Work item resolved by `workId` prop.
+
+### Sub-flows
+
+#### Next Best Action
+- **Display:** Action title + time + gain + confidence delta
+- **Why? toggle:** `WhyInline` → expands inline explanation block
+- **CTA "Open":** No navigation in current build (placeholder)
+
+#### Later / Background
+- **Default state:** Collapsed `<details>` element
+- **Expand:** Browser native disclosure + ChevronRight icon
+- **Content:** Labeled rows (Later / Background)
+
+#### Decision pending card
+- **Click:** `setActiveDecision(d.id)` + `setView("decision-package")`
+
+#### Full analysis drawer
+- **Trigger:** "Full analysis" link in progress sidebar card
+- **State:** `detailOpen = true`
+- **Drawer title:** "Full analysis"
+- **Close:** X button or backdrop click → `detailOpen = false`
+
+---
+
+## FLOW 7: WORK — ACTIVITY TAB
+
+### Filter
+- **Default:** "all"
+- **Filters:** all / human / ai / critical / sources
+- **Trigger:** Pill click → `filter = f`
+- **Result:** `ACTIVITY_FEED.filter(ev => ev.tags.includes(filter))`
+- "all" → no filter
+
+### Event rendering
+- `actorType === "ai"` → Sparkles icon + NOVA label + innoBg box
+- `actorType === "human"` → User icon + plain text
+- confDelta present → colored text + monospace `(from% → to%)`
+
+### Comment posting
+- **Default state:** empty textarea, border = N.border
+- **Typing:** Border → N.action
+- **Post button:** Visible only when `comment !== ""`
+- **Send:** No navigation (placeholder)
+
+---
+
+## FLOW 8: WORK — PEOPLE TAB
+
+### Default state
+All 4 people rendered as cards. No drawer open.
+
+### Details drawer
+- **Trigger:** "Details" button on any person card
+- **State:** `drawer = person object`
+- **Close:** X button or backdrop → `drawer = null`
+- **Content:** Summary / Why it matters / Current reasoning (NOVA only) / Key evidence / Technical details
+
+---
+
+## FLOW 9: WORK — SOURCES TAB
+
+### Sort order
+Missing (0) → Stale (1) → Available (2)
+
+### Actions per source
+- **Missing:** "Add" button (Upload icon)
+- **Stale:** "Refresh" button (RefreshCw icon)
+- **All:** "Details" button → drawer
+
+### Details drawer
+- **Trigger:** "Details" button
+- **State:** `drawer = source object`
+- **Close:** X or backdrop → `drawer = null`
+- **Content:** Summary / Why it matters / Key evidence / History
+
+---
+
+## FLOW 10: WORK — DECISIONS TAB
+
+### Rendering
+Filtered by `workId`. Decisions with `deadlineDays > 0` show DeadlineBadge.
+
+### CTA per decision
+- "Review & decide" → `setActiveDecision(d.id)` + `setView("decision-package")`
+
+### Why? toggle
+- Inline expandable below CTA buttons
+
+---
+
+## FLOW 11: WORK — DELIVERABLES TAB
+
+### Details drawer
+- **Trigger:** "Details" button
+- **State:** `drawer = deliverable object`
+- **Content:** Summary / Why it matters / What is blocking / Key evidence / History / Technical details
+
+---
+
+## FLOW 12: DECISION PACKAGE
+
+### Sections visible
+Hero → If approved/rejected grid → Options → Dissent → CTA
+
+### Option selection
+- **Trigger:** Click option button → `sel = opt.id` (toggle if same)
+- **Visual:** Selected → actionBg + action border + filled radio circle
+- **NOVA badge:** shown if `recommended = true`
+
+### "Full package" drawer
+- **Trigger:** "Full package" link (right side of hero)
+- **State:** `detailOpen = true`
+- **Content:** Summary / Why it matters / What is blocking / Key evidence / Technical details
+
+### Main CTA
+- "Review and decide" → `setView("decision-pause")`
+- Does NOT require option selection (option selection is UI preview only)
+
+---
+
+## FLOW 13: DECISION PAUSE — STEP 1 (REVIEW)
+
+### Entry
+Step = "review". Decision data displayed in review cards.
+
+### Review cards
+Rendered only if `.value` is truthy:
+- Decision statement (always present)
+- Recommended option + consequence
+- If approved (success bg)
+- If rejected (crit bg)
+- Uncertainty (warn bg)
+
+### CTA
+- "I have reviewed — continue" → `setStep("decide")`
+- Cancel → `setView("decision-package")`
+
+---
+
+## FLOW 14: DECISION PAUSE — STEP 2 (DECIDE)
+
+### Entry
+Step = "decide". No choice pre-selected (`choice = null`).
+
+### Choice selection
+- 4 buttons: Approve / Request changes / Reject / Defer
+- **Trigger:** Click → `setChoice(id)` (toggle if same)
+
+### Rationale field
+- Required (`*` marker)
+- Textarea with dynamic border (N.border → N.action when typing)
+
+### CTA states
+| choice | rationale | loading | CTA |
+|---|---|---|---|
+| null | any | false | disabled |
+| set | "" | false | disabled |
+| set | filled | false | enabled: "Record — [choice label]" |
+| set | filled | true | loading spinner + "Recording…" |
+
+### Submit
+- `loading = true` → 700ms delay → `setView("decision-receipt")`
+
+### Back
+- → `setStep("review")` (NOT setView)
+
+---
+
+## FLOW 15: DECISION RECEIPT
+
+### Entry
+No interaction required. Static display.
+
+### Navigation
+- "Return to work" → `setView("work")`
+- "Share receipt" → placeholder (no navigation)
+- Export button → placeholder
+
+---
+
+## FLOW 16: SEARCH OVERLAY
+
+### Trigger
+- Cmd+K (macOS) or Ctrl+K (Windows/Linux)
+- Search item in nav rail
+
+### Entry state
+- Auto-focus input ref
+- Recent items shown (3 hardcoded items)
+
+### Query state
+- `q.length < 2` → show RECENT
+- `q.length >= 2` → filter WORK_ITEMS + DECISIONS_DATA by `.toLowerCase().includes(q.toLowerCase())`
+- No results → "No results for '[q]'"
+
+### Navigation from search
+- Click result → `setActiveWork` or `setActiveDecision` + `setView` + `onClose()`
+
+### Close
+- Esc key (keydown listener)
+- Click outside (backdrop check `e.target === e.currentTarget`)
+- After result click
+
+---
+
+## ERROR / EDGE STATES
+
+| Condition | Behaviour |
+|---|---|
+| `workId` not found in WORK_ITEMS | Fallback to WORK_ITEMS[0] |
+| `decisionId` not found in DECISIONS_DATA | Fallback to DECISIONS_DATA[0] |
+| Decision has no options (d2, d3) | Options section not rendered |
+| Decision has no recommendation | NOVA recommendation row hidden |
+| Decision confidence = 0 | ConfChip not rendered |
+| Decision deadlineDays <= 0 | DeadlineBadge not rendered |
+| Source missing + no referenced deliverables | "Not yet referenced" text |
+| Person trustScore = 0 | DrawerRow "Trust score" not rendered |
+| NOVA novaState = null | NOVA reasoning block hidden |
+| Deliverable reviewedBy = null | Shows "Pending" |
+| Deliverable validatedBy = null | Shows "Not yet" |

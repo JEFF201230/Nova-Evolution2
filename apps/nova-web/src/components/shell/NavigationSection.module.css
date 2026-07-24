@@ -1,0 +1,29 @@
+.section {
+  display: grid;
+  gap: 0;
+}
+
+.header {
+  display: grid;
+  gap: var(--n-space-4);
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-130);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--n-color-text-secondary);
+}
+
+.description {
+  margin: 0;
+  font-size: var(--n-font-size-12);
+  color: var(--n-color-text-secondary);
+}
+
+.items {
+  display: grid;
+  gap: 0;
+}

@@ -1,0 +1,322 @@
+# 16 — REACT COMPONENT TREE
+## NOVA V6.1 — Complete Component Hierarchy
+
+---
+
+## COMPONENT DEFINITIONS (in order of appearance in App.tsx)
+
+All components are defined as function declarations in a single file: `src/app/App.tsx`.
+
+```
+App.tsx exports:
+├── confColor(pct) → helper function (not a component)
+├── NOVALabel({ size })
+├── ConfChip({ pct, afterAction, reasons, positive, missing })
+├── DeadlineBadge({ date })
+├── StatusDot({ status })
+├── Btn({ v, size, icon, loading, disabled, onClick, children })
+├── Card({ children, onClick, style })
+├── WhyInline({ children })
+├── Drawer({ open, onClose, title, children })
+├── DrawerSection({ label, children })
+├── DrawerRow({ label, value, color })
+├── NavRail({ view, setView, onSearch })
+│   └── NavItem (inline sub-component, not exported)
+├── SearchOverlay({ open, onClose, setView, setActiveWork, setActiveDecision })
+├── HomeView({ setView, setActiveWork, setActiveDecision })
+├── ClarifyView({ setView })
+├── CanvasView({ setView })
+├── PlanView({ setView })
+├── ConfirmView({ setView, setActiveWork })
+├── WorkView({ item, onDecision, onBack })
+│   ├── WorkBreadcrumb (rendered inline or as sub-component)
+│   ├── WorkOverviewTab({ item, onDecision })
+│   ├── WorkPlanTab({ phases })
+│   ├── WorkActivityTab({ events })
+│   ├── WorkPeopleTab({ people })
+│   ├── WorkSourcesTab({ sources })
+│   ├── WorkDecisionsTab({ decisions, onDecision })
+│   └── WorkDeliverablesTab({ deliverables })
+├── DecisionPackageView({ decision, setView })
+├── DecisionPauseView({ decision, setView })
+├── DecisionReceiptView({ decision, setView })
+├── GlobalDecisionsView({ setView, setActiveDecision })
+├── GlobalDeliverablesView()
+└── default export: App()
+```
+
+---
+
+## RUNTIME COMPONENT TREE (rendered hierarchy)
+
+The runtime tree depends on `view` state in App. The full tree at any given moment:
+
+```
+<App>
+  <NavRail view setView onSearch>
+    <NavItem × 4 (Home, Work, Decisions, Deliverables)>
+    <NavItem × 4 (Search, Bell, Help, Settings)>
+    <UserProfileRow>
+  </NavRail>
+
+  <main>
+    {view === "home" && (
+      <HomeView setView setActiveWork setActiveDecision>
+        <!-- Hero block (no sub-component) -->
+        <!-- Composer block (no sub-component) -->
+        <!-- Suggestion pills (no sub-component) -->
+        <!-- Active work rows -->
+        <Card onClick>         <!-- decision nudge -->
+          <DeadlineBadge />
+          <ConfChip />
+        </Card>
+        <Drawer open={detailOpen}>
+          <DrawerSection × N>
+            <DrawerRow × N />
+          </DrawerSection>
+        </Drawer>
+      </HomeView>
+    )}
+
+    {view === "clarify" && (
+      <ClarifyView setView>
+        <!-- suggestion buttons (no sub-component) -->
+        <!-- textarea -->
+      </ClarifyView>
+    )}
+
+    {view === "canvas" && (
+      <CanvasView setView>
+        <!-- canvas cards grid -->
+      </CanvasView>
+    )}
+
+    {view === "plan" && (
+      <PlanView setView>
+        <!-- phase rows (accordion) -->
+      </PlanView>
+    )}
+
+    {view === "confirm" && (
+      <ConfirmView setView setActiveWork>
+        <ConfChip />
+        <!-- autonomy buttons -->
+      </ConfirmView>
+    )}
+
+    {view === "work" && (
+      <WorkView item onDecision onBack>
+        <!-- breadcrumb -->
+        <!-- header -->
+        <!-- tab strip -->
+
+        {tab === "overview" && (
+          <WorkOverviewTab item onDecision>
+            <!-- hero card -->
+            <!-- Next Best Action card -->
+            <WhyInline />
+            <details> <!-- Later & Background -->
+            <Card onClick × N>   <!-- decision cards -->
+              <DeadlineBadge />
+              <ConfChip />
+              <WhyInline />
+            </Card>
+            <!-- sidebar: progress card with health bars -->
+            <Drawer open={detailOpen}>
+              <!-- Full analysis drawer -->
+            </Drawer>
+          </WorkOverviewTab>
+        )}
+
+        {tab === "plan" && (
+          <WorkPlanTab phases>
+            <!-- phase rows (same as PlanView) -->
+          </WorkPlanTab>
+        )}
+
+        {tab === "activity" && (
+          <WorkActivityTab events>
+            <!-- filter pills -->
+            <!-- activity events list -->
+            <!-- comment composer -->
+          </WorkActivityTab>
+        )}
+
+        {tab === "people" && (
+          <WorkPeopleTab people>
+            <!-- person cards -->
+            <NOVALabel />
+            <StatusDot />
+            <Drawer open={drawer !== null}>
+              <DrawerSection × N>
+                <DrawerRow × N />
+              </DrawerSection>
+            </Drawer>
+          </WorkPeopleTab>
+        )}
+
+        {tab === "sources" && (
+          <WorkSourcesTab sources>
+            <!-- counter strip -->
+            <!-- source cards -->
+            <Drawer open={drawer !== null}>
+              <DrawerSection × N>
+                <DrawerRow × N />
+              </DrawerSection>
+            </Drawer>
+          </WorkSourcesTab>
+        )}
+
+        {tab === "decisions" && (
+          <WorkDecisionsTab decisions onDecision>
+            <Card × N>
+              <DeadlineBadge />
+              <ConfChip />
+              <WhyInline />
+              <Btn />
+            </Card>
+          </WorkDecisionsTab>
+        )}
+
+        {tab === "deliverables" && (
+          <WorkDeliverablesTab deliverables>
+            <!-- deliverable cards -->
+            <ConfChip × N />
+            <Drawer open={drawer !== null}>
+              <DrawerSection × N>
+                <DrawerRow × N />
+              </DrawerSection>
+            </Drawer>
+          </WorkDeliverablesTab>
+        )}
+      </WorkView>
+    )}
+
+    {view === "decision-package" && (
+      <DecisionPackageView decision setView>
+        <NOVALabel />
+        <DeadlineBadge />
+        <ConfChip />
+        <WhyInline />
+        <Btn />
+        <Drawer open={detailOpen}>
+          <DrawerSection × N>
+            <DrawerRow × N />
+          </DrawerSection>
+        </Drawer>
+      </DecisionPackageView>
+    )}
+
+    {view === "decision-pause" && (
+      <DecisionPauseView decision setView>
+        <!-- step 1 or step 2 -->
+        <Btn />
+      </DecisionPauseView>
+    )}
+
+    {view === "decision-receipt" && (
+      <DecisionReceiptView decision setView>
+        <Btn × 2 />
+      </DecisionReceiptView>
+    )}
+
+    {view === "global-decisions" && (
+      <GlobalDecisionsView setView setActiveDecision>
+        <!-- filter tabs -->
+        <Card onClick × N>
+          <DeadlineBadge />
+          <ConfChip />
+        </Card>
+      </GlobalDecisionsView>
+    )}
+
+    {view === "global-deliverables" && (
+      <GlobalDeliverablesView>
+        <!-- deliverable cards -->
+        <ConfChip × N />
+      </GlobalDeliverablesView>
+    )}
+  </main>
+
+  {searchOpen && (
+    <SearchOverlay open onClose setView setActiveWork setActiveDecision>
+      <!-- input -->
+      <!-- results list -->
+    </SearchOverlay>
+  )}
+</App>
+```
+
+---
+
+## STATE OWNERSHIP
+
+| State variable | Owner component | Type |
+|---|---|---|
+| `view` | App | `"home" \| "clarify" \| "canvas" \| "plan" \| "confirm" \| "work" \| "global-decisions" \| "global-deliverables" \| "decision-package" \| "decision-pause" \| "decision-receipt"` |
+| `activeWork` | App | `string` (WorkItem id) |
+| `activeDecision` | App | `string` (DecisionData id) |
+| `searchOpen` | App | `boolean` |
+| `composerOpen` | HomeView | `boolean` |
+| `val` | HomeView | `string` |
+| `loading` | HomeView | `boolean` |
+| `detailOpen` | HomeView | `boolean` |
+| `step` | ClarifyView | `number` |
+| `current` | ClarifyView | `string` |
+| `editing` | CanvasView | `number \| null` |
+| `exp` | PlanView | `number \| null` |
+| `aut` | ConfirmView | `number` |
+| `tab` | WorkView | `string` |
+| `detailOpen` | WorkOverviewTab | `boolean` |
+| `exp` | WorkPlanTab | `number \| null` |
+| `filter` | WorkActivityTab | `string` |
+| `comment` | WorkActivityTab | `string` |
+| `drawer` | WorkPeopleTab | `PersonData \| null` |
+| `drawer` | WorkSourcesTab | `SourceData \| null` |
+| `drawer` | WorkDeliverablesTab | `DeliverableData \| null` |
+| `sel` | DecisionPackageView | `string \| null` |
+| `detailOpen` | DecisionPackageView | `boolean` |
+| `step` | DecisionPauseView | `"review" \| "decide"` |
+| `choice` | DecisionPauseView | `string \| null` |
+| `rationale` | DecisionPauseView | `string` |
+| `loading` | DecisionPauseView | `boolean` |
+| `filter` | GlobalDecisionsView | `string` |
+| `open` | ConfChip | `boolean` |
+| `open` | WhyInline | `boolean` |
+| `hovered` | Card | `boolean` |
+| `hovered` | Btn | `boolean` |
+| `q` | SearchOverlay | `string` |
+
+---
+
+## DATA FLOW (props passing)
+
+```
+App
+├── → NavRail: view, setView, () => setSearchOpen(true)
+├── → HomeView: setView, setActiveWork, setActiveDecision
+├── → WorkView: WORK_ITEMS.find(w => w.id === activeWork), (id) => { setActiveDecision(id); setView("decision-package") }, () => setView("home")
+├── → DecisionPackageView: DECISIONS.find(d => d.id === activeDecision), setView
+├── → DecisionPauseView: DECISIONS.find(d => d.id === activeDecision), setView
+├── → DecisionReceiptView: DECISIONS.find(d => d.id === activeDecision), setView
+├── → GlobalDecisionsView: setView, (id) => { setActiveDecision(id); setView("decision-package") }
+├── → GlobalDeliverablesView: (no props — reads WORK_ITEMS directly from module scope)
+└── → SearchOverlay: searchOpen, () => setSearchOpen(false), setView, setActiveWork, setActiveDecision
+```
+
+---
+
+## STATIC DATA LOCATION
+
+All data arrays are defined at module scope in App.tsx (not in any component):
+
+```
+CLARIFY_QS: ClarifyQuestion[]     — 4 questions for clarify flow
+CANVAS_ITEMS: CanvasItem[]         — 6 canvas synthesis cards
+PLAN_PHASES: Phase[]               — 4 phases (complete, active, future × 2)
+AUTONOMY_LEVELS: AutonomyLevel[]   — 4 levels (A0–A3)
+WORK_ITEMS: WorkItem[]             — 1 work item "w1" with full data
+DECISIONS: DecisionData[]          — 2 decisions ("d1", "d2")
+```
+
+All components read from these module-scope arrays directly (no context, no store, no prop drilling for static data).

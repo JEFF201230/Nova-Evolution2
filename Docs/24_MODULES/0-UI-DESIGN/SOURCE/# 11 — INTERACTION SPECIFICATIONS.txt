@@ -1,0 +1,449 @@
+# 11 — INTERACTION SPECIFICATIONS
+## NOVA V6.1 — All Interactions
+
+---
+
+## GLOBAL INTERACTIONS
+
+### Cmd+K / Ctrl+K — Search
+- **Trigger:** `keydown` on `window`
+- **Guard:** `(e.metaKey || e.ctrlKey) && e.key === "k"`
+- **Action:** `e.preventDefault()` + `setSearchOpen(true)`
+- **Location:** App root useEffect (attached once on mount, cleaned on unmount)
+
+### Escape — Close search
+- **Trigger:** `keydown` on `window`
+- **Guard:** `e.key === "Escape"`
+- **Action:** `setSearchOpen(false)`
+- **Note:** Also triggers ConfChip close via native browser behaviour? No — ConfChip has no Escape listener. Close is via button only.
+
+---
+
+## HOME INTERACTIONS
+
+### Composer: Open
+- **Element:** Collapsed composer block
+- **Trigger:** `onClick` on entire block
+- **Action:** `setComposerOpen(true)` → `setTimeout(() => ref.current?.focus(), 50)`
+- **Visual change:** Border → `1.5px solid N.action`, boxShadow → overlay + 4px ring, height expands to show textarea
+
+### Composer: Suggestion pill
+- **Trigger:** `onClick` on pill button
+- **Action:** `setComposerOpen(true)` + `setVal(ex)` + `setTimeout(() => ref.current?.focus(), 50)`
+
+### Composer: Textarea input
+- **Trigger:** `onChange`
+- **Action:** `setVal(e.target.value)`
+- **CTA enable:** `val.trim().length > 0`
+
+### Composer: Cmd+Enter submit
+- **Trigger:** `onKeyDown` on textarea
+- **Guard:** `e.key === "Enter" && e.metaKey`
+- **Action:** `setLoading(true)` → 500ms → `setLoading(false)` + `setView("clarify")`
+
+### Composer: CTA button
+- **Trigger:** `onClick`
+- **Guard:** `!val.trim() || loading` → disabled
+- **Action (enabled):** `setLoading(true)` → 500ms → `setLoading(false)` + `setView("clarify")`
+
+### Composer: Cancel
+- **Trigger:** Click "Cancel" button
+- **Action:** `setComposerOpen(false)` + `setVal("")`
+
+### Suggestion pill hover
+- **Trigger:** `onMouseEnter` / `onMouseLeave`
+- **Transition:** T.fast (120ms)
+- **Hover:** borderColor → N.action, color → N.action, background → N.actionBg
+- **Leave:** Reset to defaults
+
+### Hero "Open presentation" button
+- **Trigger:** `onClick`
+- **Action:** `setActiveWork("w1")` + `setView("work")`
+
+### WhyInline (hero)
+- **See WhyInline component spec**
+
+### "Details" link (hero + NOVA strip)
+- **Trigger:** `onClick`
+- **Action:** `setDetailOpen(true)` → opens Home Detail Drawer
+
+### Active work row
+- **Trigger:** `onClick` on row `<div>`
+- **Hover:** borderColor → N.borderMd, boxShadow → SH.cardHv
+- **Leave:** Reset
+- **Action:** `setActiveWork(w.id)` + `setView("work")`
+
+### Decision card
+- **Trigger:** `onClick` (via Card component)
+- **Action:** `setActiveDecision("d1")` + `setView("decision-package")`
+
+### NOVA strip "Details" link
+- **Trigger:** `onClick`
+- **Action:** `setDetailOpen(true)`
+
+---
+
+## CLARIFY INTERACTIONS
+
+### Back button
+- **Action:** `step > 0 ? setStep(step - 1) : setView("home")`
+
+### Suggestion button
+- **Trigger:** `onClick`
+- **Action:** `setCurrent(suggestion)`
+- **Visual:** Selected → actionBg + action border + action text; unselected → surface + borderMd
+
+### Textarea
+- **Trigger:** `onChange`
+- **Action:** `setCurrent(e.target.value)`
+- **Visual:** Dynamic border: `1.5px solid ${current && !suggestions.includes(current) ? N.action : N.border}`
+
+### Continue button
+- **Guard:** `!current` → disabled (opacity 0.4)
+- **Action:** Call `next()`:
+  - `step < CLARIFY_QS.length - 1` → `setStep(step + 1)` + `setCurrent("")`
+  - else → `setView("canvas")`
+
+### Skip button
+- **Action:** `next()` (same as continue, bypasses validation)
+
+---
+
+## CANVAS INTERACTIONS
+
+### Edit button (per card)
+- **Trigger:** `onClick`
+- **Action:** `setEditing(editing === i ? null : i)`
+- **Visual:** Button switches to "Save" + check icon when editing
+
+### Save button
+- **Trigger:** `onClick`
+- **Action:** `setEditing(null)`
+- **Note:** No save handler — textarea value is abandoned (no controlled state update)
+
+### CTA "Prepare a plan"
+- **Action:** `setView("plan")`
+
+---
+
+## PLAN INTERACTIONS
+
+### Phase toggle
+- **Element:** Phase row button
+- **Trigger:** `onClick`
+- **Action:** `setExp(exp === i ? null : i)`
+- **Rule:** Only one phase expanded at a time
+
+### Phase expand visual
+- ChevronDown rotates 180° when `exp === i`
+- Transition: T.std (200ms)
+- Expanded content appears below without animation (instant)
+
+### CTA "Review and start"
+- **Action:** `setView("confirm")`
+
+---
+
+## CONFIRM INTERACTIONS
+
+### Autonomy level button
+- **Trigger:** `onClick`
+- **Action:** `setAut(level.level)` (0–3)
+- **Visual:** Selected → actionBg, action border, action text, action monospace badge
+
+### CTA "Start work"
+- **Action:** `setActiveWork("w1")` + `setView("work")`
+
+---
+
+## WORK OVERVIEW INTERACTIONS
+
+### Next Best Action CTA "Open"
+- **Action:** No navigation (placeholder — no handler defined)
+
+### WhyInline (next action)
+- Opens inline explanation of next action rationale
+
+### "Later & Background" details toggle
+- **Element:** HTML `<details>` (native disclosure)
+- **Behaviour:** Browser-native expand/collapse
+
+### Decision card (pending)
+- **Trigger:** `onClick` via Card component
+- **Action:** `setActiveDecision(d.id)` + `setView("decision-package")`
+
+### "Full analysis" link (sidebar)
+- **Trigger:** `onClick`
+- **Action:** `setDetailOpen(true)` → opens Work Analysis Drawer
+
+### Drawer close
+- X button or backdrop → `setDetailOpen(false)`
+
+---
+
+## WORK PLAN INTERACTIONS
+
+### (No interactive elements beyond rendering — plan is read-only in the Work tab)**
+
+---
+
+## WORK ACTIVITY INTERACTIONS
+
+### Filter pill
+- **Trigger:** `onClick`
+- **Action:** `setFilter(f)`
+- **Note:** "all" shows unfiltered list
+
+### Comment textarea
+- **Trigger:** `onChange`
+- **Action:** `setComment(e.target.value)`
+- **Visual:** Border → N.action when value non-empty
+
+### Post button
+- **Visible:** Only when `comment !== ""`
+- **Action:** No handler (placeholder)
+
+---
+
+## WORK PEOPLE INTERACTIONS
+
+### "Details" button (per person)
+- **Trigger:** `onClick`
+- **Action:** `setDrawer(person)`
+
+### Drawer close
+- X or backdrop → `setDrawer(null)`
+
+---
+
+## WORK SOURCES INTERACTIONS
+
+### "Add" button (missing sources)
+- **Trigger:** `onClick`
+- **Action:** No handler (placeholder)
+
+### "Refresh" button (stale sources)
+- **Trigger:** `onClick`
+- **Action:** No handler (placeholder)
+
+### "Details" button (all sources)
+- **Trigger:** `onClick`
+- **Action:** `setDrawer(source)`
+
+### Drawer close
+- X or backdrop → `setDrawer(null)`
+
+---
+
+## WORK DECISIONS INTERACTIONS
+
+### Decision card
+- **Not a Card component** — rendered as plain `<Card>` without onClick
+
+### "Review & decide" button
+- **Trigger:** `onClick`
+- **Action:** `setActiveDecision(d.id)` + `setView("decision-package")`
+
+### WhyInline
+- Opens rationale explanation inline
+
+---
+
+## WORK DELIVERABLES INTERACTIONS
+
+### Eye button (quiet)
+- **Action:** No handler (placeholder preview)
+
+### "Details" button
+- **Trigger:** `onClick`
+- **Action:** `setDrawer(deliverable)`
+
+### Drawer close
+- X or backdrop → `setDrawer(null)`
+
+---
+
+## DECISION PACKAGE INTERACTIONS
+
+### Option button
+- **Trigger:** `onClick`
+- **Action:** `setSel(opt.id === sel ? null : opt.id)` (toggle)
+- **Visual:** Selected → actionBg + action border + filled radio circle
+
+### WhyInline
+- Opens rationale + uncertainty inline
+
+### "Full package" link
+- **Trigger:** `onClick`
+- **Action:** `setDetailOpen(true)` → Full Package Drawer
+
+### Drawer close
+- X or backdrop → `setDetailOpen(false)`
+
+### Primary CTA "Review and decide"
+- **Trigger:** `onClick`
+- **Action:** `setView("decision-pause")`
+
+### Secondary "Review and decide" (bottom)
+- **Same action:** `setView("decision-pause")`
+
+---
+
+## DECISION PAUSE INTERACTIONS
+
+### Back to package
+- **Trigger:** `onClick`
+- **Action:** `setView("decision-package")`
+
+### Step 1 CTA "I have reviewed — continue"
+- **Trigger:** `onClick`
+- **Action:** `setStep("decide")`
+
+### Step 1 Cancel
+- **Trigger:** `onClick`
+- **Action:** `setView("decision-package")`
+
+### Step 2 Choice button
+- **Trigger:** `onClick`
+- **Action:** `setChoice(c.id === choice ? null : c.id)` (toggle)
+
+### Step 2 Rationale textarea
+- **Trigger:** `onChange`
+- **Action:** `setRationale(e.target.value)`
+- **Visual:** Border → N.action when non-empty
+
+### Step 2 CTA "Record — [choice]"
+- **Guard:** `!choice || !rationale.trim() || loading` → disabled
+- **Action (enabled):** `setLoading(true)` → 700ms → `setLoading(false)` + `setView("decision-receipt")`
+- **Loading state:** Spinner icon + "Recording…" text
+
+### Step 2 Back link
+- **Trigger:** `onClick`
+- **Action:** `setStep("review")` (NOT `setView`)
+
+---
+
+## DECISION RECEIPT INTERACTIONS
+
+### "Return to work"
+- **Action:** `setView("work")`
+
+### "Share receipt"
+- **Action:** No handler (placeholder)
+
+### Export button
+- **Action:** No handler (placeholder)
+
+---
+
+## GLOBAL DECISIONS INTERACTIONS
+
+### Tab filter
+- **Trigger:** `onClick`
+- **Action:** `setFilter(f)` ("all" | "pending" | "waiting" | "decided")
+
+### Decision card (pending / waiting)
+- **Trigger:** `onClick` via Card component
+- **Guard:** `d.status !== "decided"` — "decided" cards have no onClick
+- **Action:** `setActiveDecision(d.id)` + `setView("decision-package")`
+
+---
+
+## CONFIDENCE CHIP INTERACTIONS
+
+### Trigger click
+- **Action:** `setOpen(!open)` (toggle)
+
+### Close button
+- **Action:** `setOpen(false)`
+
+### Popover click (internal)
+- **Action:** `e.stopPropagation()` (prevents parent click handlers)
+
+---
+
+## NAV RAIL INTERACTIONS
+
+### Primary nav item
+- **Hover:** `background: rgba(15,23,42,.04)`, color → N.text
+- **Action:** `setView(id as View)`
+
+### Search item
+- **Action:** `onSearch()` → `setSearchOpen(true)`
+
+### Other bottom items (Bell, Help, Settings)
+- **Action:** None (placeholder)
+
+### User profile row
+- **Hover:** `background: rgba(15,23,42,.04)`
+- **Action:** None (placeholder)
+
+---
+
+## SEARCH OVERLAY INTERACTIONS
+
+### Input
+- **Trigger:** `onChange`
+- **Action:** `setQ(e.target.value)`
+
+### Result click
+- **Trigger:** `onClick` on result button
+- **Action:** `setActiveWork(id)` or `setActiveDecision(id)` + `setView(v)` + `onClose()`
+
+### Backdrop click
+- **Guard:** `e.target === e.currentTarget`
+- **Action:** `onClose()`
+
+### Esc key
+- **Trigger:** `onKeyDown` on input
+- **Guard:** `e.key === "Escape"`
+- **Action:** `onClose()`
+
+### Result hover
+- **onMouseEnter:** `background → N.subtle`
+- **onMouseLeave:** `background → transparent`
+
+---
+
+## ICON INTERACTIONS
+
+All icons are static (no hover state unless within an interactive parent).
+
+### Icons used and their sizes
+
+| Icon | Size | StrokeWidth | Contexts |
+|---|---|---|---|
+| Home | 16 | 2 | Nav |
+| Briefcase | 16 | 2 | Nav |
+| Scale | 16, 14, 15 | 2 | Nav, Decision cards |
+| FileText | 16, 13, 11 | 2 | Nav, Deliverables |
+| Search | 16, 14 | 2 | Nav, Search overlay |
+| Bell | 16 | 2 | Nav |
+| HelpCircle | 16 | 2 | Nav |
+| Settings | 16 | 2 | Nav |
+| ChevronRight | 11-13 | 2-2.5 | Breadcrumb, details links |
+| ChevronDown | 9, 12 | 2-2.5 | Collapse toggles, ConfChip |
+| Plus | 12-13 | 2.5 | Add buttons |
+| Check | 7-10 | 3 | Radio filled, task complete, step complete |
+| AlertTriangle | 9-12 | 2-2.5 | Warnings, blockers, critical |
+| Clock | 9, 11 | 2-2.5 | Deadline badge, time estimate |
+| ArrowRight | 12-14 | 2-2.5 | CTAs, navigation arrows |
+| MoreHorizontal | 12 | 2 | Work header more button |
+| Edit2 | 9 | 2 | Canvas edit button |
+| Eye | 11 | 2 | Deliverable preview |
+| Paperclip | 11 | 2 | Composer attach |
+| Mic | 11 | 2 | Composer voice |
+| MessageSquare | 11 | 2 | Dissent block |
+| Download | 11 | 2 | Export, published deliverable |
+| Upload | 10 | 2 | Add missing source |
+| Info | 11 | 2 | Clarify "why" |
+| CheckCircle | 11-20 | 2-2.5 | Phase complete, receipt success, NOVA will |
+| RefreshCw | 10-13 | 2-2.5 | Loading spinner, refresh stale, active phase |
+| Lock | 11 | 2.5 | Decision pause header |
+| StopCircle | 11, 13 | 2 | Work pause button, blocker icon |
+| Send | 11 | 2.5 | Comment post button |
+| Sparkles | 9-15 | 2-2.5 | NOVA label, logo, AI avatars |
+| Circle | 12 | 2 | Future phase icon |
+| User | 9-14 | 2 | Human avatar |
+| ChevronLeft | 13 | 2.5 | Back buttons |
+| X | 12-15 | 2 | Drawer close, ConfChip close |

@@ -1,0 +1,25 @@
+.stack {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-8);
+}
+
+.grid {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.note {
+  display: grid;
+  gap: var(--n-space-8);
+  color: var(--n-color-text-secondary);
+}
+
+.note p {
+  margin: 0;
+}

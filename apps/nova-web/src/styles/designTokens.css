@@ -1,0 +1,216 @@
+:root {
+  /* Typography */
+  --n-font-family-ui: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --n-font-family-mono: 'Roboto Mono', 'SF Mono', ui-monospace, monospace;
+  --n-font-weight-regular: 400;
+  --n-font-weight-medium: 500;
+  --n-font-weight-semibold: 600;
+  --n-font-weight-semibold-alt: 650;
+  --n-font-weight-bold: 700;
+  --n-font-size-9: 9px;
+  --n-font-size-10: 10px;
+  --n-font-size-11: 11px;
+  --n-font-size-12: 12px;
+  --n-font-size-13: 13px;
+  --n-font-size-14: 14px;
+  --n-font-size-15: 15px;
+  --n-font-size-16: 16px;
+  --n-font-size-17: 17px;
+  --n-font-size-18: 18px;
+  --n-font-size-19: 19px;
+  --n-font-size-20: 20px;
+  --n-font-size-22: 22px;
+  --n-font-size-24: 24px;
+  --n-font-size-26: 26px;
+  --n-font-size-27: 27px;
+  --n-line-height-100: 1;
+  --n-line-height-130: 1.3;
+  --n-line-height-140: 1.4;
+  --n-line-height-145: 1.45;
+  --n-line-height-150: 1.5;
+  --n-line-height-155: 1.55;
+  --n-line-height-160: 1.6;
+  --n-line-height-165: 1.65;
+  --n-letter-spacing-neg-035: -0.035em;
+  --n-letter-spacing-000: 0;
+  --n-letter-spacing-010: 0.01em;
+  --n-letter-spacing-020: 0.02em;
+  --n-letter-spacing-030: 0.03em;
+  --n-letter-spacing-040: 0.04em;
+  --n-letter-spacing-050: 0.05em;
+  --n-letter-spacing-060: 0.06em;
+  --n-letter-spacing-070: 0.07em;
+
+  /* Colors */
+  --n-color-canvas: #f8fafc;
+  --n-color-surface: #ffffff;
+  --n-color-surface-alt: #f1f5f9;
+  --n-color-text: #0f172a;
+  --n-color-text-secondary: #475569;
+  --n-color-text-disabled: #94a3b8;
+  --n-color-border: #e2e8f0;
+  --n-color-border-medium: #cbd5e1;
+  --n-color-border-strong: #94a3b8;
+  --n-color-action: #1d4ed8;
+  --n-color-action-hover: #1e40af;
+  --n-color-action-bg: #eff6ff;
+  --n-color-success-bg: #f0fdf4;
+  --n-color-success: #166534;
+  --n-color-warning-bg: #fffbeb;
+  --n-color-warning: #92400e;
+  --n-color-critical-bg: #fef2f2;
+  --n-color-critical: #991b1b;
+  --n-color-nova: #6d28d9;
+  --n-color-nova-bg: #f5f3ff;
+  --n-color-nova-border: #ddd6fe;
+  --n-gradient-home: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+  --n-gradient-decision: linear-gradient(135deg, #fef2f2 0%, #fff7f0 100%);
+  --n-gradient-logo: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+  --n-gradient-avatar: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+
+  /* Spacing */
+  --n-space-2: 2px;
+  --n-space-4: 4px;
+  --n-space-6: 6px;
+  --n-space-8: 8px;
+  --n-space-9: 9px;
+  --n-space-10: 10px;
+  --n-space-11: 11px;
+  --n-space-12: 12px;
+  --n-space-13: 13px;
+  --n-space-14: 14px;
+  --n-space-16: 16px;
+  --n-space-18: 18px;
+  --n-space-20: 20px;
+  --n-space-22: 22px;
+  --n-space-24: 24px;
+  --n-space-26: 26px;
+  --n-space-28: 28px;
+  --n-space-30: 30px;
+  --n-space-32: 32px;
+  --n-space-36: 36px;
+  --n-space-40: 40px;
+  --n-space-44: 44px;
+  --n-space-48: 48px;
+  --n-space-52: 52px;
+  --n-space-64: 64px;
+  --n-space-72: 72px;
+  --n-space-96: 96px;
+  --n-space-100: 100px;
+  --n-space-120: 120px;
+
+  /* Radius */
+  --n-radius-4: 4px;
+  --n-radius-6: 6px;
+  --n-radius-7: 7px;
+  --n-radius-8: 8px;
+  --n-radius-9: 9px;
+  --n-radius-10: 10px;
+  --n-radius-11: 11px;
+  --n-radius-12: 12px;
+  --n-radius-13: 13px;
+  --n-radius-14: 14px;
+  --n-radius-16: 16px;
+  --n-radius-pill: 999px;
+  --n-radius-circle: 50%;
+
+  /* Borders */
+  --n-border-width-1: 1px;
+  --n-border-width-1-5: 1.5px;
+  --n-border-width-2: 2px;
+  --n-border-width-3: 3px;
+
+  /* Shadows */
+  --n-shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --n-shadow-card-hover: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --n-shadow-overlay: 0 20px 48px rgba(15, 23, 42, 0.16), 0 4px 8px rgba(15, 23, 42, 0.08);
+  --n-shadow-hero: 0 2px 20px rgba(29, 78, 216, 0.1), 0 1px 4px rgba(29, 78, 216, 0.06);
+
+  /* Opacity */
+  --n-opacity-icon: 0.7;
+  --n-opacity-subcaption: 0.65;
+  --n-opacity-confidence-label: 0.7;
+  --n-opacity-disabled: 0.4;
+
+  /* Z-index */
+  --n-z-popover: 20;
+  --n-z-popover-alt: 30;
+  --n-z-drawer: 50;
+  --n-z-drawer-overlay: 51;
+  --n-z-search: 100;
+
+  /* Blur */
+  --n-blur-drawer: 2px;
+  --n-blur-search: 3px;
+
+  /* Motion */
+  --n-duration-fast: 120ms;
+  --n-duration-standard: 200ms;
+  --n-duration-composer: 280ms;
+  --n-duration-submit: 500ms;
+  --n-duration-record: 700ms;
+  --n-duration-spinner: 1s;
+  --n-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layout / dimensions */
+  --n-button-size-sm: 32px;
+  --n-button-size-md: 40px;
+  --n-button-size-lg: 48px;
+  --n-status-size: 7px;
+  --n-avatar-size-22: 22px;
+  --n-avatar-size-26: 26px;
+  --n-avatar-size-28: 28px;
+  --n-avatar-size-36: 36px;
+  --n-avatar-size-38: 38px;
+  --n-step-size-18: 18px;
+  --n-step-size-24: 24px;
+  --n-progress-size-3: 3px;
+  --n-progress-size-4: 4px;
+  --n-progress-size-6: 6px;
+  --n-textarea-size-64: 64px;
+  --n-textarea-size-72: 72px;
+  --n-textarea-size-80: 80px;
+  --n-textarea-size-88: 88px;
+  --n-result-size-320: 320px;
+  --n-result-size-360: 360px;
+  --n-nav-rail-compact: 56px;
+  --n-nav-rail-large: 220px;
+  --n-drawer-width: 460px;
+  --n-search-width: 560px;
+  --n-search-width-compact: 520px;
+  --n-home-max-width: 880px;
+  --n-clarify-max-width: 640px;
+  --n-confirm-max-width: 560px;
+  --n-decision-package-width: 800px;
+  --n-decision-receipt-width: 520px;
+
+  /* Viewport references */
+  --n-viewport-min-desktop-width: 960px;
+  --n-viewport-min-desktop-height: 640px;
+  --n-viewport-optimal-min-width: 1280px;
+  --n-viewport-optimal-max-width: 1440px;
+  --n-viewport-optimal-min-height: 800px;
+  --n-viewport-optimal-max-height: 900px;
+  --n-viewport-max-useful-width: 1600px;
+
+  /* Backward-compatible aliases used by the current shell */
+  --canvas: var(--n-color-canvas);
+  --surface: var(--n-color-surface);
+  --surface-alt: var(--n-color-surface-alt);
+  --text: var(--n-color-text);
+  --text-secondary: var(--n-color-text-secondary);
+  --text-disabled: var(--n-color-text-disabled);
+  --border: var(--n-color-border);
+  --border-medium: var(--n-color-border-medium);
+  --border-strong: var(--n-color-border-strong);
+  --action: var(--n-color-action);
+  --action-hover: var(--n-color-action-hover);
+  --action-bg: var(--n-color-action-bg);
+  --nova: var(--n-color-nova);
+  --nova-bg: var(--n-color-nova-bg);
+  --nova-border: var(--n-color-nova-border);
+  --shadow-card: var(--n-shadow-card);
+  --shadow-card-hover: var(--n-shadow-card-hover);
+  --radius-md: var(--n-radius-12);
+  --radius-lg: var(--n-radius-16);
+}

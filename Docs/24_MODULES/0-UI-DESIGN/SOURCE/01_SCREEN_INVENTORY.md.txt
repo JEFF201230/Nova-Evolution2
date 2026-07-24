@@ -1,0 +1,299 @@
+# 01 — SCREEN INVENTORY
+## NOVA V6.1 — Exhaustive Screen Inventory
+
+---
+
+## SCREEN HIERARCHY
+
+```
+NOVA Application
+├── Home                          [/home]
+│   └── Composer (inline expand)
+├── Work Setup Flow
+│   ├── Clarify                   [/clarify]
+│   ├── Canvas                    [/canvas]
+│   ├── Plan                      [/plan]
+│   └── Confirm                   [/confirm]
+├── Work                          [/work/:id]
+│   ├── Tab: Overview
+│   ├── Tab: Plan
+│   ├── Tab: Activity
+│   ├── Tab: People
+│   ├── Tab: Sources
+│   ├── Tab: Decisions
+│   └── Tab: Deliverables
+├── Global Decisions              [/decisions]
+├── Global Deliverables           [/deliverables]
+├── Decision Package              [/decisions/:id]
+├── Decision Pause                [/decisions/:id/decide]
+└── Decision Receipt              [/decisions/:id/receipt]
+```
+
+---
+
+## SCREEN 1 — HOME
+
+**Route:** `/home`
+**Purpose:** Situational awareness + new work creation + focal urgency block
+**Primary question answered:** "What do I need to do right now?"
+
+### Sections (top-to-bottom)
+1. **Page header** — Greeting + sub-caption (decision count + work count)
+2. **Composer block** — Objective input field (collapsed/expanded states)
+3. **Suggestion pills** — 3 example objectives
+4. **Hero situation block** — NOVA gradient card (focal point of the page)
+5. **Decision card** — Urgent pending decision (accent left border)
+6. **Active work list** — Secondary, compact rows
+7. **NOVA background strip** — Status + time saved + details link
+
+### Navigation triggers
+- Composer CTA → `clarify`
+- Hero "Open presentation" → `work` (w1)
+- Decision card click → `decision-package` (d1)
+- Active work row click → `work` (id)
+- Details button → Drawer (HomeDetailDrawer)
+
+---
+
+## SCREEN 2 — CLARIFY
+
+**Route:** `/clarify`
+**Purpose:** Step-by-step qualification of user objective (3 questions)
+**Primary question answered:** "What exactly do you want to achieve and by when?"
+
+### Sections
+1. Back button + progress bar (step N/3) + step count
+2. Objective recap card (read-only)
+3. Question heading (large)
+4. "Why does this matter?" expandable (details)
+5. Suggestion buttons (radio-style selection, 3 options)
+6. Free-text textarea (or describe in own words)
+7. CTA row: primary button + skip
+
+### Navigation triggers
+- Back → previous step or `home`
+- Continue/Submit → next step or `canvas`
+- Skip → next step
+
+---
+
+## SCREEN 3 — CANVAS
+
+**Route:** `/canvas`
+**Purpose:** Review and correct NOVA's understanding before plan creation
+**Primary question answered:** "Did NOVA understand my objective correctly?"
+
+### Sections
+1. Back button
+2. NOVA label + heading + sub-caption
+3. Understanding cards (6 sections): Outcome / Audience / Success / Constraints / Assumptions / People
+4. Edit button per card → inline textarea toggle
+5. Assumption warning block (amber) for uncertain items
+6. CTA: "Prepare a plan"
+
+### Navigation triggers
+- Back → `clarify`
+- Edit → inline editing mode (toggle)
+- Save → collapse textarea
+- CTA → `plan`
+
+---
+
+## SCREEN 4 — PLAN
+
+**Route:** `/plan`
+**Purpose:** Review the 4-phase work plan before starting
+**Primary question answered:** "What is NOVA planning to do?"
+
+### Sections
+1. Back button
+2. NOVA label + heading + sub-caption
+3. Phase timeline (vertical stepper, 4 phases)
+   - Each phase: outcome / date range / probability / remaining / blocker / expand toggle
+   - Expanded: AI contribution / Human contribution / task checklist
+4. NOVA confidence strip (innoBg)
+5. CTA: "Review and start"
+
+### Navigation triggers
+- Back → `canvas`
+- Phase toggle → expand/collapse
+- CTA → `confirm`
+
+---
+
+## SCREEN 5 — CONFIRM
+
+**Route:** `/confirm`
+**Purpose:** Set NOVA autonomy level before work begins
+**Primary question answered:** "How much should NOVA do without asking me?"
+
+### Sections
+1. Back link → `plan`
+2. Heading + sub-caption
+3. Autonomy level grid (2×2, 4 options: A0/A1/A2/A3)
+4. Autonomy detail card: NOVA will / NOVA will ask first
+5. CTA: "Start work"
+
+### Navigation triggers
+- Back → `plan`
+- Select level → updates detail card
+- CTA → `work` (w1)
+
+---
+
+## SCREEN 6 — WORK
+
+**Route:** `/work/:id`
+**Purpose:** Central working screen for active work item
+**Primary question answered:** "Where is this work and what should I do next?"
+
+### Layout
+- Sticky header (work title + confidence + phase + deadline + actions)
+- 7-tab navigation
+- Tab content area (scrollable)
+
+### Tab inventory
+| Tab | Purpose | Primary element |
+|---|---|---|
+| Overview | Situation + next action | Next Best Action focal card |
+| Plan | Phase tracker | Phase cards with completion |
+| Activity | Timeline of events | Narrative event list |
+| People | Who can unblock | Person cards + NOVA state |
+| Sources | Source quality | Status-sorted source cards |
+| Decisions | Pending decisions | Decision + consequence card |
+| Deliverables | Output readiness | Readiness bar cards |
+
+### Work header elements
+- `ConfChip` (confidence %)
+- Phase indicator (N/M)
+- Deadline text
+- Work title (h1)
+- Pause button
+- More button (⋯)
+- 7 tab buttons (border-bottom indicator)
+
+---
+
+## SCREEN 7 — GLOBAL DECISIONS
+
+**Route:** `/decisions`
+**Purpose:** All decisions across all work items
+**Primary question answered:** "Which decisions need my authority now?"
+
+### Sections
+1. Page heading + urgency sub-caption
+2. Filter tabs: All / Needs my decision / Waiting / History (with counts)
+3. Decision cards (filtered)
+
+### Card anatomy
+- Hero sentence (bold)
+- 2 badges: deadline pill + confidence chip
+- Decision statement
+- Outcome (if decided, green checkmark)
+
+---
+
+## SCREEN 8 — GLOBAL DELIVERABLES
+
+**Route:** `/deliverables`
+**Purpose:** All deliverables across all work
+**Primary question answered:** "What has been produced and is it ready?"
+
+### Sections
+1. Page heading + Create button
+2. Filter tabs: All / Drafts / In review / Published (with counts)
+3. Deliverable rows (icon + name + metadata + confidence + actions)
+
+---
+
+## SCREEN 9 — DECISION PACKAGE
+
+**Route:** `/decisions/:id`
+**Purpose:** Full decision brief for one decision
+**Primary question answered:** "What do I need to know to decide?"
+
+### Sections
+1. Back button → `work`
+2. Hero block (gradient critBg): badges + statement + heroSentence + NOVA recommendation + CTA + Why? + Full package link
+3. If approved / If rejected (2-column grid)
+4. Options list (radio-select, 3 options)
+5. Dissent block (italic, message icon)
+6. Primary CTA: "Review and decide"
+7. Drawer: Full package (narrative order)
+
+---
+
+## SCREEN 10 — DECISION PAUSE (Review → Decide)
+
+**Route:** `/decisions/:id/decide`
+**Purpose:** 2-step immutable decision recording
+**Primary question answered:** "Have I reviewed everything before I commit?"
+
+### Step 1: Review
+- Lock icon header + authority + "permanent record" sub-label
+- Step indicator (Review → Decide)
+- Review cards: Decision / Recommended / If approved / If rejected / Uncertainty
+- CTA: "I have reviewed — continue"
+- Cancel link
+
+### Step 2: Decide
+- 4 choice buttons (Approve / Request changes / Reject / Defer)
+- Rationale textarea (required)
+- CTA: "Record — [choice]" (disabled until both filled)
+- Back link → Review step
+
+---
+
+## SCREEN 11 — DECISION RECEIPT
+
+**Route:** `/decisions/:id/receipt`
+**Purpose:** Immutable confirmation of recorded decision
+**Primary question answered:** "What was decided and what happens next?"
+
+### Sections
+1. Success icon + heading + permanent record note
+2. Receipt card: reference code / outcome / decision / approved option / authority / timestamp / Export
+3. Resulting actions card (3 actions with assignees + dates)
+4. CTA row: Return to work + Share receipt
+
+---
+
+## WORKFLOW MAPS
+
+### User Workflow — New Work
+```
+Home (composer) → Clarify (3 steps) → Canvas (review) → Plan (4 phases) → Confirm (autonomy) → Work (overview)
+```
+
+### User Workflow — Decision
+```
+Work (overview) → Decision card → Decision Package → Review step → Decide step → Receipt → Work
+  ─OR─
+Global Decisions → Decision Package → Review step → Decide step → Receipt
+```
+
+### AI Workflow (NOVA background)
+```
+Sources loading → Contradiction detection → Synthesis → Draft generation → Confidence scoring → Activity feed events
+```
+
+### Decision Workflow
+```
+pending → [review] → [decide] → decided
+waiting → (external committee action) → decided
+```
+
+### Documentary Workflow
+```
+Objective → Sources loaded → Analysis → Draft v0.1 → Review comments → Draft v1.x → Validated → Published
+```
+
+### Evidence Workflow
+```
+Source added → NOVA validation → Conflict check → Quality score → Confidence contribution → Activity event
+```
+
+### Collaborator Workflow
+```
+Invited → Docs reviewed → Validation given → Comments posted → Requests responded → Sign-off
+```

@@ -1,0 +1,154 @@
+.planList {
+  display: grid;
+  gap: var(--n-space-10);
+}
+
+.workMetaCompact {
+  gap: var(--n-space-8);
+}
+
+.confidenceCluster {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--n-space-4);
+  color: var(--n-color-warning);
+}
+
+.confidenceCluster strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.phaseCard {
+  display: grid;
+  grid-template-columns: var(--n-space-24) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--n-space-12);
+  min-height: 153px;
+  padding: var(--n-space-18) var(--n-space-20);
+  border-radius: var(--n-radius-12);
+}
+
+.complete {
+  border-left: var(--n-border-width-3) solid var(--n-color-success);
+}
+
+.active {
+  min-height: 174px;
+  border-left: var(--n-border-width-3) solid var(--n-color-action);
+}
+
+.upcoming {
+  border-left: var(--n-border-width-3) solid var(--n-color-border);
+}
+
+.phaseStatus {
+  display: grid;
+  place-items: center;
+  width: var(--n-space-24);
+  height: var(--n-space-24);
+  border-radius: var(--n-radius-8);
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-disabled);
+  font-size: var(--n-font-size-12);
+  font-weight: var(--n-font-weight-bold);
+}
+
+.complete .phaseStatus {
+  background: var(--n-color-success-bg);
+  color: var(--n-color-success);
+}
+
+.active .phaseStatus {
+  background: var(--n-color-action-bg);
+  color: var(--n-color-action);
+}
+
+.phaseContent {
+  display: grid;
+  gap: var(--n-space-6);
+  min-width: 0;
+}
+
+.phaseContent h2,
+.phaseContent p {
+  margin: 0;
+}
+
+.phaseContent h2 {
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-14);
+  font-weight: var(--n-font-weight-semibold);
+  line-height: var(--n-line-height-140);
+}
+
+.phaseMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-4);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-11);
+  line-height: var(--n-line-height-145);
+}
+
+.phaseMeta strong {
+  color: var(--n-color-success);
+  font-weight: var(--n-font-weight-semibold);
+}
+
+.warning {
+  color: var(--n-color-warning);
+  font-size: var(--n-font-size-11);
+  line-height: var(--n-line-height-145);
+}
+
+.taskList {
+  display: grid;
+  gap: var(--n-space-6);
+  margin: var(--n-space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.taskList li {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-8);
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-11);
+  line-height: var(--n-line-height-130);
+}
+
+.taskMarker {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: var(--n-space-14);
+  height: var(--n-space-14);
+  border: var(--n-border-width-1) solid var(--n-color-border-strong);
+  border-radius: var(--n-radius-circle);
+  color: var(--n-color-surface);
+  font-size: var(--n-font-size-9);
+  font-weight: var(--n-font-weight-bold);
+}
+
+.taskComplete {
+  color: var(--n-color-text-disabled) !important;
+  text-decoration: line-through;
+}
+
+.taskComplete .taskMarker {
+  border-color: var(--n-color-success);
+  background: var(--n-color-success);
+}
+
+.loading {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.loadingStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-10);
+  color: var(--n-color-text-secondary);
+}

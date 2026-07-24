@@ -1,0 +1,280 @@
+# 18 — IMPLEMENTATION GUIDE
+## NOVA V6.1 — Step-by-Step Reconstruction Guide
+
+---
+
+## PREREQUISITES
+
+```bash
+node >= 18
+npm >= 9
+```
+
+Required packages:
+```bash
+npm install react react-dom lucide-react
+npm install -D vite @vitejs/plugin-react typescript tailwindcss postcss autoprefixer
+```
+
+---
+
+## STEP 1: PROJECT SETUP
+
+Create `vite.config.ts`:
+```typescript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+export default defineConfig({ plugins: [react()] });
+```
+
+Create `tsconfig.json`:
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  }
+}
+```
+
+---
+
+## STEP 2: DESIGN TOKENS
+
+Define all tokens at module scope in App.tsx before any component:
+
+```typescript
+// Color palette
+const N = {
+  canvas:"#F8FAFC", surface:"#FFFFFF", subtle:"#F1F5F9",
+  text:"#0F172A", textSec:"#475569", textDis:"#94A3B8",
+  border:"#E2E8F0", borderMd:"#CBD5E1", borderSt:"#94A3B8",
+  action:"#1D4ED8", actionHv:"#1E40AF", actionBg:"#EFF6FF",
+  successBg:"#F0FDF4", success:"#166534",
+  warnBg:"#FFFBEB", warn:"#92400E",
+  critBg:"#FEF2F2", crit:"#991B1B",
+  innoBg:"#F5F3FF", inno:"#6D28D9", innoBrd:"#DDD6FE",
+};
+
+// Shadow system
+const SH = {
+  card:"0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04)",
+  cardHv:"0 4px 12px rgba(15,23,42,.08), 0 2px 4px rgba(15,23,42,.04)",
+  overlay:"0 20px 48px rgba(15,23,42,.16), 0 4px 8px rgba(15,23,42,.08)",
+  hero:"0 2px 20px rgba(29,78,216,.10), 0 1px 4px rgba(29,78,216,.06)",
+};
+
+// Typography
+const FONT = '"Inter", system-ui, -apple-system, sans-serif';
+const MONO = '"Roboto Mono","SF Mono",ui-monospace,monospace';
+
+// Animation
+const ease = "cubic-bezier(.2,0,0,1)";
+const T = { fast:`all 120ms ${ease}`, std:`all 200ms ${ease}` };
+```
+
+---
+
+## STEP 3: HELPER FUNCTION
+
+```typescript
+function confColor(pct: number): { color: string; bg: string; brd: string } {
+  if (pct >= 80) return { color: "#166534", bg: "#F0FDF4", brd: "#BBF7D0" };
+  if (pct >= 55) return { color: "#B45309", bg: "#FFFBEB", brd: "#FDE68A" };
+  return { color: "#991B1B", bg: "#FEF2F2", brd: "#FECACA" };
+}
+```
+
+---
+
+## STEP 4: STATIC DATA STRUCTURES
+
+Define TypeScript interfaces and data arrays at module scope.
+
+Order of definition:
+1. Interface types (WorkItem, PersonData, SourceData, DeliverableData, DecisionData, ActivityEvent, DecisionOption, etc.)
+2. CLARIFY_QS array
+3. CANVAS_ITEMS array
+4. PLAN_PHASES array
+5. AUTONOMY_LEVELS array
+6. WORK_ITEMS array (most complex — contains nested PersonData[], SourceData[], DeliverableData[], DecisionData[], ActivityEvent[])
+7. DECISIONS array
+
+Key rule: WORK_ITEMS[0].decisions should reference decision IDs from DECISIONS, and DECISIONS should contain the full decision detail data.
+
+---
+
+## STEP 5: PRIMITIVE COMPONENTS
+
+Build in this order (each depends on tokens and confColor only):
+
+1. `NOVALabel` — uses Sparkles icon, N.innoBg/inno/innoBrd
+2. `DeadlineBadge` — uses Clock icon, confColor-like date logic
+3. `StatusDot` — pure CSS circle
+4. `ConfChip` — uses confColor, ChevronDown, X icon; has popover (absolute positioned)
+5. `Btn` — uses RefreshCw for spinner; 3 variants (primary/secondary/quiet)
+6. `Card` — hover state via useState
+7. `WhyInline` — uses ChevronDown; expandable inline box
+8. `DrawerRow` — pure display
+9. `DrawerSection` — wraps DrawerRow
+10. `Drawer` — uses X icon; renders backdrop + panel
+
+Build order matters: ConfChip must exist before any screen that uses it.
+
+---
+
+## STEP 6: NAVIGATION COMPONENTS
+
+11. `NavRail` — uses NavItem internally; Home/Briefcase/Scale/FileText/Search/Bell/HelpCircle/Settings icons
+12. `SearchOverlay` — uses Search icon, result routing logic
+
+---
+
+## STEP 7: FLOW SCREENS (in user journey order)
+
+13. `HomeView` — most complex home screen; contains composer, hero, work rows, decision nudge
+14. `ClarifyView` — simple Q&A flow
+15. `CanvasView` — edit/save cards
+16. `PlanView` — accordion phases
+17. `ConfirmView` — autonomy selection
+
+---
+
+## STEP 8: WORK SCREEN
+
+18. `WorkView` — shell with breadcrumb + header + tabs
+19. `WorkOverviewTab` — 2-column grid; most complex tab
+20. `WorkPlanTab` — same phase accordion as PlanView
+21. `WorkActivityTab` — filter + event list + comment
+22. `WorkPeopleTab` — person cards + drawer
+23. `WorkSourcesTab` — source cards + counter strip + drawer
+24. `WorkDecisionsTab` — decision cards with CTA
+25. `WorkDeliverablesTab` — deliverable cards + readiness bar + drawer
+
+---
+
+## STEP 9: DECISION FLOW SCREENS
+
+26. `DecisionPackageView` — hero + options + dissent + CTA
+27. `DecisionPauseView` — 2-step checkpoint flow
+28. `DecisionReceiptView` — success confirmation
+
+---
+
+## STEP 10: GLOBAL VIEWS
+
+29. `GlobalDecisionsView` — filter tabs + decision list
+30. `GlobalDeliverablesView` — flat deliverable list
+
+---
+
+## STEP 11: ROOT APP
+
+31. `App` — view router; Cmd+K handler; all setView/setActiveWork/setActiveDecision state
+
+```typescript
+export default function App() {
+  const [view, setView] = useState<View>("home");
+  const [activeWork, setActiveWork] = useState("w1");
+  const [activeDecision, setActiveDecision] = useState("d1");
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  const item = WORK_ITEMS.find(w => w.id === activeWork) ?? WORK_ITEMS[0];
+  const decision = DECISIONS.find(d => d.id === activeDecision) ?? DECISIONS[0];
+
+  return (
+    <div style={{ display: "flex", height: "100vh", width: "100vw", background: N.canvas, fontFamily: FONT, overflow: "hidden" }}>
+      <NavRail view={view} setView={setView} onSearch={() => setSearchOpen(true)} />
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Route views */}
+      </div>
+      {searchOpen && <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} setView={setView} setActiveWork={setActiveWork} setActiveDecision={setActiveDecision} />}
+    </div>
+  );
+}
+```
+
+---
+
+## COMMON IMPLEMENTATION PITFALLS
+
+### 1. Badge-only rule
+Each card must have at most 2 badges: **DeadlineBadge + ConfChip only**. Remove all other status labels from card headers.
+
+### 2. One focal point per screen
+- Home: hero gradient block dominates
+- Work overview: Next Best Action card dominates (2px border + shadow ring)
+- All other screens: single primary CTA
+
+### 3. Drawer narrative order
+Always: Summary → Why it matters → What is blocking → Key evidence → History → Technical details
+
+### 4. Confidence chip is always clickable
+ConfChip is never a static badge. Always wire up `reasons`, `afterAction`, `positive`, `missing`.
+
+### 5. Activity events: narrative format
+Primary text = what changed (not "NOVA analysed X docs"). NOVA box = impact (colored) + delta MONO + why + source tags.
+
+### 6. Phase display: outcome first
+Outcome (the goal) is 14px 600 N.text. Phase name is secondary metadata on the next line.
+
+### 7. People tab: NOVA reasoning only if novaState not null
+Don't render the "Current reasoning" NOVA box if `person.novaState === null`.
+
+### 8. Source counter strip: inline text
+Use `"N available · N stale · N missing"` as inline text, NOT a 4-box grid.
+
+### 9. No `href` for navigation
+All navigation is via `setView()` state transitions. No `<a>` tags with page URLs.
+
+### 10. Inline styles only
+No Tailwind utility classes in JSX. No CSS modules. All styles via `style={{ ... }}` prop.
+
+---
+
+## VIEW TYPE DEFINITION
+
+```typescript
+type View =
+  | "home" | "clarify" | "canvas" | "plan" | "confirm"
+  | "work" | "global-decisions" | "global-deliverables"
+  | "decision-package" | "decision-pause" | "decision-receipt";
+```
+
+---
+
+## TESTING CHECKLIST AFTER IMPLEMENTATION
+
+1. Cmd+K opens search overlay
+2. Escape closes search overlay
+3. Suggestion pill in home composer populates textarea and opens composer
+4. Home hero CTA → work screen (Work tab, Overview)
+5. Work tabs switch without losing scroll state (each tab rerenders)
+6. ConfChip opens popover, close button works, clicking outside popover does NOT close it (no outside-click handler)
+7. Drawer opens and closes via X and backdrop
+8. WhyInline expands inline, ChevronDown rotates 180°
+9. Phase accordion: only one open at a time
+10. Decision pause: step 1 → step 2 → receipt (loading spinner 700ms)
+11. Composer: Cmd+Enter submits, Cancel resets state
+12. Activity filter pills: "all" shows all events, type filters work
+13. NavRail active state: correct item highlighted per view
+14. Decision package: selecting option fills radio, deselecting works

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0.0",
+  "defaultProfile": "BUILD",
+  "profiles": {
+    "FAST": {
+      "description": "Corrections ciblées NOVA, CSS, inspection et documentation",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "low",
+      "sandbox": "workspace-write",
+      "approvalPolicy": "on-request"
+    },
+    "BUILD": {
+      "description": "Développement NOVA React, TypeScript et services locaux",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "sandbox": "workspace-write",
+      "approvalPolicy": "on-request"
+    },
+    "ARCHITECTURE": {
+      "description": "Architecture NOVA Core, workflow, API, données et sécurité",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "high",
+      "sandbox": "workspace-write",
+      "approvalPolicy": "on-request"
+    },
+    "READ_ONLY": {
+      "description": "Audit NOVA sans modification",
+      "model": "gpt-5.6-sol",
+      "reasoningEffort": "medium",
+      "sandbox": "read-only",
+      "approvalPolicy": "on-request"
+    }
+  },
+  "forbidden": {
+    "sandbox": [
+      "danger-full-access"
+    ],
+    "approvalPolicies": [
+      "never"
+    ],
+    "flags": [
+      "--dangerously-bypass-approvals-and-sandbox",
+      "--dangerously-bypass-hook-trust"
+    ]
+  }
+}

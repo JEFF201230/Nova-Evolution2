@@ -1,0 +1,378 @@
+# 07 — TYPOGRAPHY
+## NOVA V6.1 — Complete Typography Reference
+
+---
+
+## FONT FAMILIES
+
+```typescript
+const FONT = '"Inter", system-ui, -apple-system, sans-serif';
+const MONO = '"Roboto Mono","SF Mono",ui-monospace,monospace';
+```
+
+| Family token | Stack | Usage |
+|---|---|---|
+| FONT | Inter → system-ui → -apple-system → sans-serif | All UI text, labels, headings, body |
+| MONO | Roboto Mono → SF Mono → ui-monospace → monospace | Confidence %, probability %, version numbers, ref codes |
+
+Google Fonts: Not loaded (blocked in environment). System font fallback applies. If Inter is available system-wide, it will be used.
+
+---
+
+## COMPLETE TEXT INVENTORY
+
+### NAV RAIL
+
+| Element | Size | Weight | Color | Family | Letter-spacing |
+|---|---|---|---|---|---|
+| NOVA logo text | 15px | 700 | N.text | FONT | -0.03em |
+| Nav item label | 13px | 400 (inactive) / 600 (active) | N.textSec / N.action | FONT | -0.01em |
+| Nav badge count | 11px | 700 | N.crit | FONT | 0 |
+| User name | 13px | 600 | N.text | FONT | 0 |
+| User plan | 11px | 400 | N.textDis | FONT | 0 |
+
+---
+
+### HOME
+
+| Element | Size | Weight | Color | Family | Letter-spacing | Line-height |
+|---|---|---|---|---|---|---|
+| Greeting h1 | 27px | 650 | N.text | FONT | -0.03em | default |
+| Sub-caption | 14px | 400 | N.textDis | FONT | 0 | default |
+| Composer label | 13px | 600 | N.textSec | FONT | 0 | default |
+| Composer placeholder title | 15px | 400 | N.textDis | FONT | 0 | default |
+| Composer placeholder sub | 12px | 400 | N.textDis | FONT | 0 | default (opacity .65) |
+| Composer textarea | 15px | 400 | N.text | FONT | 0 | 1.65 |
+| Suggestion pill text | 12px | 400 | N.textSec / N.action | FONT | 0 | default |
+| "Try:" label | 12px | 400 | N.textDis | FONT | 0 | default |
+| Attach/Voice button text | 12px | 400 | N.textSec | FONT | 0 | default |
+| CTA button | 13px | 600 | #FFFFFF | FONT | -0.01em | default |
+| Hero situation text | 15px | 400 | N.textSec | FONT | 0 | 1.6 |
+| Hero gain text | 19px | 700 | N.text | FONT | -0.022em | 1.5 |
+| Section label "Active work" | 11px | 600 | N.textDis | FONT | 0.04em | default |
+| Work row title | 13px | 500 | N.text | FONT | 0 | default |
+| Work row next action | 12px | 400 | N.textSec / N.crit | FONT | 0 | default |
+| Work row deadline | 12px | 400 | N.textDis | FONT | 0 | default |
+| NOVA strip text | 13px | 400 | N.inno | FONT | 0 | default |
+| NOVA strip "6 hours" bold | 13px | 700 | N.inno | FONT | 0 | default |
+| Situation timestamp | 12px | 400 | N.textDis | FONT | 0 | default |
+
+---
+
+### CLARIFY
+
+| Element | Size | Weight | Color | Family | Line-height |
+|---|---|---|---|---|---|
+| Back button | 13px | 400 | N.textSec | FONT | default |
+| Step counter | 12px | 400 | N.textDis | FONT | default |
+| Objective label | 10px | 600 | N.textDis | FONT | default |
+| Objective text | 13px | 400 | N.textSec | FONT | 1.55 |
+| Question heading | 22px | 650 | N.text | FONT | default |
+| "Why does this matter?" summary | 12px | 400 | N.textSec | FONT | default |
+| Rationale text | 12px | 400 | N.textSec | FONT | 1.6 |
+| Suggestion button text | 13px | 400 / 400 | N.text / N.action | FONT | default |
+| Textarea placeholder | 13px | 400 | N.textDis? | FONT | 1.6 |
+| Skip button | 13px | 400 | N.textSec | FONT | default |
+
+---
+
+### CANVAS
+
+| Element | Size | Weight | Color | Family | Line-height |
+|---|---|---|---|---|---|
+| Back button | 13px | 400 | N.textSec | FONT | default |
+| NOVA label | 11px | 650 | N.inno | FONT | default |
+| Heading | 24px | 650 | N.text | FONT | default |
+| Sub-caption | 14px | 400 | N.textSec | FONT | 1.6 |
+| Section label (uppercase) | 10px | 600 | N.textDis | FONT | default |
+| Section text | 13px | 400 | N.text | FONT | 1.6 |
+| Edit/Save button | 11px | 400 | N.textSec | FONT | default |
+| Warning text | 12px | 400 | N.warn | FONT | default |
+
+---
+
+### PLAN
+
+| Element | Size | Weight | Color | Family | Line-height |
+|---|---|---|---|---|---|
+| Back button | 13px | 400 | N.textSec | FONT | default |
+| Heading | 24px | 650 | N.text | FONT | default |
+| Sub-caption | 14px | 400 | N.textSec | FONT | 1.6 |
+| Phase outcome | 14px | 600 | N.text | FONT | default |
+| Phase date range | 12px | 400 | N.textSec | FONT | default |
+| Phase probability | 12px | 600 | confColor(prob).color | FONT | default |
+| Phase remaining | 12px | 400 | N.textSec | FONT | default |
+| Phase blocker | 11px | 400 | N.warn | FONT | default |
+| Contribution label | 10px | 700 | N.inno / N.textSec | FONT | default |
+| Contribution text | 12px | 400 | N.textSec | FONT | 1.5 |
+| Task item | 12px | 400 | N.textDis / N.text | FONT | default |
+| Task done (strikethrough) | 12px | 400 | N.textDis | FONT | — |
+| NOVA strip text | 13px | 400 | N.inno | FONT | 1.5 |
+
+---
+
+### CONFIRM
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Back link | 13px | 400 | N.textSec | FONT |
+| Heading | 24px | 650 | N.text | FONT |
+| Sub-caption | 14px | 400 | N.textSec | FONT |
+| Level label | 13px | 600 (sel) / 600 | N.action / N.text | FONT |
+| Level code badge | 10px | 700 | N.action / N.textDis | MONO |
+| "NOVA will" label | 10px | 600 | N.success | FONT |
+| "NOVA will ask" label | 10px | 600 | N.warn | FONT |
+| Item text | 12px | 400 | N.textSec | FONT |
+
+---
+
+### WORK HEADER
+
+| Element | Size | Weight | Color | Family | Letter-spacing |
+|---|---|---|---|---|---|
+| Work title h1 | 17px | 650 | N.text | FONT | -0.02em |
+| Phase indicator | 12px | 400 | N.textDis | FONT | 0 |
+| Tab label | 13px | 400 (inactive) / 600 (active) | N.textSec / N.action | FONT | 0 |
+
+---
+
+### WORK OVERVIEW
+
+| Element | Size | Weight | Color | Family | Letter-spacing | Line-height |
+|---|---|---|---|---|---|---|
+| "Next best action" label | 10px | 700 | N.action | FONT | 0.07em | default |
+| Next Action title | 18px | 700 | N.text | FONT | -0.02em | 1.4 |
+| Time estimate | 13px | 400 | N.textSec | FONT | 0 | default |
+| Gain text | 13px | 600 | N.success | FONT | 0 | default |
+| Confidence delta | 13px | 700 | N.success | MONO | 0 | default |
+| Hero situation text | 14px | 400 | N.textSec | FONT | 0 | default |
+| Hero gain text | 16px | 700 | N.text | FONT | -0.015em | 1.5 |
+| Sidebar "Progress" label | 11px | 600 | N.textDis | FONT | 0.04em | default |
+| Sidebar progress % | 20px | 700 | N.text | MONO | 0 | default |
+| Sidebar meta label | 10px | 600 | N.textDis | FONT | 0.04em | default |
+| Sidebar meta value | 12px | 400 | N.text | FONT | 0 | default |
+| "Full analysis" link | 11px | 400 | N.textSec | FONT | 0 | default |
+| "Later & Background" summary | 13px | 400 | N.textSec | FONT | 0 | default |
+| Later label pill | 10px | 400 | N.textDis / N.inno | FONT | 0 | default |
+| Later action text | 13px | 400 | N.textSec | FONT | 0 | default |
+| NOVA state label | 10px | 600 | N.inno | FONT | 0.05em | default |
+| NOVA state text | 12px | 400 | N.inno | FONT | 0 | 1.5 |
+| Deliverable name (sidebar) | 12px | 400 | N.text | FONT | 0 | default |
+| Person name (sidebar) | 12px | 500 | N.text | FONT | 0 | default |
+| Person availability (sidebar) | 11px | 400 | N.textSec | FONT | 0 | default |
+
+---
+
+### WORK PLAN
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Phase outcome | 14px | 600 | N.text | FONT |
+| Phase name + meta | 12px | 400 | N.textSec | FONT |
+| Phase probability | 12px | 600 | confColor(prob).color | FONT |
+| Phase blocker | 11px | 400 | N.warn | FONT |
+| Task text | 12px | 400 | N.textDis / N.text | FONT |
+
+---
+
+### WORK ACTIVITY
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Actor name | 13px | 600 | N.text | FONT |
+| Timestamp | 11px | 400 | N.textDis | FONT |
+| Change text (primary) | 13px | 500 | N.text | FONT |
+| Impact text | 13px | 500 | N.success / N.crit / N.textSec | FONT |
+| Confidence delta | 13px | 700 | — | MONO |
+| Why text | 12px | 400 | N.textDis | FONT |
+| Source tag | 10px | 400 | N.inno | FONT |
+| Human comment | 12px | 400 | N.textSec | FONT |
+| Filter pill label | 12px | 400 / 600 | N.textSec / #FFFFFF | FONT |
+
+---
+
+### WORK PEOPLE
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Page heading | 17px | 650 | N.text | FONT |
+| Person name | 14px | 600 | N.text | FONT |
+| Role + availability | 12px | 400 | N.textSec | FONT |
+| Contribution text | 13px | 400 | N.warn / N.textSec | FONT |
+| "Current reasoning" label | 10px | 600 | N.inno | FONT |
+| NOVA reasoning text | 12px | 400 | N.inno | FONT |
+| Details button text | 11px | 400 | N.textSec | FONT |
+
+---
+
+### WORK SOURCES
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Page heading | 17px | 650 | N.text | FONT |
+| Counter items | 13px | 600 | N.success / N.warn / N.crit | FONT |
+| Coverage summary | 13px | 400 | N.textSec | FONT |
+| Source name | 14px | 600 | N.text | FONT |
+| Status badge text | 11px | 600 | state.color | FONT |
+| Source meta row | 12px | 400 | N.textDis | FONT |
+| NOVA comment | 12px | 400 | N.inno | FONT |
+| Validating text | 12px | 400 | N.inno | FONT |
+
+---
+
+### WORK DECISIONS
+
+| Element | Size | Weight | Color | Family | Line-height |
+|---|---|---|---|---|---|
+| Page heading | 17px | 650 | N.text | FONT | default |
+| Decision statement | 15px | 700 | N.text | FONT | 1.4 |
+| NOVA recommendation | 13px | 400 | N.inno | FONT | default |
+| "If approved" label | 10px | 700 | N.success | FONT | default |
+| "If approved" text | 12px | 400 | N.success | FONT | 1.45 |
+| "If rejected" label | 10px | 700 | N.crit | FONT | default |
+| "If rejected" text | 12px | 400 | N.crit | FONT | 1.45 |
+| CTA button | 13px | 600 | #FFFFFF | FONT | default |
+
+---
+
+### WORK DELIVERABLES
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Page heading | 17px | 650 | N.text | FONT |
+| Deliverable name | 14px | 600 | N.text | FONT |
+| "Ready for publication" | 12px | 400 | N.textSec | FONT |
+| Readiness % | 12px | 700 | pubColor | MONO |
+| Blocker text | 12px | 400 | N.warn | FONT |
+| Next action text | 12px | 400 | N.textSec | FONT |
+
+---
+
+### GLOBAL DECISIONS
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Page heading | 26px | 650 | N.text | FONT |
+| Sub-caption | 14px | 400 | N.textDis | FONT |
+| Tab label | 13px | 400 / 600 | N.textSec / N.action | FONT |
+| Tab count badge | 11px | 400 | N.crit / N.textDis | FONT |
+| Hero sentence | 14px | 600 | N.text | FONT |
+| Decision statement | 14px | 500 | N.text | FONT |
+| Outcome text | 13px | 400 | N.success | FONT |
+
+---
+
+### DECISION PACKAGE
+
+| Element | Size | Weight | Color | Family | Letter-spacing | Line-height |
+|---|---|---|---|---|---|---|
+| Back button | 13px | 400 | N.textSec | FONT | 0 | default |
+| Decision statement | 18px | 700 | N.text | FONT | -0.02em | 1.55 |
+| Hero sentence | 14px | 400 | N.crit | FONT | 0 | default |
+| NOVA recommendation | 13px | 400 | N.inno | FONT | 0 | default |
+| "If approved" label | 10px | 700 | N.success | FONT | 0.05em | default |
+| "If approved" text | 13px | 400 | N.success | FONT | 0 | 1.5 |
+| "If rejected" label | 10px | 700 | N.crit | FONT | 0.05em | default |
+| "If rejected" text | 13px | 400 | N.crit | FONT | 0 | 1.5 |
+| "Options" section label | 10px | 700 | N.textDis | FONT | 0.06em | default |
+| Option label | 14px | 600 | N.text | FONT | 0 | default |
+| Option risk | 11px | 400 | risk color | FONT | 0 | default |
+| Option consequence | 12px | 400 | N.textSec | FONT | 0 | default |
+| Dissent text | 12px | 400 italic | N.textSec | FONT | 0 | default |
+
+---
+
+### DECISION PAUSE
+
+| Element | Size | Weight | Color | Family | Line-height |
+|---|---|---|---|---|---|
+| Authority label | 13px | 600 | N.textSec | FONT | default |
+| "Permanent record" | 11px | 400 | N.textDis | FONT | default |
+| Step label | 13px | 400 / 600 | N.textSec / N.text | FONT | default |
+| Step number | 9px | 700 | #FFFFFF / N.textDis | FONT | default |
+| Review heading | 20px | 650 | N.text | FONT | default |
+| Review sub | 13px | 400 | N.textSec | FONT | 1.6 |
+| Review card label | 10px | 600 | depends | FONT | default |
+| Review card value | 13px | 500 | depends | FONT | 1.5 |
+| Review card sub | 11px | 400 | N.textSec | FONT | default |
+| Decide heading | 20px | 650 | N.text | FONT | default |
+| Choice label | 13px | 600 | choice.color / N.text | FONT | default |
+| Rationale label | 13px | 600 | N.text | FONT | default |
+| Required asterisk | 13px | 400 | N.crit | FONT | default |
+| Rationale textarea | 13px | 400 | N.text | FONT | 1.6 |
+| CTA button | 15px | 600 | #FFFFFF | FONT | default |
+| Cancel link | 13px | 400 | N.textSec | FONT | default |
+
+---
+
+### DECISION RECEIPT
+
+| Element | Size | Weight | Color | Family | Letter-spacing |
+|---|---|---|---|---|---|
+| Success heading | 22px | 650 | N.text | FONT | -0.025em |
+| "Permanent record" | 13px | 400 | N.textSec | FONT | 0 |
+| Reference label | 10px | 600 | N.textDis | FONT | 0.05em |
+| Reference code | 11px | 400 | N.text | MONO | 0 |
+| Receipt label column | 12px | 500 | N.textSec | FONT | 0 |
+| Receipt value column | 13px | 400 | row.c / N.text | FONT | 0 |
+| "Resulting actions" label | 10px | 700 | N.textDis | FONT | 0.05em |
+| Action text | 13px | 400 | N.text | FONT | 0 |
+
+---
+
+### DRAWERS
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Drawer title | 15px | 650 | N.text | FONT |
+| Section header | 10px | 700 | N.textDis | FONT |
+| Summary paragraph | 13-14px | 400 | N.text / N.textSec | FONT |
+| DrawerRow label | 13px | 400 | N.textSec | FONT |
+| DrawerRow value | 13px | 600 | N.text / color | FONT |
+| Blocker item | 13px | 400 | N.crit | FONT |
+| Version row version | 12px | 600 | N.action | MONO |
+| Version row date | 12px | 400 | N.textDis | FONT |
+| Version row note | 12px | 400 | N.textSec | FONT |
+| Expertise tag | 12px | 400 | N.textSec | FONT |
+
+---
+
+### CONFIDENCE CHIP
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Percentage | 12px | 700 | confColor(pct).color | MONO |
+| "confidence" label | 10px | 500 | confColor(pct).color (opacity .7) | FONT |
+| ChevronDown | 9px icon | — | opacity .5 | — |
+| Popover "Why X%" label | 11px | 700 | N.textDis | FONT |
+| Popover "N% → N% after action" | 11px | 700 | N.success | MONO |
+| Popover negative reason | 12px | 400 | N.crit | FONT |
+| Popover positive reason | 12px | 400 | N.success | FONT |
+| Missing warning text | 11px | 400 | N.warn | FONT |
+
+---
+
+### DEADLINE BADGE
+
+| Element | Size | Weight | Color | Family |
+|---|---|---|---|---|
+| Badge text | 11px | 600 | variant color | FONT |
+
+---
+
+### NOVA LABEL COMPONENT
+
+| Element | Size | Weight | Color | Family | Letter-spacing |
+|---|---|---|---|---|---|
+| NOVA text | 11px | 650 | N.inno | FONT | -0.01em |
+| Sparkles icon | 9px | — | N.inno | — | — |
+
+---
+
+### GLOBAL COMPONENT: Btn
+
+| Size | Font size | Weight | Family | Letter-spacing |
+|---|---|---|---|---|
+| sm | 13px | 600 | FONT | -0.01em |
+| md | 14px | 600 | FONT | -0.01em |
+| lg | 15px | 600 | FONT | -0.01em |

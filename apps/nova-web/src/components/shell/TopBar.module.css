@@ -1,0 +1,42 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--n-space-16);
+  padding: var(--n-space-10) var(--n-space-16);
+}
+
+.branding {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-12);
+  min-width: 0;
+}
+
+.logo {
+  flex-shrink: 0;
+}
+
+.heading {
+  display: grid;
+  gap: var(--n-space-4);
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--n-font-size-16);
+  line-height: var(--n-line-height-130);
+}
+
+.description {
+  margin: 0;
+  color: var(--n-color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--n-space-8);
+}

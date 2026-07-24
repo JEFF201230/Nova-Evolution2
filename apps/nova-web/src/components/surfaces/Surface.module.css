@@ -1,0 +1,91 @@
+.surface {
+  position: relative;
+  border: 1px solid var(--n-color-border);
+  border-radius: var(--n-radius-16);
+  background: var(--n-color-surface);
+  color: var(--n-color-text);
+  box-shadow: var(--n-shadow-card);
+}
+
+.surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.default {
+  background: var(--n-color-surface);
+}
+
+.subtle {
+  background: var(--n-color-surface-alt);
+}
+
+.raised {
+  box-shadow: var(--n-shadow-card-hover);
+}
+
+.hero {
+  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+  border-color: color-mix(in srgb, var(--n-color-action) 12%, var(--n-color-border));
+  box-shadow: var(--n-shadow-hero);
+}
+
+.overlay {
+  background: var(--n-color-surface);
+  box-shadow: var(--n-shadow-overlay);
+}
+
+.none {
+  padding: 0;
+}
+
+.sm {
+  padding: var(--n-space-12);
+}
+
+.md {
+  padding: var(--n-space-16);
+}
+
+.lg {
+  padding: var(--n-space-24);
+}
+
+.selected {
+  border-color: var(--n-color-action);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--n-color-action) 18%, transparent),
+    var(--n-shadow-card-hover);
+}
+
+.disabled {
+  opacity: var(--n-opacity-disabled);
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--n-color-surface) 65%, transparent) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}

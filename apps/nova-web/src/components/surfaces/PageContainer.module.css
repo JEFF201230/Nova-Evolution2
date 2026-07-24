@@ -1,0 +1,16 @@
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--n-space-16);
+  max-width: var(--n-viewport-max-useful-width);
+}
+
+.narrow {
+  max-width: var(--n-home-max-width);
+}
+
+@media (max-width: 960px) {
+  .container {
+    padding: var(--n-space-16);
+  }
+}

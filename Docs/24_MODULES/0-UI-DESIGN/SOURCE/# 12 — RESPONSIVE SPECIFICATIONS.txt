@@ -1,0 +1,118 @@
+# 12 — RESPONSIVE SPECIFICATIONS
+## NOVA V6.1 — Viewport & Layout Behaviour
+
+---
+
+## DESIGN TARGET
+
+NOVA V6.1 is a **desktop-first, fixed-width application**. It is not a responsive website. No media queries exist in the codebase.
+
+**Minimum supported viewport:** ~960px wide × ~640px tall (typical enterprise laptop display)
+**Optimal viewport:** 1280px–1440px wide × 800px–900px tall
+**Maximum useful width:** ~1600px (content does not reflow beyond max-width containers)
+
+---
+
+## FIXED LAYOUT ELEMENTS
+
+These elements have fixed pixel widths or heights that never change:
+
+| Element | Fixed dimension |
+|---|---|
+| NavRail | 56px wide |
+| Drawer | 460px wide |
+| Search overlay panel | 560px wide |
+| Clarify view | max-width 640px |
+| Confirm view | max-width 560px |
+| Decision-pause view | max-width 560px |
+| Decision-receipt view | max-width 560px |
+| Decision-package view | max-width 800px |
+| ConfChip popover | 260px wide |
+| Work breadcrumb | height 42px |
+| NavItem | 56px wide |
+| Logo circle | 32px × 32px |
+| Avatar (person) | 38px × 38px |
+| User avatar (nav) | 28px × 28px |
+
+---
+
+## FLUID ELEMENTS
+
+These elements grow with available space:
+
+| Element | Behaviour |
+|---|---|
+| Main content area | `flex: 1` fills remaining width after NavRail |
+| Home / Work / Global pages | Full width of main area, `padding: 28px 32px` |
+| Work overview grid | `grid-template-columns: 2fr 1fr`, scales with container |
+| Canvas cards grid | `grid-template-columns: repeat(3, 1fr)`, scales with container |
+| Health bars in drawer | `flex: 1` fills remaining width in 2-col row |
+| Progress bar | `width: 100%` relative to parent |
+| Card bodies | `flex: 1`, `min-width: 0` to allow text truncation |
+| Tab strip | `width: 100%`, individual tabs fixed padding |
+
+---
+
+## SCROLL BEHAVIOUR
+
+| Container | Scroll |
+|---|---|
+| Root `<body>` | No scroll (fixed fullscreen layout) |
+| Main area | `overflow-y: auto` on screen container |
+| Drawer body | `overflow-y: auto`, flex: 1 |
+| Search results | `max-height: 320px`, `overflow-y: auto` |
+| Work tab content | Individual tab containers may scroll |
+| NavRail | `overflow: hidden` (no scroll) |
+
+---
+
+## MINIMUM WIDTH BEHAVIOUR
+
+Below ~900px, the layout does not collapse. Instead:
+- NavRail labels may be clipped (`overflow: hidden` on NavRail)
+- Work overview 2-column grid compresses columns (no breakpoint — just narrower)
+- Canvas 3-column grid compresses columns
+- Drawer overlaps main content (expected — it's an overlay)
+
+**No mobile breakpoints exist.** The application is not intended for mobile use.
+
+---
+
+## DENSITY VARIANTS
+
+No density switching exists. Fixed-density design throughout:
+- Card padding: 16px
+- Page padding: 28px 32px
+- List gap: 10–16px
+
+---
+
+## WHAT DOES NOT ADAPT
+
+The following never change based on viewport:
+- Font sizes (all fixed px)
+- Icon sizes (all fixed px)
+- Border radii
+- Shadow values
+- Color tokens
+- Animation timings
+- Number of columns in grids
+- Width of fixed-width overlays (drawer, search, popovers)
+
+---
+
+## PRINT
+
+No print styles defined. Not a supported use case.
+
+---
+
+## DARK MODE
+
+Not implemented. All colors are light-mode only. `prefers-color-scheme` is not respected.
+
+---
+
+## ZOOM
+
+Browser zoom (Cmd+/Cmd-) will scale all px values proportionally (as px renders at 1:1 in CSS). No special handling.

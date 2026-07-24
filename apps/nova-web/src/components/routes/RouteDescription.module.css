@@ -1,0 +1,5 @@
+.description {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--n-color-text-secondary);
+}

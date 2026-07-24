@@ -1,0 +1,259 @@
+# 05 — DESIGN TOKENS
+## NOVA V6.1 — Complete Design Token System
+
+---
+
+## SPACING SCALE
+
+All spacing values are implicit multiples of 4px base unit.
+
+| Token | Value | Usage |
+|---|---|---|
+| space-1  | 2px   | Badge padding vertical, icon gap tight |
+| space-2  | 4px   | Badge padding horizontal inner, icon margin |
+| space-3  | 6px   | Confidence chip icon gap, small gaps |
+| space-4  | 8px   | Badge padding horizontal, card gap small, grid gap small |
+| space-5  | 9px   | DrawerRow padding vertical, person card padding vertical |
+| space-6  | 10px  | Nav rail item padding left/right, NOVA strip padding |
+| space-7  | 11px  | Comment/dissent block padding |
+| space-8  | 12px  | Card padding small, button sm horizontal padding |
+| space-9  | 13px  | Tab button padding horizontal, search item padding |
+| space-10 | 14px  | Button md padding horizontal, drawer section label margin |
+| space-11 | 16px  | Button lg padding horizontal, card padding standard |
+| space-12 | 18px  | Source card padding, details block padding |
+| space-13 | 20px  | Card padding medium, drawer header padding vertical |
+| space-14 | 22px  | Overview next-action card padding horizontal, decision card |
+| space-15 | 24px  | Drawer body padding, plan section padding |
+| space-16 | 26px  | Decision package hero padding horizontal |
+| space-17 | 28px  | Work tab content padding top, home page header margin-bottom |
+| space-18 | 30px  | Decision package hero padding |
+| space-19 | 32px  | Work content padding horizontal, home composer margin-bottom |
+| space-20 | 36px  | Clarify question section margin |
+| space-21 | 40px  | Decision receipt icon margin-bottom |
+| space-22 | 44px  | Home composer margin-bottom |
+| space-23 | 48px  | Decision pause container padding-top |
+| space-24 | 52px  | Home page padding-top, global pages padding-top |
+| space-25 | 64px  | Work setup pages padding-top |
+| space-26 | 72px  | Clarify page padding-top, search overlay padding-top |
+| space-27 | 100px | Home page padding-bottom |
+
+---
+
+## GRID / LAYOUT
+
+| Property | Value |
+|---|---|
+| Main nav rail width | 220px |
+| Main content area | flex: 1 (fills remaining viewport width) |
+| Home max-width | 880px |
+| Canvas max-width | 680px |
+| Plan max-width | 720px |
+| Clarify max-width | 600px |
+| Confirm max-width | 580px |
+| Work content max-width | 1060px |
+| Global decisions max-width | 760px |
+| Global deliverables max-width | 760px |
+| Decision package max-width | 780px |
+| Decision pause max-width | 520px |
+| Decision receipt max-width | 520px |
+| Search overlay max-width | 520px |
+| Drawer width | 460px |
+| Work Overview grid | 1fr 280px (main + sidebar) |
+| Work Overview grid gap | 20px |
+| Autonomy grid | 1fr 1fr, gap 8px |
+| Confidence breakdown grid | 1fr 1fr, gap 10px (approved/rejected) |
+| Plan contribution grid | 1fr 1fr, gap 10px |
+| People detail grid | 1fr 1fr (key evidence) |
+
+---
+
+## BORDER RADIUS
+
+| Token | Value | Usage |
+|---|---|---|
+| radius-xs  | 4px   | Badge inner, code block, version history monospace |
+| radius-sm  | 6px   | NOVA label, small detail buttons |
+| radius-md  | 7px   | Warning block in canvas, dissent block, source action area |
+| radius-base | 8px  | Confidence popover inner items, option card expanded, textarea |
+| radius-lg  | 9px   | Autonomy buttons, choice buttons, textarea, search item hover |
+| radius-xl  | 10px  | Card base radius, later/background container, activity comment |
+| radius-2xl | 11px  | Source cards, decision option cards, blocker bar |
+| radius-3xl | 12px  | Card component default, search overlay |
+| radius-4xl | 13px  | Search overlay, receipt card |
+| radius-5xl | 14px  | Composer (collapsed), overview NOVA situation card |
+| radius-6xl | 16px  | Hero blocks (home, decision package) |
+| radius-full | 999px | Badges (deadline, status), pills, suggestion pills, filter chips, progress bars |
+| radius-circle | 50% | Avatar, status dot, step indicator circles, person avatar |
+
+---
+
+## ELEVATION / SHADOW
+
+| Token | Value | Usage |
+|---|---|---|
+| SH.card | `0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04)` | Default card, option buttons |
+| SH.cardHv | `0 4px 12px rgba(15,23,42,.08), 0 2px 4px rgba(15,23,42,.04)` | Card hover, composer collapsed hover |
+| SH.overlay | `0 20px 48px rgba(15,23,42,.16), 0 4px 8px rgba(15,23,42,.08)` | Drawer, search overlay, confidence popover |
+| SH.hero | `0 2px 20px rgba(29,78,216,.10), 0 1px 4px rgba(29,78,216,.06)` | Hero gradient blocks, decision package hero |
+| Button primary hover | `0 2px 8px rgba(29,78,216,.24)` | Primary button on hover |
+| Next Best Action ring | `0 0 0 4px rgba(29,78,216,.06), SH.card` | Next Best Action focal card |
+
+---
+
+## BORDER / STROKE
+
+| Property | Value | Usage |
+|---|---|---|
+| Default border | `1px solid #E2E8F0` (N.border) | Card, input, most borders |
+| Medium border | `1px solid #CBD5E1` (N.borderMd) | Button secondary, radio default |
+| Strong border | `1px solid #94A3B8` (N.borderSt) | Button secondary hover |
+| Active border | `1.5px solid N.action` | Composer active, inputs filled, selected cards |
+| Nav accent | `2px solid N.action` | Active nav rail item (left edge) |
+| Card accent | `3px solid [color]` | Work item accent (left edge on Card component) |
+| Decision package hero | `1px solid #FECACA` | Critical hero block border |
+| NOVA label | `1px solid #DDD6FE` (N.innoBrd) | AI label badge |
+| Badge: success | `1px solid #BBF7D0` | Success state badge |
+| Badge: warning | `1px solid #FDE68A` | Warning state badge |
+| Badge: critical | `1px solid #FECACA` | Critical state badge |
+| Focus ring | `box-shadow: 0 0 0 4px rgba(29,78,216,.07)` | Composer focus state |
+
+---
+
+## OPACITY
+
+| Token | Value | Usage |
+|---|---|---|
+| icon-default | 0.7 | Nav icon opacity when not active |
+| suggestion-sub | 0.65 | Composer placeholder sub-caption |
+| confidence-label | 0.7 | "confidence" label next to % in chip |
+| disabled-element | 0.4 | Disabled button opacity |
+
+---
+
+## Z-INDEX
+
+| Layer | Value | Usage |
+|---|---|---|
+| base | auto | Normal document flow |
+| confidence-popover | 30 | ConfChip popover |
+| drawer-backdrop | 50 | Drawer overlay backdrop |
+| drawer-panel | 50 | Drawer panel (same stacking context) |
+| search-overlay | 100 | Search command palette |
+
+---
+
+## BLUR
+
+| Usage | Value |
+|---|---|
+| Drawer backdrop | `backdrop-filter: blur(2px)` |
+| Search backdrop | `backdrop-filter: blur(3px)` |
+
+---
+
+## TRANSITIONS
+
+| Token | Value | Easing | Usage |
+|---|---|---|---|
+| T.fast | `all 120ms cubic-bezier(.2,0,0,1)` | ease | Hover on pills, quick toggles |
+| T.std | `all 200ms cubic-bezier(.2,0,0,1)` | ease | Most interactive elements, cards, nav |
+| composer | `all 280ms cubic-bezier(.2,0,0,1)` | ease | Composer expand/collapse |
+| transform (button) | included in T.std | ease | Button translateY(-1px) on hover |
+
+---
+
+## ANIMATIONS
+
+| Name | Keyframes | Usage |
+|---|---|---|
+| spin | `to { transform: rotate(360deg) }` | Loading button icon |
+| pulse | `0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)}` | NOVA active dot, status dot |
+
+---
+
+## TYPOGRAPHY SCALE (see 07_TYPOGRAPHY for full detail)
+
+| Token | Size | Weight | Family |
+|---|---|---|---|
+| label-xs | 10px | 600-700 | Inter |
+| label-sm | 11px | 600-650 | Inter |
+| body-sm | 12px | 400-500 | Inter |
+| body-base | 13px | 400-600 | Inter |
+| body-md | 14px | 400-700 | Inter |
+| body-lg | 15px | 400-700 | Inter |
+| heading-sm | 16px | 500-700 | Inter |
+| heading-md | 17px | 650 | Inter |
+| heading-lg | 18px | 700 | Inter |
+| heading-xl | 19px | 700 | Inter |
+| display-sm | 20px | 650 | Inter |
+| display-md | 22px | 650 | Inter |
+| display-lg | 24px | 650 | Inter |
+| display-xl | 26px | 650 | Inter |
+| display-2xl | 27px | 650 | Inter |
+| mono | 11-13px | 600-700 | Roboto Mono |
+
+---
+
+## LETTER SPACING
+
+| Value | Usage |
+|---|---|
+| `-0.035em` | Home page h1 (greeting) |
+| `-0.03em` | Global page headings, NOVA logo |
+| `-0.025em` | Setup page headings, receipt h1 |
+| `-0.022em` | Hero statement (home) |
+| `-0.02em` | Next Best Action title, decision statement |
+| `-0.015em` | Work tab heading, drawer title |
+| `-0.01em` | Nav item labels, button labels |
+| `0` | Body text |
+| `0.04em` | Section label caps |
+| `0.05em` | Drawer section headers, badge label (uppercase) |
+| `0.06em` | Next Best Action label |
+| `0.07em` | Next Best Action label (max) |
+
+---
+
+## LINE HEIGHT
+
+| Value | Usage |
+|---|---|
+| 1 | Confidence chip % |
+| 1.3 | Work header h1 |
+| 1.4 | Decision statement, Next Best Action |
+| 1.45 | Activity why text, deliverable consequence |
+| 1.5 | Hero gain, NOVA state, receipt rows |
+| 1.55 | Canvas understanding text, NOVA recommendation |
+| 1.6 | Composer sub, clarify rationale, drawer text |
+| 1.65 | Drawer summary paragraphs |
+
+---
+
+## DIMENSION TOKENS (component heights)
+
+| Component | Height |
+|---|---|
+| Button sm | 32px |
+| Button md | 40px |
+| Button lg | 48px |
+| Nav item | ~36px (padding-driven) |
+| Tab button | 38px (padding: 9px 13px + content) |
+| Search input row | ~46px |
+| Badge / pill | ~20px (padding: 2px 9px + 11px font) |
+| Progress bar | 4px |
+| Confidence popover dot | 4px × 4px |
+| Status dot | 7px × 7px |
+| NOVA pulse dot | 5px × 5px |
+| Nav avatar | 26px × 26px |
+| NOVA logo mark | 26px × 26px |
+| Person avatar (card) | 36px × 36px |
+| Person avatar (overview sidebar) | 22px × 22px |
+| Timeline circle (plan) | 24px × 24px |
+| Step indicator (decision pause) | 18px × 18px |
+| Phase icon block (work plan) | 24px × 24px |
+| Decision/search icon block | 36px × 36px |
+| Home decision icon block | 36px × 36px |
+| Textarea min-height (composer) | 80px |
+| Textarea min-height (clarify) | 72px |
+| Textarea min-height (rationale) | 88px |
+| Comment textarea min-height | 64px |
+| Search results max-height | 360px |

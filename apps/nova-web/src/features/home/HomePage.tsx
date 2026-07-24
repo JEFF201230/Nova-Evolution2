@@ -1,0 +1,143 @@
+import { useState } from 'react';
+import { EmptyState } from '../../components/surfaces/EmptyState';
+import { Skeleton } from '../../components/shared/Skeleton';
+import { useNavigation } from '../../hooks/useNavigation';
+import { SituationDetailsDrawer } from '../situation-details';
+import { homeFixture } from './homeFixture';
+import { HomeHeader } from './HomeHeader';
+import { ObjectiveComposer } from './ObjectiveComposer';
+import { PriorityInsight } from './PriorityInsight';
+import { PendingDecisionCard } from './PendingDecisionCard';
+import { ActiveWorkSection } from './ActiveWorkSection';
+import { BackgroundWorkSection } from './BackgroundWorkSection';
+import styles from './HomePage.module.css';
+
+export type HomePageState = 'default' | 'loading' | 'empty' | 'error' | 'blocked';
+
+export interface HomePageProps {
+  state?: HomePageState;
+  onOpenWork: () => void;
+  onOpenDecision: () => void;
+  onOpenDetails?: () => void;
+  onStartWorkSetup: (objective: string) => void;
+}
+
+export function HomePage({
+  state = 'default',
+  onOpenWork,
+  onOpenDecision,
+  onOpenDetails,
+  onStartWorkSetup,
+}: HomePageProps) {
+  const { navigate } = useNavigation();
+  const [situationDetailsOpen, setSituationDetailsOpen] = useState(false);
+
+  function openWork(workId: string) {
+    navigate('work.detail', { pathParams: { workId } });
+  }
+
+  function openDecision(decisionId: string) {
+    navigate('decision.detail', { pathParams: { decisionId } });
+  }
+
+  if (state === 'loading') {
+    return (
+      <div className={styles.homeView}>
+        <div className={styles.page}>
+          <div className={styles.header}>
+            <p className={styles.sectionHeading}>{homeFixture.loading.title}</p>
+            <p className={styles.sectionDescription}>{homeFixture.loading.description}</p>
+          </div>
+          <div className={styles.loadingCard}>
+            <Skeleton className={styles.loadingHero} />
+            <Skeleton className={styles.loadingBlock} />
+            <Skeleton className={styles.loadingBlock} />
+            <Skeleton className={styles.loadingBlock} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === 'empty') {
+    return (
+      <div className={styles.homeView}>
+        <div className={styles.page}>
+          <HomeHeader />
+          <EmptyState
+            className={styles.stateCard}
+            heading={homeFixture.empty.title}
+            description={homeFixture.empty.description}
+            actionLabel="Open work"
+            onAction={onOpenWork}
+            secondaryActionLabel="Open decisions"
+            onSecondaryAction={onOpenDecision}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (state === 'error') {
+    return (
+      <div className={styles.homeView}>
+        <div className={styles.page}>
+          <HomeHeader />
+          <EmptyState
+            className={styles.stateCard}
+            heading={homeFixture.error.title}
+            description={homeFixture.error.description}
+            actionLabel="Retry"
+            onAction={onOpenWork}
+            secondaryActionLabel="Open work"
+            onSecondaryAction={onOpenWork}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (state === 'blocked') {
+    return (
+      <div className={styles.homeView}>
+        <div className={styles.page}>
+          <HomeHeader />
+          <EmptyState
+            className={styles.stateCard}
+            heading={homeFixture.blocked.title}
+            description={homeFixture.blocked.description}
+            actionLabel="Open decision"
+            onAction={onOpenDecision}
+            secondaryActionLabel="Open work"
+            onSecondaryAction={onOpenWork}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.homeView}>
+      <div className={styles.page}>
+        <HomeHeader />
+
+        <ObjectiveComposer onContinue={onStartWorkSetup} />
+
+        <PriorityInsight
+          onOpenWork={openWork}
+          onOpenDetails={() => setSituationDetailsOpen(true)}
+        />
+
+        <PendingDecisionCard onOpenDecision={openDecision} />
+
+        <ActiveWorkSection onOpenWork={openWork} />
+
+        <BackgroundWorkSection onOpenDetails={onOpenDetails} />
+      </div>
+      <SituationDetailsDrawer
+        open={situationDetailsOpen}
+        onClose={() => setSituationDetailsOpen(false)}
+      />
+    </div>
+  );
+}

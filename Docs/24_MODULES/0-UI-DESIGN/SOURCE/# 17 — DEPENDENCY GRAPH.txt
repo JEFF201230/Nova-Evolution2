@@ -1,0 +1,249 @@
+# 17 — DEPENDENCY GRAPH
+## NOVA V6.1 — Package & Import Dependencies
+
+---
+
+## PACKAGE DEPENDENCIES
+
+### Runtime dependencies (used in App.tsx)
+
+| Package | Version constraint | Imports used |
+|---|---|---|
+| `react` | ^18 | `useState`, `useRef`, `useEffect` |
+| `react-dom` | ^18 | (entry point only, not imported in App.tsx) |
+| `lucide-react` | latest | See icon list below |
+
+### Dev dependencies (build infrastructure)
+
+| Package | Purpose |
+|---|---|
+| `vite` | Build tool / dev server |
+| `@vitejs/plugin-react` | React JSX transform |
+| `typescript` | Type checking |
+| `tailwindcss` | CSS utility framework (theme tokens only — not used in JSX) |
+| `postcss` | Tailwind processing |
+| `autoprefixer` | CSS vendor prefixes |
+
+### NOT used in App.tsx (available but unused)
+
+| Package | Why available | Not used because |
+|---|---|---|
+| `motion` / `framer-motion` | Pre-installed | Animations done with CSS transitions |
+| `@radix-ui/*` | Pre-installed | Custom components built from scratch |
+| `recharts` | Pre-installed | No charts in NOVA |
+| `sonner` | Pre-installed | No toast notifications |
+| `date-fns` | Pre-installed | Dates displayed as-is (no formatting) |
+| `tailwind-merge` | Pre-installed | No Tailwind classes in JSX |
+| `clsx` | Pre-installed | No className usage |
+
+---
+
+## LUCIDE-REACT IMPORTS
+
+```typescript
+import {
+  Home, Briefcase, Scale, FileText, Search,
+  Bell, HelpCircle, Settings,
+  ChevronRight, ChevronDown, ChevronLeft,
+  Plus, Check, AlertTriangle, Clock, ArrowRight,
+  MoreHorizontal, Edit2, Eye, Paperclip, Mic,
+  MessageSquare, Download, Upload, Info,
+  CheckCircle, RefreshCw, Lock, StopCircle,
+  Send, Sparkles, Circle, User, X,
+} from "lucide-react";
+```
+
+Total: 29 named icon imports.
+
+---
+
+## REACT IMPORTS
+
+```typescript
+import React, { useState, useRef, useEffect } from "react";
+```
+
+### Hook usage by component
+
+| Component | Hooks used |
+|---|---|
+| App | `useState` × 4 (view, activeWork, activeDecision, searchOpen), `useEffect` × 1 (Cmd+K listener) |
+| HomeView | `useState` × 3 (composerOpen, val, loading), `useState` × 1 (detailOpen), `useRef` × 1 (textarea) |
+| ClarifyView | `useState` × 2 (step, current) |
+| CanvasView | `useState` × 1 (editing) |
+| PlanView | `useState` × 1 (exp) |
+| ConfirmView | `useState` × 1 (aut) |
+| WorkView | `useState` × 1 (tab) |
+| WorkOverviewTab | `useState` × 1 (detailOpen) |
+| WorkPlanTab | `useState` × 1 (exp) |
+| WorkActivityTab | `useState` × 2 (filter, comment) |
+| WorkPeopleTab | `useState` × 1 (drawer) |
+| WorkSourcesTab | `useState` × 1 (drawer) |
+| WorkDecisionsTab | — (stateless) |
+| WorkDeliverablesTab | `useState` × 1 (drawer) |
+| DecisionPackageView | `useState` × 2 (sel, detailOpen) |
+| DecisionPauseView | `useState` × 4 (step, choice, rationale, loading) |
+| DecisionReceiptView | — (stateless) |
+| GlobalDecisionsView | `useState` × 1 (filter) |
+| GlobalDeliverablesView | — (stateless) |
+| ConfChip | `useState` × 1 (open) |
+| WhyInline | `useState` × 1 (open) |
+| Card | `useState` × 1 (hovered) |
+| Btn | `useState` × 1 (hovered) |
+| NavRail | — (stateless, receives view as prop) |
+| SearchOverlay | `useState` × 1 (q) |
+| Drawer | — (stateless, open controlled by parent) |
+
+---
+
+## INTERNAL DEPENDENCIES
+
+### Helper function dependencies
+
+```
+confColor(pct: number) → used by:
+  ├── ConfChip (background, color of trigger)
+  ├── Deliverable readiness bar color
+  ├── Phase probability color
+  ├── DrawerRow "Confidence" value color
+  ├── DrawerRow "Trust score" value color
+  ├── DrawerRow quality score colors (drawer 2, 4)
+  └── Work header progress color (indirectly, via separate logic)
+```
+
+### Component dependency graph
+
+```
+App
+├── NavRail (no child components)
+├── SearchOverlay (no child components)
+├── HomeView
+│   ├── NOVALabel
+│   ├── Btn
+│   ├── WhyInline
+│   ├── Card (decision nudge)
+│   │   ├── DeadlineBadge
+│   │   └── ConfChip
+│   └── Drawer
+│       ├── DrawerSection
+│       │   └── DrawerRow
+│       └── DrawerSection (paragraph content)
+├── ClarifyView
+│   └── Btn
+├── CanvasView
+│   ├── Btn
+│   └── Btn (per card edit/save)
+├── PlanView
+│   └── Btn
+├── ConfirmView
+│   └── ConfChip, Btn
+├── WorkView
+│   ├── WorkOverviewTab
+│   │   ├── NOVALabel
+│   │   ├── ConfChip
+│   │   ├── DeadlineBadge
+│   │   ├── WhyInline
+│   │   ├── Btn
+│   │   ├── Card
+│   │   └── Drawer → DrawerSection → DrawerRow
+│   ├── WorkPlanTab (phases, no primitives)
+│   ├── WorkActivityTab (no primitives)
+│   ├── WorkPeopleTab
+│   │   ├── NOVALabel
+│   │   ├── StatusDot
+│   │   ├── Btn
+│   │   └── Drawer → DrawerSection → DrawerRow
+│   ├── WorkSourcesTab
+│   │   ├── Btn
+│   │   └── Drawer → DrawerSection → DrawerRow
+│   ├── WorkDecisionsTab
+│   │   ├── Card
+│   │   ├── DeadlineBadge
+│   │   ├── ConfChip
+│   │   ├── WhyInline
+│   │   └── Btn
+│   └── WorkDeliverablesTab
+│       ├── ConfChip
+│       ├── Btn
+│       └── Drawer → DrawerSection → DrawerRow
+├── DecisionPackageView
+│   ├── NOVALabel
+│   ├── DeadlineBadge
+│   ├── ConfChip
+│   ├── WhyInline
+│   ├── Btn
+│   └── Drawer → DrawerSection → DrawerRow
+├── DecisionPauseView
+│   └── Btn
+├── DecisionReceiptView
+│   └── Btn
+├── GlobalDecisionsView
+│   ├── Card
+│   ├── DeadlineBadge
+│   ├── ConfChip
+│   └── Btn
+└── GlobalDeliverablesView
+    ├── ConfChip
+    └── Btn
+```
+
+---
+
+## STATIC DATA DEPENDENCIES
+
+```
+WORK_ITEMS → consumed by:
+  ├── HomeView (active work rows, decisions nudge)
+  ├── WorkView (item lookup by activeWork)
+  ├── SearchOverlay (search results)
+  └── GlobalDeliverablesView (all deliverables)
+
+DECISIONS → consumed by:
+  ├── HomeView (decision nudge card — first decision)
+  ├── DecisionPackageView (lookup by activeDecision)
+  ├── DecisionPauseView (lookup by activeDecision)
+  ├── DecisionReceiptView (lookup by activeDecision)
+  ├── GlobalDecisionsView (all decisions list)
+  └── SearchOverlay (search results)
+
+CLARIFY_QS → consumed by: ClarifyView only
+CANVAS_ITEMS → consumed by: CanvasView only
+PLAN_PHASES → consumed by: PlanView, WorkPlanTab
+AUTONOMY_LEVELS → consumed by: ConfirmView only
+```
+
+---
+
+## FILE STRUCTURE
+
+```
+/workspaces/default/code/
+├── src/
+│   ├── app/
+│   │   └── App.tsx          ← entire application (~1700 lines)
+│   ├── styles/
+│   │   ├── fonts.css        ← Google Fonts import (Inter, Roboto Mono)
+│   │   ├── theme.css        ← Tailwind design tokens
+│   │   └── index.css        ← Tailwind base + custom scrollbar + spin animation
+│   └── imports/
+│       ├── pasted_text/
+│       │   ├── nova-module-spec.md   ← spec brief (user-provided)
+│       │   └── figma-nova-v6-polish.md ← V6.1 brief (user-provided)
+│       └── nova-spec/
+│           └── [20 spec documents]
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── tailwind.config.js
+```
+
+---
+
+## GOOGLE FONTS
+
+```css
+/* src/styles/fonts.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&display=swap");
+```
+
+Fonts loaded: Inter (400/500/600/700) + Roboto Mono (400/500/600/700)

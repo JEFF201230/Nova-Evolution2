@@ -1,0 +1,930 @@
+# 09 — COMPONENT SPECIFICATIONS
+## NOVA V6.1 — Complete Component Reference
+
+---
+
+## COMPONENT: NOVALabel
+
+**Type:** Presentational atom
+**Responsibility:** Identifies AI-generated content throughout the application
+
+### Props
+None.
+
+### Visual spec
+```
+display: inline-flex
+align-items: center
+gap: 4px
+font-size: 11px
+font-weight: 650
+color: #6D28D9
+background: #F5F3FF
+border: 1px solid #DDD6FE
+border-radius: 6px
+padding: 2px 7px
+letter-spacing: -0.01em
+font-family: FONT
+```
+
+### Children
+- `<Sparkles size={9} strokeWidth={2.5} />` icon
+- Text: "NOVA"
+
+### States
+- No interactive states (static display)
+
+### Usage
+Home hero, work overview situation card, activity feed events, plan NOVA strip, people cards, source validation status, drawer titles attribution
+
+---
+
+## COMPONENT: ConfChip
+
+**Type:** Interactive atom (popover trigger)
+**Responsibility:** Display confidence percentage + trigger explanatory popover
+
+### Props
+```typescript
+interface ConfChipProps {
+  pct: number;           // 0-100, confidence percentage
+  afterAction?: number;  // optional target confidence after action
+  reasons: string[];     // negative factors (bullet list)
+  positive?: string[];   // positive factors (optional)
+  missing?: string;      // single missing element string
+}
+```
+
+### State
+```typescript
+const [open, setOpen] = useState(false);
+```
+
+### Layout
+```
+position: relative
+display: inline-flex
+```
+
+### Trigger button
+```
+display: inline-flex
+align-items: center
+gap: 4px
+font-size: 12px
+font-weight: 700
+color: confColor(pct).color
+background: transparent
+border: none
+cursor: pointer
+font-family: MONO
+padding: 0
+line-height: 1
+```
+
+Children of trigger button:
+1. `{pct}%` text (MONO, 12px, 700)
+2. "confidence" span (10px, 500, FONT, opacity .7, marginLeft 1px)
+3. `<ChevronDown size={9} strokeWidth={2.5} />` (opacity .5, rotate 180° when open)
+
+### Popover
+```
+position: absolute
+top: calc(100% + 8px)
+left: 0
+z-index: 30
+background: #FFFFFF
+border: 1px solid #E2E8F0
+border-radius: 12px
+box-shadow: SH.overlay
+padding: 16px 18px
+min-width: 240px
+width: max-content
+max-width: 300px
+```
+
+#### Popover header
+```
+display: flex
+align-items: center
+justify-content: space-between
+margin-bottom: 12px
+```
+- Left: "Why {pct}%" — 11px, 700, N.textDis, uppercase, letter-spacing 0.05em
+- Right (if afterAction > pct): "{pct}% → {afterAction}% after action" — 11px, 700, N.success, MONO
+
+#### Negative reasons
+```
+display: flex
+gap: 7px
+font-size: 12px
+color: N.crit
+margin-bottom: 5px
+line-height: 1.4
+```
+- Bullet dot: 4px × 4px, border-radius 50%, bg N.crit, flexShrink 0, marginTop 5px
+
+#### Divider (if positive reasons exist)
+```
+height: 1px
+background: N.border
+margin: 10px 0 8px
+```
+
+#### Positive reasons
+```
+display: flex
+gap: 7px
+font-size: 12px
+color: N.success
+margin-bottom: 4px
+line-height: 1.4
+```
+- Bullet dot: 4px × 4px, border-radius 50%, bg N.success
+
+#### Missing warning (if missing exists)
+```
+margin-top: 8px
+padding: 8px 10px
+background: N.warnBg
+border-radius: 7px
+border: 1px solid #FDE68A
+font-size: 11px
+color: N.warn
+```
+Text: "Missing: {missing}"
+
+#### Close button
+```
+position: absolute
+top: 10px
+right: 10px
+background: none
+border: none
+cursor: pointer
+color: N.textDis
+```
+- `<X size={12} strokeWidth={2} />`
+
+### Popover close behaviour
+- Click close button → `setOpen(false)`
+- Click outside → handled by parent page (no global dismiss in chip itself)
+- Popover has `onClick: e => e.stopPropagation()` to prevent bubbling
+
+### States
+| State | Trigger |
+|---|---|
+| closed (default) | Initial |
+| open | Click on trigger button |
+
+---
+
+## COMPONENT: DeadlineBadge
+
+**Type:** Presentational atom
+**Responsibility:** Display urgency-coded deadline
+
+### Props
+```typescript
+interface DeadlineBadgeProps {
+  days: number;  // days until deadline (positive = future)
+}
+```
+
+### Color logic
+```typescript
+const variant = days <= 4 ? N.crit : days <= 10 ? N.warn : N.textSec;
+const bg      = days <= 4 ? N.critBg : days <= 10 ? N.warnBg : N.subtle;
+const brd     = days <= 4 ? "#FECACA" : days <= 10 ? "#FDE68A" : N.border;
+```
+
+### Layout
+```
+display: inline-flex
+align-items: center
+gap: 4px
+font-size: 11px
+font-weight: 600
+color: variant
+background: bg
+border: 1px solid brd
+border-radius: 999px
+padding: 2px 9px
+font-family: FONT
+white-space: nowrap
+```
+
+### Children
+1. `<Clock size={9} strokeWidth={2.5} />`
+2. "Due in {days} day{days !== 1 ? 's' : ''}"
+
+---
+
+## COMPONENT: StatusDot
+
+**Type:** Presentational micro-atom
+**Responsibility:** Binary active/inactive visual indicator
+
+### Props
+```typescript
+interface StatusDotProps {
+  ok: boolean;
+}
+```
+
+### Layout
+```
+width: 7px
+height: 7px
+border-radius: 50%
+background: ok ? N.success : N.border
+flex-shrink: 0
+```
+
+---
+
+## COMPONENT: Btn
+
+**Type:** Interactive atom
+**Responsibility:** Primary action trigger across the application
+
+### Props
+```typescript
+interface BtnProps {
+  variant?: "primary" | "secondary" | "quiet";  // default: "primary"
+  size?: "sm" | "md" | "lg";                    // default: "md"
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  full?: boolean;  // width: 100%
+}
+```
+
+### State
+```typescript
+const [hov, setHov] = useState(false);
+```
+
+### Base styles (all variants)
+```
+display: inline-flex
+align-items: center
+justify-content: center
+gap: 6px
+border-radius: 9px
+font-family: FONT
+font-weight: 600
+letter-spacing: -0.01em
+cursor: disabled ? "not-allowed" : "pointer"
+transition: all 200ms cubic-bezier(.2,0,0,1)
+border: none
+outline: none
+width: full ? "100%" : undefined
+opacity: disabled ? 0.4 : 1
+user-select: none
+```
+
+### Size variants
+| Size | Height | Padding | Font-size |
+|---|---|---|---|
+| sm | 32px | 0 12px | 13px |
+| md | 40px | 0 16px | 14px |
+| lg | 48px | 0 20px | 15px |
+
+### Variant styles
+
+**primary**
+```
+Default:  background: #1D4ED8; color: #fff; box-shadow: none; transform: none
+Hover:    background: #1E40AF; box-shadow: 0 2px 8px rgba(29,78,216,.24); transform: translateY(-1px)
+Disabled: opacity: 0.4 (base applied)
+```
+
+**secondary**
+```
+Default: background: #FFFFFF; color: #0F172A; border: 1px solid #CBD5E1; box-shadow: SH.card
+Hover:   background: #F1F5F9; border: 1px solid #94A3B8
+```
+
+**quiet**
+```
+Default: background: transparent; color: #475569
+Hover:   background: #F1F5F9; color: #0F172A
+```
+
+---
+
+## COMPONENT: Card
+
+**Type:** Interactive / Presentational container
+**Responsibility:** Surface container for content groups
+
+### Props
+```typescript
+interface CardProps {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+  onClick?: () => void;
+  accent?: string;  // left border color
+}
+```
+
+### State
+```typescript
+const [hov, setHov] = useState(false);
+```
+
+### Layout
+```
+background: #FFFFFF
+border-radius: 12px
+border: 1px solid (hov && onClick ? N.borderMd : N.border)
+box-shadow: (hov && onClick ? SH.cardHv : SH.card)
+transition: all 200ms cubic-bezier(.2,0,0,1)
+cursor: onClick ? "pointer" : undefined
+border-left: accent ? `3px solid ${accent}` : undefined
+```
+
+Note: when `accent` is set, border-left overrides the 1px left border with a 3px colored accent.
+
+### Hover condition
+Hover state only triggers visual change if `onClick` is defined. Cards without onClick remain at default shadow even on hover.
+
+---
+
+## COMPONENT: WhyInline
+
+**Type:** Interactive disclosure atom
+**Responsibility:** Inline expandable explanation
+
+### Props
+```typescript
+interface WhyInlineProps {
+  children: React.ReactNode;
+}
+```
+
+### State
+```typescript
+const [open, setOpen] = useState(false);
+```
+
+### Trigger button
+```
+font-size: 12px
+color: N.textSec
+background: none
+border: none
+cursor: pointer
+font-family: FONT
+padding: 0
+text-decoration: underline
+text-decoration-style: dotted
+text-underline-offset: 3px
+display: inline-flex
+align-items: center
+gap: 3px
+```
+Children: "Why?" + `<ChevronDown size={9} strokeWidth={2.5} />` (rotates 180° when open)
+
+### Expanded content
+```
+margin-top: 10px
+padding: 12px 14px
+background: N.innoBg
+border-radius: 9px
+border: 1px solid N.innoBrd
+font-size: 12px
+color: N.inno
+line-height: 1.6
+font-family: FONT
+```
+
+---
+
+## COMPONENT: Drawer
+
+**Type:** Interactive overlay panel
+**Responsibility:** Right-panel slide-in for secondary information
+
+### Props
+```typescript
+interface DrawerProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}
+```
+
+### Render condition
+Returns `null` when `open === false`.
+
+### Outer container
+```
+position: fixed
+inset: 0
+z-index: 50
+```
+
+### Backdrop
+```
+position: absolute
+inset: 0
+background: rgba(15,23,42,.20)
+backdrop-filter: blur(2px)
+```
+- onClick → `onClose()`
+
+### Panel
+```
+position: absolute
+top: 0
+right: 0
+bottom: 0
+width: 460px
+background: #FFFFFF
+box-shadow: SH.overlay
+display: flex
+flex-direction: column
+```
+
+No CSS entry animation implemented — drawer appears immediately on `open = true`. Implementing slide-in would require: `transform: translateX(100%)` → `translateX(0)` with transition on the panel.
+
+### Panel header
+```
+display: flex
+align-items: center
+justify-content: space-between
+padding: 20px 24px
+border-bottom: 1px solid N.border
+flex-shrink: 0
+```
+- Title: 15px, 650, N.text, FONT, letter-spacing -0.015em
+- Close button: X icon (15px, strokeWidth 2), N.textDis, padding 4px
+
+### Panel body
+```
+flex: 1
+overflow-y: auto
+padding: 24px
+```
+
+---
+
+## COMPONENT: DrawerSection
+
+**Type:** Presentational layout atom
+**Responsibility:** Named section within a drawer
+
+### Props
+```typescript
+interface DrawerSectionProps {
+  label: string;
+  children: React.ReactNode;
+}
+```
+
+### Layout
+```
+margin-bottom: 24px
+```
+
+### Label
+```
+font-size: 10px
+font-weight: 700
+color: N.textDis
+text-transform: uppercase
+letter-spacing: 0.06em
+margin-bottom: 10px
+font-family: FONT
+```
+
+---
+
+## COMPONENT: DrawerRow
+
+**Type:** Presentational data row
+**Responsibility:** Key-value pair within a drawer
+
+### Props
+```typescript
+interface DrawerRowProps {
+  label: string;
+  value: string | number;
+  color?: string;
+}
+```
+
+### Layout
+```
+display: flex
+justify-content: space-between
+align-items: flex-start
+padding: 9px 0
+border-bottom: 1px solid N.border
+```
+
+### Label
+```
+font-size: 13px
+color: N.textSec
+font-family: FONT
+```
+
+### Value
+```
+font-size: 13px
+font-weight: 600
+color: color ?? N.text
+font-family: FONT
+text-align: right
+max-width: 220px
+```
+
+---
+
+## COMPONENT: NavRail
+
+**Type:** Navigation shell
+**Responsibility:** Left sidebar navigation across all primary screens
+
+### Props
+```typescript
+interface NavRailProps {
+  view: View;
+  setView: (v: View) => void;
+  onSearch: () => void;
+}
+```
+
+### Outer container
+```
+width: 220px
+flex-shrink: 0
+background: #FFFFFF
+border-right: 1px solid N.border
+display: flex
+flex-direction: column
+padding: 24px 16px 20px
+height: 100vh
+position: sticky
+top: 0
+```
+
+### Logo area
+```
+display: flex
+align-items: center
+gap: 9px
+padding-left: 14px
+margin-bottom: 28px
+```
+
+Logo mark:
+```
+width: 26px
+height: 26px
+border-radius: 8px
+background: linear-gradient(135deg, #1D4ED8 0%, #6D28D9 100%)
+display: flex
+align-items: center
+justify-content: center
+```
+Children: `<Sparkles size={13} color="#fff" strokeWidth={2.5} />`
+
+Logo text: 15px, 700, N.text, FONT, letter-spacing -0.03em
+
+### Primary nav section
+```
+display: flex
+flex-direction: column
+gap: 1px
+flex: 1
+```
+
+### Bottom section
+```
+display: flex
+flex-direction: column
+gap: 1px
+```
+
+### NavRail.Item
+
+**Inner component** — local to NavRail
+
+```typescript
+interface NavItemProps {
+  icon: React.ReactNode;
+  label: string;
+  id?: string;
+  action?: () => void;
+  badge?: string;
+}
+```
+
+State: `const [hov, setHov] = useState(false);`
+
+Active detection:
+```typescript
+const act = id ? (view === id || (id === "work" && ["clarify","canvas","plan","confirm","work"].includes(view))) : false;
+```
+
+Item button:
+```
+width: 100%
+display: flex
+align-items: center
+gap: 9px
+padding: 8px 12px 8px 14px
+border-radius: 8px
+border: none
+border-left: 2px solid (act ? N.action : "transparent")
+background: act ? N.actionBg : hov ? rgba(15,23,42,.04) : transparent
+color: act ? N.action : hov ? N.text : N.textSec
+font-size: 13px
+font-weight: act ? 600 : 400
+cursor: pointer
+transition: all 200ms ease
+text-align: left
+margin-left: -2px  // compensates for left border offset
+letter-spacing: -0.01em
+```
+
+Icon wrapper:
+```
+flex-shrink: 0
+opacity: act ? 1 : 0.7
+```
+
+Label:
+```
+flex: 1
+```
+
+Badge:
+```
+font-size: 11px
+font-weight: 700
+background: N.critBg
+color: N.crit
+border-radius: 999px
+padding: 1px 6px
+```
+
+### User profile row
+```
+display: flex
+align-items: center
+gap: 9px
+padding: 10px 14px
+border-radius: 8px
+cursor: pointer
+```
+Hover: `background: rgba(15,23,42,.04)`
+
+Avatar:
+```
+width: 26px
+height: 26px
+border-radius: 50%
+background: linear-gradient(135deg, #2563EB, #7C3AED)
+font-size: 10px
+font-weight: 700
+color: #fff
+flex-shrink: 0
+```
+
+---
+
+## COMPONENT: WorkView (shell)
+
+**Type:** Shell / container
+**Responsibility:** Tabbed work item view
+
+### Props
+```typescript
+interface WorkViewProps {
+  workId: string;
+  setView: (v: View) => void;
+  setActiveDecision: (id: string) => void;
+}
+```
+
+### State
+```typescript
+const [tab, setTab] = useState<WorkTab>("overview");
+```
+
+### Layout
+```
+display: flex
+flex-direction: column
+height: 100%
+overflow: hidden
+```
+
+### Header bar
+```
+background: #FFFFFF
+border-bottom: 1px solid N.border
+padding: 18px 32px 0
+flex-shrink: 0
+```
+
+Inner container:
+```
+max-width: 1060px
+margin: 0 auto
+```
+
+### Tab buttons row
+```
+display: flex
+gap: 0
+```
+
+Per tab button:
+```
+padding: 9px 13px
+background: none
+border: none
+border-bottom: 2px solid (active ? N.action : "transparent")
+color: active ? N.action : N.textSec
+font-size: 13px
+font-weight: active ? 600 : 400
+cursor: pointer
+font-family: FONT
+transition: all 200ms ease
+white-space: nowrap
+```
+
+### Content area
+```
+flex: 1
+overflow-y: auto
+padding: 28px 32px
+background: N.canvas
+```
+
+Inner container:
+```
+max-width: 1060px
+margin: 0 auto
+```
+
+---
+
+## COMPONENT: SearchOverlay
+
+**Type:** Modal overlay
+**Responsibility:** Global command palette search
+
+### Props
+```typescript
+interface SearchOverlayProps {
+  onClose: () => void;
+  setView: (v: View) => void;
+  setActiveWork: (id: string) => void;
+  setActiveDecision: (id: string) => void;
+}
+```
+
+### State
+```typescript
+const [q, setQ] = useState("");
+const ref = useRef<HTMLInputElement>(null);
+```
+
+### Mount effect
+```typescript
+useEffect(() => { ref.current?.focus(); }, []);
+```
+
+### Backdrop
+```
+position: fixed
+inset: 0
+background: rgba(15,23,42,.35)
+backdrop-filter: blur(3px)
+display: flex
+align-items: flex-start
+justify-content: center
+padding: 72px 24px
+z-index: 100
+```
+onClick outside: `e.target === e.currentTarget && onClose()`
+
+### Dialog
+```
+width: 100%
+max-width: 520px
+background: #FFFFFF
+border-radius: 13px
+box-shadow: SH.overlay
+overflow: hidden
+border: 1px solid N.border
+```
+
+### Input row
+```
+display: flex
+align-items: center
+gap: 10px
+padding: 13px 16px
+border-bottom: 1px solid N.border
+```
+- `<Search size={14} color={N.textDis} strokeWidth={2} />`
+- input: flex 1, no border, no outline, 14px, N.text
+- kbd: 10px, N.textDis, N.subtle bg, border N.border, border-radius 4px, padding "1px 5px"
+
+### Results list
+```
+max-height: 360px
+overflow-y: auto
+padding: 8px 0 4px
+```
+
+Per result:
+```
+width: 100%
+padding: 9px 16px
+background: transparent → N.subtle on hover
+border: none
+display: flex
+align-items: center
+gap: 10px
+```
+- Label: 13px, N.text, ellipsis
+- Sub: 11px, N.textDis
+
+### Keyboard behaviour
+- Esc → `onClose()`
+
+---
+
+## COMPONENT: Divider
+
+**Type:** Presentational micro-atom
+
+```
+height: 1px
+background: N.border
+```
+
+---
+
+## COMPONENT: App (root)
+
+**Type:** Application shell
+**Responsibility:** View routing, global state, keyboard listeners
+
+### State
+```typescript
+const [view, setView] = useState<View>("home");
+const [activeWork, setActiveWork] = useState("w1");
+const [activeDecision, setActiveDecision] = useState("d1");
+const [searchOpen, setSearchOpen] = useState(false);
+```
+
+### Global keyboard listener
+```typescript
+useEffect(() => {
+  function onKey(e: KeyboardEvent) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSearchOpen(true); }
+    if (e.key === "Escape") setSearchOpen(false);
+  }
+  window.addEventListener("keydown", onKey);
+  return () => window.removeEventListener("keydown", onKey);
+}, []);
+```
+
+### Layout
+```
+display: flex
+height: 100vh
+font-family: FONT
+background: N.canvas
+color: N.text
+overflow: hidden
+```
+
+### Fullscreen screens (no nav rail)
+```typescript
+const fullscreen = view === "decision-pause" || view === "decision-receipt";
+```
+
+### Global CSS (injected via `<style>`)
+```css
+* { box-sizing: border-box; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+body { margin: 0; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+details summary::-webkit-details-marker { display: none; }
+```

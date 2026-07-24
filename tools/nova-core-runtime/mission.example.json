@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "NOVA-CORE-EXAMPLE-001",
+  "program": "NOVA-CORE",
+  "lot": "NOVA-CORE-MVP",
+  "title": "Exemple de mission NOVA Core",
+  "missionType": "DEVELOPMENT",
+  "profile": "BUILD",
+  "repository": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24",
+  "expectedBranch": "develop",
+  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24\\.nova-data\\execution\\missions\\NOVA-CORE\\NOVA-CORE-EXAMPLE-001\\prompt.md",
+  "workingDirectory": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24",
+  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24\\.nova-data\\execution\\reports\\NOVA-CORE\\NOVA-CORE-EXAMPLE-001",
+  "allowedPaths": [
+    "server/nova-core/**"
+  ],
+  "forbiddenPaths": [
+    ".git/**",
+    ".nova-data/**",
+    "node_modules/**",
+    ".env*",
+    "*.pem",
+    "*.key",
+    "*secret*"
+  ],
+  "deliverables": [
+    "Résultat attendu"
+  ],
+  "stopCriteria": [
+    "Tests et contrôles réussis"
+  ],
+  "validations": [
+    {
+      "name": "git-diff-check",
+      "type": "gitDiffCheck",
+      "required": true
+    },
+    {
+      "name": "nova-core-tests",
+      "type": "namedCommand",
+      "command": "novaCoreTests",
+      "required": true
+    },
+    {
+      "name": "nova-core-typecheck",
+      "type": "namedCommand",
+      "command": "novaCoreTypecheck",
+      "required": true
+    }
+  ],
+  "changesExpected": true,
+  "humanReviewRequired": true,
+  "enabled": false
+}

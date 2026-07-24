@@ -1,0 +1,2259 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+
+info:
+  title: NOVA Platform API Canonical Specification
+  version: 1.0.0
+  summary: Normative OpenAPI 3.1 reference for PROGRAM-016
+  description: |
+    Canonical OpenAPI 3.1 specification for NOVA PROGRAM-016.
+    This document is normative and implementation-neutral.
+
+servers:
+  - url: /v1
+
+security:
+  - bearerAuth: []
+
+x-nova-standard-reference: CONTRACT_DRIVEN_DEVELOPMENT_STANDARD.md
+x-nova-contract-reference: API_CONTRACT.md
+x-nova-resource-catalog-reference: API_RESOURCE_CATALOG.md
+x-nova-error-catalog-reference: API_ERROR_CATALOG.md
+x-nova-versioning-reference: API_VERSIONING_POLICY.md
+x-nova-certification-status: certified-with-reserves
+
+x-nova-resource-index:
+  api-contract:
+    endpoint: /api-contract
+    methods: [GET, PATCH]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-010, API-ERR-011, API-ERR-013]
+  api-resource-catalog:
+    endpoint: /api-resource-catalog
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  api-error-catalog:
+    endpoint: /api-error-catalog
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  api-versioning-policy:
+    endpoint: /api-versioning-policy
+    methods: [GET]
+    requestSchema: null
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  api-consumer:
+    endpoint: /api-consumers
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-009, API-ERR-013]
+  api-producer:
+    endpoint: /api-producers
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-009, API-ERR-013]
+  principal:
+    endpoint: /principals
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  human-user:
+    endpoint: /human-users
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  service-account:
+    endpoint: /service-accounts
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  agent-identity:
+    endpoint: /agent-identities
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  tenant:
+    endpoint: /tenants
+    methods: [GET, POST]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  role:
+    endpoint: /roles
+    methods: [GET, POST, PATCH, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  permission:
+    endpoint: /permissions
+    methods: [GET, POST, PATCH, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  resource:
+    endpoint: /resources
+    methods: [GET, POST, PATCH, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  request:
+    endpoint: /requests
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  response:
+    endpoint: /responses
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  error:
+    endpoint: /errors
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  event:
+    endpoint: /events
+    methods: [GET]
+    requestSchema: null
+    responseSchema: CollectionResponse
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-009, API-ERR-013]
+  webhook-subscription:
+    endpoint: /webhook-subscriptions
+    methods: [GET, POST, PATCH, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  long-running-operation:
+    endpoint: /long-running-operations
+    methods: [GET, POST, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: OperationAcceptance
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  batch-operation:
+    endpoint: /batch-operations
+    methods: [GET, POST, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: OperationAcceptance
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+  pagination-cursor:
+    endpoint: /pagination-cursors/{cursorId}
+    methods: [GET]
+    requestSchema: null
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-014, API-ERR-013]
+  api-scope:
+    endpoint: /api-scopes
+    methods: [GET, POST, PATCH, DELETE]
+    requestSchema: MutationRequest
+    responseSchema: ResourceDocument
+    authentication: [bearerAuth]
+    errorCodes: [API-ERR-001, API-ERR-002, API-ERR-003, API-ERR-004, API-ERR-005, API-ERR-009, API-ERR-013]
+
+paths:
+  /api-contract:
+    get:
+      tags: [contracts]
+      summary: Read the canonical API contract resource
+      x-nova-resource-id: api-contract
+      x-nova-allowed-methods: [GET, PATCH]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API contract resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [contracts]
+      summary: Update the canonical API contract resource under governance
+      x-nova-resource-id: api-contract
+      x-nova-allowed-methods: [GET, PATCH]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Updated API contract resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-resource-catalog:
+    get:
+      tags: [catalogs]
+      summary: Read the canonical API resource catalog
+      x-nova-resource-id: api-resource-catalog
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API resource catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-resource-catalog/{resourceId}:
+    get:
+      tags: [catalogs]
+      summary: Read a canonical API resource catalog entry
+      x-nova-resource-id: api-resource-catalog
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/resourceId'
+      responses:
+        '200':
+          description: API resource catalog entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-error-catalog:
+    get:
+      tags: [catalogs]
+      summary: Read the canonical API error catalog
+      x-nova-resource-id: api-error-catalog
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API error catalog
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-error-catalog/{errorCode}:
+    get:
+      tags: [catalogs]
+      summary: Read a canonical API error catalog entry
+      x-nova-resource-id: api-error-catalog
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/errorCode'
+      responses:
+        '200':
+          description: API error catalog entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-versioning-policy:
+    get:
+      tags: [catalogs]
+      summary: Read the canonical API versioning policy
+      x-nova-resource-id: api-versioning-policy
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API versioning policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-consumers:
+    get:
+      tags: [identity]
+      summary: List API consumers
+      x-nova-resource-id: api-consumer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API consumer collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create an API consumer
+      x-nova-resource-id: api-consumer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: API consumer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-consumers/{consumerId}:
+    get:
+      tags: [identity]
+      summary: Read an API consumer
+      x-nova-resource-id: api-consumer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/consumerId'
+      responses:
+        '200':
+          description: API consumer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [identity]
+      summary: Update an API consumer
+      x-nova-resource-id: api-consumer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/consumerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: API consumer updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [identity]
+      summary: Remove an API consumer
+      x-nova-resource-id: api-consumer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/consumerId'
+      responses:
+        '204':
+          description: API consumer removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-producers:
+    get:
+      tags: [identity]
+      summary: List API producers
+      x-nova-resource-id: api-producer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API producer collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create an API producer
+      x-nova-resource-id: api-producer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: API producer created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-producers/{producerId}:
+    get:
+      tags: [identity]
+      summary: Read an API producer
+      x-nova-resource-id: api-producer
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/producerId'
+      responses:
+        '200':
+          description: API producer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /principals:
+    get:
+      tags: [identity]
+      summary: List principals
+      x-nova-resource-id: principal
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Principal collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create a principal
+      x-nova-resource-id: principal
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Principal created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /principals/{principalId}:
+    get:
+      tags: [identity]
+      summary: Read a principal
+      x-nova-resource-id: principal
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/principalId'
+      responses:
+        '200':
+          description: Principal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /human-users:
+    get:
+      tags: [identity]
+      summary: List human users
+      x-nova-resource-id: human-user
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Human user collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create a human user
+      x-nova-resource-id: human-user
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Human user created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /human-users/{userId}:
+    get:
+      tags: [identity]
+      summary: Read a human user
+      x-nova-resource-id: human-user
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Human user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /service-accounts:
+    get:
+      tags: [identity]
+      summary: List service accounts
+      x-nova-resource-id: service-account
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Service account collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create a service account
+      x-nova-resource-id: service-account
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Service account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /service-accounts/{accountId}:
+    get:
+      tags: [identity]
+      summary: Read a service account
+      x-nova-resource-id: service-account
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      responses:
+        '200':
+          description: Service account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /agent-identities:
+    get:
+      tags: [identity]
+      summary: List agent identities
+      x-nova-resource-id: agent-identity
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Agent identity collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [identity]
+      summary: Create an agent identity
+      x-nova-resource-id: agent-identity
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Agent identity created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /agent-identities/{agentId}:
+    get:
+      tags: [identity]
+      summary: Read an agent identity
+      x-nova-resource-id: agent-identity
+      x-nova-allowed-methods: [GET, POST]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/agentId'
+      responses:
+        '200':
+          description: Agent identity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /tenants:
+    get:
+      tags: [tenancy]
+      summary: List tenants
+      x-nova-resource-id: tenant
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tenant collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [tenancy]
+      summary: Create a tenant
+      x-nova-resource-id: tenant
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Tenant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /tenants/{tenantId}:
+    get:
+      tags: [tenancy]
+      summary: Read a tenant
+      x-nova-resource-id: tenant
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+      responses:
+        '200':
+          description: Tenant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [tenancy]
+      summary: Update a tenant
+      x-nova-resource-id: tenant
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Tenant updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [tenancy]
+      summary: Remove a tenant
+      x-nova-resource-id: tenant
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+      responses:
+        '204':
+          description: Tenant removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /roles:
+    get:
+      tags: [rbac]
+      summary: List roles
+      x-nova-resource-id: role
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Role collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [rbac]
+      summary: Create a role
+      x-nova-resource-id: role
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Role created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /roles/{roleId}:
+    get:
+      tags: [rbac]
+      summary: Read a role
+      x-nova-resource-id: role
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/roleId'
+      responses:
+        '200':
+          description: Role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [rbac]
+      summary: Update a role
+      x-nova-resource-id: role
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/roleId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [rbac]
+      summary: Remove a role
+      x-nova-resource-id: role
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/roleId'
+      responses:
+        '204':
+          description: Role removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /permissions:
+    get:
+      tags: [rbac]
+      summary: List permissions
+      x-nova-resource-id: permission
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Permission collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [rbac]
+      summary: Create a permission
+      x-nova-resource-id: permission
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Permission created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /permissions/{permissionId}:
+    get:
+      tags: [rbac]
+      summary: Read a permission
+      x-nova-resource-id: permission
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/permissionId'
+      responses:
+        '200':
+          description: Permission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [rbac]
+      summary: Update a permission
+      x-nova-resource-id: permission
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/permissionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Permission updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [rbac]
+      summary: Remove a permission
+      x-nova-resource-id: permission
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/permissionId'
+      responses:
+        '204':
+          description: Permission removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /resources:
+    get:
+      tags: [resources]
+      summary: List resources
+      x-nova-resource-id: resource
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Resource collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [resources]
+      summary: Create a resource record
+      x-nova-resource-id: resource
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /resources/{resourceId}:
+    get:
+      tags: [resources]
+      summary: Read a resource record
+      x-nova-resource-id: resource
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/resourceId'
+      responses:
+        '200':
+          description: Resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [resources]
+      summary: Update a resource record
+      x-nova-resource-id: resource
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/resourceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Resource updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [resources]
+      summary: Remove a resource record
+      x-nova-resource-id: resource
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/resourceId'
+      responses:
+        '204':
+          description: Resource removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /requests:
+    get:
+      tags: [observability]
+      summary: List request records
+      x-nova-resource-id: request
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Request collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /requests/{requestId}:
+    get:
+      tags: [observability]
+      summary: Read a request record
+      x-nova-resource-id: request
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          description: Request record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /responses:
+    get:
+      tags: [observability]
+      summary: List response records
+      x-nova-resource-id: response
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Response collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /responses/{responseId}:
+    get:
+      tags: [observability]
+      summary: Read a response record
+      x-nova-resource-id: response
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/responseId'
+      responses:
+        '200':
+          description: Response record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /errors:
+    get:
+      tags: [observability]
+      summary: List error records
+      x-nova-resource-id: error
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Error collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /errors/{errorId}:
+    get:
+      tags: [observability]
+      summary: Read an error record
+      x-nova-resource-id: error
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/errorId'
+      responses:
+        '200':
+          description: Error record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /events:
+    get:
+      tags: [observability]
+      summary: List event records
+      x-nova-resource-id: event
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /events/{eventId}:
+    get:
+      tags: [observability]
+      summary: Read an event record
+      x-nova-resource-id: event
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/eventId'
+      responses:
+        '200':
+          description: Event record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /webhook-subscriptions:
+    get:
+      tags: [events]
+      summary: List webhook subscriptions
+      x-nova-resource-id: webhook-subscription
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Webhook subscription collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [events]
+      summary: Create a webhook subscription
+      x-nova-resource-id: webhook-subscription
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: Webhook subscription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /webhook-subscriptions/{subscriptionId}:
+    get:
+      tags: [events]
+      summary: Read a webhook subscription
+      x-nova-resource-id: webhook-subscription
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/subscriptionId'
+      responses:
+        '200':
+          description: Webhook subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [events]
+      summary: Update a webhook subscription
+      x-nova-resource-id: webhook-subscription
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/subscriptionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: Webhook subscription updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [events]
+      summary: Remove a webhook subscription
+      x-nova-resource-id: webhook-subscription
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/subscriptionId'
+      responses:
+        '204':
+          description: Webhook subscription removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /long-running-operations:
+    post:
+      tags: [operations]
+      summary: Submit a long-running operation
+      x-nova-resource-id: long-running-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '202':
+          description: Long-running operation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationAcceptance'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /long-running-operations/{operationId}:
+    get:
+      tags: [operations]
+      summary: Read a long-running operation
+      x-nova-resource-id: long-running-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/operationId'
+      responses:
+        '200':
+          description: Long-running operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationAcceptance'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [operations]
+      summary: Cancel a long-running operation
+      x-nova-resource-id: long-running-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/operationId'
+      responses:
+        '204':
+          description: Long-running operation cancelled
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /batch-operations:
+    post:
+      tags: [operations]
+      summary: Submit a batch operation
+      x-nova-resource-id: batch-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '202':
+          description: Batch operation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationAcceptance'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /batch-operations/{batchId}:
+    get:
+      tags: [operations]
+      summary: Read a batch operation
+      x-nova-resource-id: batch-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/batchId'
+      responses:
+        '200':
+          description: Batch operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationAcceptance'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [operations]
+      summary: Cancel a batch operation
+      x-nova-resource-id: batch-operation
+      x-nova-allowed-methods: [GET, POST, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/batchId'
+      responses:
+        '204':
+          description: Batch operation cancelled
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /pagination-cursors/{cursorId}:
+    get:
+      tags: [pagination]
+      summary: Read a pagination cursor
+      x-nova-resource-id: pagination-cursor
+      x-nova-allowed-methods: [GET]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/cursorId'
+      responses:
+        '200':
+          description: Pagination cursor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-scopes:
+    get:
+      tags: [security]
+      summary: List API scopes
+      x-nova-resource-id: api-scope
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: API scope collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionResponse'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    post:
+      tags: [security]
+      summary: Create an API scope
+      x-nova-resource-id: api-scope
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '201':
+          description: API scope created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /api-scopes/{scopeId}:
+    get:
+      tags: [security]
+      summary: Read an API scope
+      x-nova-resource-id: api-scope
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/scopeId'
+      responses:
+        '200':
+          description: API scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    patch:
+      tags: [security]
+      summary: Update an API scope
+      x-nova-resource-id: api-scope
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/scopeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MutationRequest'
+      responses:
+        '200':
+          description: API scope updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceDocument'
+        '400': { $ref: '#/components/responses/ValidationError' }
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '409': { $ref: '#/components/responses/ConflictError' }
+        '412': { $ref: '#/components/responses/PreconditionError' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+    delete:
+      tags: [security]
+      summary: Remove an API scope
+      x-nova-resource-id: api-scope
+      x-nova-allowed-methods: [GET, POST, PATCH, DELETE]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/scopeId'
+      responses:
+        '204':
+          description: API scope removed
+        '401': { $ref: '#/components/responses/UnauthorizedError' }
+        '403': { $ref: '#/components/responses/ForbiddenError' }
+        '404': { $ref: '#/components/responses/NotFoundError' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  parameters:
+    resourceId:
+      name: resourceId
+      in: path
+      required: true
+      schema:
+        type: string
+    errorCode:
+      name: errorCode
+      in: path
+      required: true
+      schema:
+        type: string
+    consumerId:
+      name: consumerId
+      in: path
+      required: true
+      schema:
+        type: string
+    producerId:
+      name: producerId
+      in: path
+      required: true
+      schema:
+        type: string
+    principalId:
+      name: principalId
+      in: path
+      required: true
+      schema:
+        type: string
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+    agentId:
+      name: agentId
+      in: path
+      required: true
+      schema:
+        type: string
+    tenantId:
+      name: tenantId
+      in: path
+      required: true
+      schema:
+        type: string
+    roleId:
+      name: roleId
+      in: path
+      required: true
+      schema:
+        type: string
+    permissionId:
+      name: permissionId
+      in: path
+      required: true
+      schema:
+        type: string
+    requestId:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: string
+    responseId:
+      name: responseId
+      in: path
+      required: true
+      schema:
+        type: string
+    errorId:
+      name: errorId
+      in: path
+      required: true
+      schema:
+        type: string
+    eventId:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+    subscriptionId:
+      name: subscriptionId
+      in: path
+      required: true
+      schema:
+        type: string
+    operationId:
+      name: operationId
+      in: path
+      required: true
+      schema:
+        type: string
+    batchId:
+      name: batchId
+      in: path
+      required: true
+      schema:
+        type: string
+    cursorId:
+      name: cursorId
+      in: path
+      required: true
+      schema:
+        type: string
+    scopeId:
+      name: scopeId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    ResourceDocument:
+      type: object
+      required: [id, resourceType, version, status, owner]
+      properties:
+        id:
+          type: string
+        resourceType:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        status:
+          type: string
+        owner:
+          type: string
+        tenantId:
+          type: string
+        scope:
+          type: string
+        lifecycle:
+          type: string
+        relations:
+          type: array
+          items:
+            type: object
+        metadata:
+          type: object
+          additionalProperties: true
+        payload:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    CollectionResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceDocument'
+        count:
+          type: integer
+          minimum: 0
+        nextCursor:
+          type:
+            - string
+            - 'null'
+      additionalProperties: false
+
+    MutationRequest:
+      type: object
+      required: [correlationId, actor, intent, data]
+      properties:
+        correlationId:
+          type: string
+        idempotencyKey:
+          type: string
+        expectedVersion:
+          type: string
+        actor:
+          type: object
+          required: [id, type]
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+        tenantId:
+          type: string
+        scope:
+          type: string
+        intent:
+          type: string
+        decisionId:
+          type: string
+        evidenceIds:
+          type: array
+          items:
+            type: string
+        data:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    OperationAcceptance:
+      type: object
+      required: [operationId, status, correlationId]
+      properties:
+        operationId:
+          type: string
+        status:
+          type: string
+        resourceType:
+          type: string
+        correlationId:
+          type: string
+        message:
+          type: string
+      additionalProperties: false
+
+    ApiError:
+      type: object
+      required: [code, category, message, cause]
+      properties:
+        code:
+          type: string
+        category:
+          type: string
+        message:
+          type: string
+        cause:
+          type: string
+        recommendedAction:
+          type: string
+        correlationId:
+          type: string
+        resourceReference:
+          type: string
+        version:
+          type: string
+      additionalProperties: false
+
+  responses:
+    ValidationError:
+      description: Canonical validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr003:
+              value:
+                code: API-ERR-003
+                category: Validation
+                message: Request validation failed.
+                cause: Payload, shape, type, or required field constraint violation.
+                recommendedAction: Correct the request and retry.
+    UnauthorizedError:
+      description: Canonical authentication error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr001:
+              value:
+                code: API-ERR-001
+                category: Authentication
+                message: Authentication failed.
+                cause: Missing, invalid, expired, or malformed identity proof.
+                recommendedAction: Re-authenticate or renew credentials.
+    ForbiddenError:
+      description: Canonical authorization error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr002:
+              value:
+                code: API-ERR-002
+                category: Authorization
+                message: Access denied.
+                cause: Principal lacks required role, scope, tenant, or ownership rights.
+                recommendedAction: Request the required permission or retry with an authorized principal.
+    NotFoundError:
+      description: Canonical not found error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr009:
+              value:
+                code: API-ERR-009
+                category: Availability
+                message: Service unavailable.
+                cause: Target service or resource cannot currently serve the request.
+                recommendedAction: Retry later or escalate if the condition persists.
+    ConflictError:
+      description: Canonical conflict error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr004:
+              value:
+                code: API-ERR-004
+                category: Conflict
+                message: Resource conflict detected.
+                cause: A resource state prevents the requested operation.
+                recommendedAction: Refresh state and retry only after the conflict is resolved.
+    PreconditionError:
+      description: Canonical concurrency precondition error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr018:
+              value:
+                code: API-ERR-018
+                category: Concurrency
+                message: Conditional request failed.
+                cause: ETag, version, or precondition did not match current state.
+                recommendedAction: Refresh the resource and retry.
+    DependencyMissingError:
+      description: Canonical missing dependency error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr006:
+              value:
+                code: API-ERR-006
+                category: Dependency
+                message: Required dependency missing.
+                cause: Upstream dependency or prerequisite is absent.
+                recommendedAction: Resolve the dependency and retry.
+    DependencyUnavailableError:
+      description: Canonical unavailable dependency error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr007:
+              value:
+                code: API-ERR-007
+                category: Dependency
+                message: Required dependency unavailable.
+                cause: Upstream dependency is unreachable, delayed, or invalidated.
+                recommendedAction: Wait, re-evaluate dependency status, or escalate.
+    RateLimitError:
+      description: Canonical rate limit error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr008:
+              value:
+                code: API-ERR-008
+                category: Rate Limit
+                message: Rate limit exceeded.
+                cause: Client has exceeded allowed request volume.
+                recommendedAction: Back off and retry after the indicated window.
+    IdempotencyConflictError:
+      description: Canonical idempotency conflict error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr012:
+              value:
+                code: API-ERR-012
+                category: Conflict
+                message: Idempotency conflict.
+                cause: The same idempotency key is associated with a different logical request.
+                recommendedAction: Use a new idempotency key and verify request intent.
+    FilterNotSupportedError:
+      description: Canonical unsupported filter error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr015:
+              value:
+                code: API-ERR-015
+                category: Validation
+                message: Filter not supported.
+                cause: Filter dimension or operator is not declared by the contract.
+                recommendedAction: Remove unsupported filters or use supported query dimensions.
+    SortNotSupportedError:
+      description: Canonical unsupported sort error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr016:
+              value:
+                code: API-ERR-016
+                category: Validation
+                message: Sort not supported.
+                cause: Sort key or order is not declared by the contract.
+                recommendedAction: Use a declared sort key or remove sorting.
+    WebhookDeliveryFailedError:
+      description: Canonical webhook delivery failure error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr017:
+              value:
+                code: API-ERR-017
+                category: Dependency
+                message: Webhook delivery failed.
+                cause: Subscriber endpoint cannot be reached or rejected the callback.
+                recommendedAction: Retry delivery or re-register the subscription.
+    PrincipalNotRecognizedError:
+      description: Canonical principal recognition error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr019:
+              value:
+                code: API-ERR-019
+                category: Authentication
+                message: Principal not recognized.
+                cause: The identity source did not resolve to a canonical principal.
+                recommendedAction: Re-authenticate or correct the identity provider mapping.
+    ScopeViolationError:
+      description: Canonical scope violation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr020:
+              value:
+                code: API-ERR-020
+                category: Authorization
+                message: Scope violation.
+                cause: The requested scope exceeds what the principal is allowed to access.
+                recommendedAction: Reduce scope or request delegated access.
+    InternalError:
+      description: Canonical internal error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            apiErr013:
+              value:
+                code: API-ERR-013
+                category: Internal
+                message: Internal error.
+                cause: Unclassified server-side failure.
+                recommendedAction: Retry if appropriate; escalate if persistent.

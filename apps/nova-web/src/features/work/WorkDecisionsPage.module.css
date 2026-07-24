@@ -1,0 +1,130 @@
+.decisionsPage,
+.decisionList,
+.decisionCard {
+  display: grid;
+}
+
+.decisionsPage {
+  gap: var(--n-space-20);
+}
+
+.decisionsPage > h2 {
+  margin: 0;
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-18);
+  font-weight: var(--n-font-weight-bold);
+  line-height: var(--n-line-height-130);
+}
+
+.decisionList {
+  gap: var(--n-space-12);
+}
+
+.decisionCard {
+  gap: var(--n-space-12);
+  padding: var(--n-space-20) var(--n-space-24);
+  border-left: var(--n-border-width-3) solid var(--n-color-critical);
+  border-radius: var(--n-radius-12);
+}
+
+.decisionMeta,
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.decisionMeta {
+  gap: var(--n-space-10);
+}
+
+.decisionMeta > strong {
+  color: var(--n-color-success);
+  font-size: var(--n-font-size-11);
+  font-weight: var(--n-font-weight-semibold);
+}
+
+.decisionCard > h3,
+.decisionCard p {
+  margin: 0;
+}
+
+.decisionCard > h3 {
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-16);
+  font-weight: var(--n-font-weight-bold);
+  line-height: var(--n-line-height-140);
+}
+
+.recommendation {
+  color: var(--n-color-nova);
+  font-size: var(--n-font-size-13);
+  line-height: var(--n-line-height-145);
+}
+
+.impactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--n-space-8);
+}
+
+.impact {
+  display: grid;
+  align-content: start;
+  gap: var(--n-space-8);
+  min-height: var(--n-space-72);
+  padding: var(--n-space-12);
+  border: var(--n-border-width-1) solid;
+  border-radius: var(--n-radius-8);
+}
+
+.impact > strong {
+  font-size: var(--n-font-size-10);
+  font-weight: var(--n-font-weight-bold);
+  letter-spacing: var(--n-letter-spacing-030);
+}
+
+.impact > p {
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-150);
+}
+
+.approvedImpact {
+  border-color: color-mix(in srgb, var(--n-color-success) 24%, transparent);
+  background: var(--n-color-success-bg);
+  color: var(--n-color-success);
+}
+
+.rejectedImpact {
+  border-color: color-mix(in srgb, var(--n-color-critical) 24%, transparent);
+  background: var(--n-color-critical-bg);
+  color: var(--n-color-critical);
+}
+
+.actions {
+  gap: var(--n-space-12);
+}
+
+.whyLabel {
+  border-bottom: var(--n-border-width-1) dotted var(--n-color-text-secondary);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-140);
+}
+
+.loading {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.loadingStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-10);
+  color: var(--n-color-text-secondary);
+}
+
+@media (max-width: 720px) {
+  .impactGrid {
+    grid-template-columns: 1fr;
+  }
+}

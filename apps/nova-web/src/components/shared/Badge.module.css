@@ -1,0 +1,69 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--n-space-6);
+  border-radius: var(--n-radius-pill);
+  border: 1px solid transparent;
+  font-weight: var(--n-font-weight-medium);
+  line-height: var(--n-line-height-130);
+  white-space: nowrap;
+}
+
+.sm {
+  padding: 0 var(--n-space-8);
+  min-height: 20px;
+  font-size: var(--n-font-size-11);
+}
+
+.md {
+  padding: 0 var(--n-space-10);
+  min-height: 24px;
+  font-size: var(--n-font-size-12);
+}
+
+.neutral {
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-secondary);
+  border-color: var(--n-color-border);
+}
+
+.action {
+  background: var(--n-color-action-bg);
+  color: var(--n-color-action);
+  border-color: color-mix(in srgb, var(--n-color-action) 18%, transparent);
+}
+
+.success {
+  background: var(--n-color-success-bg);
+  color: var(--n-color-success);
+  border-color: color-mix(in srgb, var(--n-color-success) 18%, transparent);
+}
+
+.warning {
+  background: var(--n-color-warning-bg);
+  color: var(--n-color-warning);
+  border-color: color-mix(in srgb, var(--n-color-warning) 18%, transparent);
+}
+
+.error {
+  background: var(--n-color-critical-bg);
+  color: var(--n-color-critical);
+  border-color: color-mix(in srgb, var(--n-color-critical) 18%, transparent);
+}
+
+.nova {
+  background: var(--n-color-nova-bg);
+  color: var(--n-color-nova);
+  border-color: var(--n-color-nova-border);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.label {
+  min-width: 0;
+}

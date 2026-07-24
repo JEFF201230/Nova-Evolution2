@@ -1,0 +1,25 @@
+## 1. Vision
+
+L'architecture de développement de CEREBRAU OS définit le cadre documentaire dans lequel les décisions du Product Owner et de l'Architecte sont transformées en unités de travail exécutables, traçables et vérifiables. Elle établit une séparation stricte entre la décision, la spécification, l'exécution et la capitalisation afin de garantir que chaque évolution du système reste gouvernée, reproductible et compatible avec le Knowledge Runtime v1.
+
+Cette architecture repose sur un flux officiel unique : PROGRAM, EPIC, LOT, Codex, Git, Knowledge Runtime. Le PROGRAM porte l'intention stratégique, l'EPIC structure un objectif fonctionnel ou documentaire majeur, le LOT constitue l'unité d'exécution contrôlée, Codex produit le livrable autorisé, Git assure la conservation versionnée, et le Knowledge Runtime rend la connaissance exploitable par le système documentaire.
+
+La vision de développement de CEREBRAU OS est celle d'un environnement où la documentation n'est pas un support secondaire, mais l'infrastructure d'exécution de la connaissance projet. Chaque document doit pouvoir exprimer une autorité, un périmètre, une responsabilité, une règle ou un état validable. Cette exigence permet d'éviter les décisions implicites, les dérives de périmètre et les productions non reliées à une intention formelle.
+
+L'architecture doit rester compatible avec une exécution humaine, assistée ou multi-agents. Dans ce contexte, les futurs agents ne sont pas considérés comme des autorités autonomes, mais comme des exécutants spécialisés opérant sous contraintes explicites. Leur contribution doit rester bornée par les lots, les documents de référence, les critères d'acceptation et les règles de gouvernance définies par CEREBRAU OS.
+
+La cible d'architecture est un système documentaire Enterprise capable de soutenir la croissance de VEEDDA sans perte de contrôle opérationnel. Il doit permettre l'exécution séquentielle des travaux, la vérification indépendante des livrables, la traçabilité des décisions, la limitation des initiatives non autorisées et la consolidation progressive de la connaissance dans un runtime documentaire cohérent.
+
+## Principes fondateurs
+
+Le premier principe est la gouvernance documentaire stricte et la séparation des responsabilités. Le développement de VEEDDA et de CEREBRAU OS repose sur une règle selon laquelle aucune évolution ne doit exister en dehors d'une intention formalisée, d'un périmètre explicite et d'un mécanisme de validation. La documentation constitue le support d'autorité qui relie la décision produit, la spécification d'architecture, l'exécution technique et la capitalisation dans le Knowledge Runtime v1. Le PROGRAM porte la direction stratégique, l'EPIC structure un objectif majeur, le LOT borne l'exécution, Codex ou l'agent mandaté produit le livrable autorisé, Git conserve l'historique, et le Knowledge Runtime consolide la connaissance exploitable. Chaque niveau possède une fonction distincte afin d'éviter la confusion entre décision, conception, exécution et validation.
+
+Le deuxième principe est la traçabilité intégrale. Toute modification doit pouvoir être reliée à un objectif, un lot, un fichier autorisé, un livrable attendu et des critères d'acceptation. Cette traçabilité garantit que le système reste auditable, que les responsabilités sont identifiables et que la connaissance produite peut être réutilisée sans interprétation implicite.
+
+Le troisième principe est l'exécution bornée. Aucun agent, humain ou IA, ne doit élargir son périmètre, anticiper un lot futur, créer un livrable non demandé ou transformer une contrainte en décision autonome. L'exécution est acceptable uniquement lorsqu'elle respecte le périmètre autorisé, le périmètre interdit, les fichiers listés et les critères de qualité définis par la mission.
+
+Le quatrième principe est la compatibilité multi-agents contrôlée. La bibliothèque officielle des Agents IA définit des rôles spécialisés, mais ces rôles ne remplacent ni le Product Owner, ni l'Architecte, ni les mécanismes de validation. Les agents doivent rester orchestrables, auditables et substituables, avec des entrées, sorties, fichiers autorisés et critères d'arrêt explicites.
+
+Le cinquième principe est la capitalisation systématique. Git assure la mémoire versionnée des changements, tandis que le Knowledge Runtime v1 transforme les livrables documentaires et techniques en connaissance exploitable. Le développement ne se limite donc pas à produire une modification locale : il doit préserver la capacité du système à comprendre, vérifier et réutiliser ce qui a été décidé et livré.
+
+Le sixième principe est la stabilité Enterprise. L'architecture de développement doit privilégier la clarté, la reproductibilité, la vérifiabilité et la limitation des effets de bord. Une évolution conforme est une évolution qui peut être comprise indépendamment, contrôlée par ses critères, reliée à son origine et intégrée au système sans fragiliser la gouvernance documentaire de VEEDDA.

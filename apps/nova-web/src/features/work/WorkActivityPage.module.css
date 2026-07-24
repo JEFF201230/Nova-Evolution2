@@ -1,0 +1,209 @@
+.activity {
+  display: grid;
+  gap: var(--n-space-16);
+  width: 100%;
+  max-width: 640px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-6);
+}
+
+.filterButton {
+  min-height: var(--n-avatar-size-28);
+  padding: 0 var(--n-space-12);
+  border: var(--n-border-width-1) solid var(--n-color-border);
+  border-radius: var(--n-radius-circle);
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-secondary);
+  font: inherit;
+  font-size: var(--n-font-size-11);
+  cursor: pointer;
+}
+
+.filterButton:hover {
+  border-color: var(--n-color-border-strong);
+  color: var(--n-color-text);
+}
+
+.filterButton:focus-visible,
+.comment:focus-visible {
+  outline: var(--n-border-width-2) solid var(--n-color-action);
+  outline-offset: var(--n-space-2);
+}
+
+.filterButtonActive {
+  border-color: var(--n-color-text);
+  background: var(--n-color-text);
+  color: var(--n-color-surface);
+}
+
+.timeline {
+  display: grid;
+  gap: var(--n-space-14);
+}
+
+.event {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--n-avatar-size-28) minmax(0, 1fr);
+  gap: var(--n-space-12);
+}
+
+.event:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: var(--n-avatar-size-28);
+  bottom: calc(-1 * var(--n-space-14));
+  left: calc(var(--n-avatar-size-28) / 2);
+  width: var(--n-border-width-1);
+  background: var(--n-color-border);
+}
+
+.avatar {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--n-avatar-size-28);
+  height: var(--n-avatar-size-28);
+  border: var(--n-border-width-1) solid var(--n-color-border);
+  border-radius: var(--n-radius-circle);
+  background: var(--n-color-surface-alt);
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-9);
+}
+
+.novaAvatar {
+  border-color: var(--n-color-nova-border);
+  background: var(--n-color-nova-bg);
+  color: var(--n-color-nova);
+}
+
+.eventContent {
+  display: grid;
+  gap: var(--n-space-6);
+  min-width: 0;
+}
+
+.eventHeader,
+.actorRow {
+  display: flex;
+  align-items: center;
+}
+
+.eventHeader {
+  justify-content: space-between;
+  gap: var(--n-space-16);
+}
+
+.actorRow {
+  flex-wrap: wrap;
+  gap: var(--n-space-8);
+}
+
+.actorRow > strong {
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-13);
+  font-weight: var(--n-font-weight-semibold);
+}
+
+.eventHeader time {
+  flex: 0 0 auto;
+  color: var(--n-color-text-disabled);
+  font-size: var(--n-font-size-10);
+}
+
+.summary,
+.detailCard p {
+  margin: 0;
+}
+
+.summary {
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-145);
+}
+
+.detailCard {
+  display: grid;
+  gap: var(--n-space-8);
+  margin-top: var(--n-space-2);
+  border-color: var(--n-color-nova-border);
+  border-radius: var(--n-radius-8);
+  background: var(--n-color-nova-bg);
+  box-shadow: none;
+}
+
+.detailCard > p:first-child {
+  font-size: var(--n-font-size-11);
+  font-weight: var(--n-font-weight-medium);
+  line-height: var(--n-line-height-145);
+}
+
+.critical {
+  color: var(--n-color-critical);
+}
+
+.neutral {
+  color: var(--n-color-text-secondary);
+}
+
+.success {
+  color: var(--n-color-success);
+}
+
+.detailDescription {
+  color: var(--n-color-text-disabled);
+  font-size: var(--n-font-size-10);
+  line-height: var(--n-line-height-145);
+}
+
+.sourceList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sourceList li {
+  padding: var(--n-space-2) var(--n-space-6);
+  border: var(--n-border-width-1) solid var(--n-color-nova-border);
+  border-radius: var(--n-radius-4);
+  background: var(--n-color-nova-bg);
+  color: var(--n-color-nova);
+  font-size: var(--n-font-size-9);
+  line-height: var(--n-line-height-130);
+}
+
+.comment {
+  width: 100%;
+  min-height: var(--n-space-72);
+  padding: var(--n-space-16);
+  resize: none;
+  border: var(--n-border-width-1) solid var(--n-color-border);
+  border-radius: var(--n-radius-10);
+  background: var(--n-color-surface);
+  color: var(--n-color-text);
+  font: inherit;
+  font-size: var(--n-font-size-12);
+}
+
+.comment::placeholder {
+  color: var(--n-color-text-disabled);
+}
+
+.loading {
+  display: grid;
+  gap: var(--n-space-16);
+}
+
+.loadingStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--n-space-10);
+  color: var(--n-color-text-secondary);
+}

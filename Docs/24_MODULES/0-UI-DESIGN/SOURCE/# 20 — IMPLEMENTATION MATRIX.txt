@@ -1,0 +1,169 @@
+# 20 — IMPLEMENTATION MATRIX
+## NOVA V6.1 — Complete Feature × Screen Coverage
+
+---
+
+## COMPONENT × SCREEN MATRIX
+
+`●` = present and functional | `○` = present but placeholder | `—` = not present
+
+| Component | home | clarify | canvas | plan | confirm | work-overview | work-plan | work-activity | work-people | work-sources | work-decisions | work-deliverables | decision-pkg | decision-pause | decision-receipt | global-decisions | global-deliverables |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| NOVALabel | ● | — | — | — | — | ● | — | ● | ● | — | — | — | ● | — | — | — | — |
+| ConfChip | — | — | — | — | ● | — | — | — | — | — | ● | ● | ● | — | — | ● | ● |
+| DeadlineBadge | ● | — | — | — | — | ● | — | — | — | — | ● | — | ● | — | — | ● | — |
+| StatusDot | — | — | — | — | — | — | — | — | ● | — | — | — | — | — | — | — | — |
+| Btn (primary) | ● | ● | ● | ● | ● | ● | — | — | — | — | ● | — | ● | ● | ● | — | — |
+| Btn (secondary) | ● | ● | — | — | — | — | — | — | — | ● | — | — | — | ● | ● | — | — |
+| Btn (quiet) | — | ● | — | — | — | ○ | — | — | ● | ● | — | ● | ● | — | — | — | ● |
+| Card | ● | — | — | — | — | ● | — | — | — | — | ● | — | — | — | — | ● | — |
+| WhyInline | ● | — | — | — | — | ● | — | — | — | — | ● | — | ● | — | — | — | — |
+| Drawer | ● | — | — | — | — | ● | — | — | ● | ● | — | ● | ● | — | — | — | — |
+| DrawerSection | ● | — | — | — | — | ● | — | — | ● | ● | — | ● | ● | — | — | — | — |
+| DrawerRow | ● | — | — | — | — | ● | — | — | ● | ● | — | ● | ● | — | — | — | — |
+| NavRail | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● | ● |
+| SearchOverlay | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ | ○ |
+
+---
+
+## FEATURE × SCREEN MATRIX
+
+### Visual Features
+
+| Feature | home | clarify | canvas | plan | confirm | work-OV | work-PL | work-ACT | work-PE | work-SO | work-DE | work-DL | dec-pkg | dec-pause | dec-rcpt | glob-dec | glob-del |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Hero gradient block | ● | — | — | — | — | ● | — | — | — | — | — | — | ● | — | — | — | — |
+| Focal card (accent border) | ● | — | — | — | — | ● | — | — | — | — | — | — | — | — | — | — | — |
+| NOVA box (innoBg) | ● | — | — | ● | — | ● | ● | ● | ● | ● | ● | — | ● | — | — | — | — |
+| Progress bar (3px) | — | — | — | — | — | ● | — | — | — | — | — | — | — | — | — | — | — |
+| Progress bar (6px) | — | — | — | — | — | — | — | — | — | — | — | ● | — | — | — | — | ● |
+| Phase accordion | — | — | — | ● | — | — | ● | — | — | — | — | — | — | — | — | — | — |
+| Filter pills | — | — | — | — | — | — | — | ● | — | — | — | — | — | — | — | ● | — |
+| 2-column grid | — | — | ● | — | ● | ● | ● | — | — | — | ● | — | ● | ● | ● | — | — |
+| 3-column grid | — | — | ● | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| Clarify progress dots | — | ● | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| Step indicator | — | — | — | — | — | — | — | — | — | — | — | — | — | ● | — | — | — |
+| Check circle success | — | — | — | — | — | — | — | — | — | — | — | — | — | — | ● | — | — |
+
+---
+
+## INTERACTION × SCREEN MATRIX
+
+| Interaction | home | clarify | canvas | plan | confirm | work | dec-pkg | dec-pause | global |
+|---|---|---|---|---|---|---|---|---|---|
+| Cmd+K search | ● | ● | ● | ● | ● | ● | ● | ● | ● |
+| Drawer open/close | ● | — | — | — | — | ● | ● | — | — |
+| Accordion toggle | — | — | — | ● | — | ● | — | — | — |
+| Tab switching | — | — | — | — | — | ● | — | — | — |
+| Filter pills | — | — | — | — | — | ● (activity) | — | — | ● |
+| ConfChip popover | — | — | — | — | ● | ● | ● | — | ● |
+| WhyInline expand | ● | — | — | — | — | ● | ● | — | — |
+| Radio selection | — | ● | — | — | ● (autonomy) | — | ● | ● | — |
+| Loading + navigate | ● | ● | — | — | — | — | — | ● | — |
+| Step progression | — | ● | — | — | — | — | — | ● | — |
+
+---
+
+## DATA × COMPONENT MATRIX
+
+| Data field | Components that render it |
+|---|---|
+| `heroSentence` | HomeView hero, WorkOverviewTab hero |
+| `heroGain` | HomeView hero, WorkOverviewTab hero |
+| `confPct` | ConfChip (all), DeadlineBadge indirectly |
+| `confAfterAction` | ConfChip (popover delta) |
+| `confReasons` | ConfChip (popover negative list) |
+| `confPositive` | ConfChip (popover positive list) |
+| `confMissing` | ConfChip (popover missing warning) |
+| `nextActionTime` | WorkOverviewTab focal card |
+| `nextActionGain` | WorkOverviewTab focal card |
+| `nextActionConfDelta` | WorkOverviewTab focal card |
+| `nextActionWhy` | WhyInline in focal card + HomeView |
+| `laterActions` | WorkOverviewTab disclosure, HomeView drawer |
+| `backgroundActions` | WorkOverviewTab disclosure, HomeView drawer |
+| `people[].name` | WorkPeopleTab card header, drawer title |
+| `people[].novaState` | WorkPeopleTab NOVA box |
+| `people[].pendingRequests` | WorkPeopleTab contribution color |
+| `people[].workload` | Drawer evidence color |
+| `sources[].status` | WorkSourcesTab badge, counter strip |
+| `sources[].aiComment` | WorkSourcesTab card + drawer summary |
+| `sources[].freshness` | WorkSourcesTab meta inline |
+| `deliverables[].readiness` | WorkDeliverablesTab progress bar |
+| `deliverables[].confPct` | ConfChip on deliverable card |
+| `deliverables[].blocker` | WorkDeliverablesTab AlertTriangle |
+| `decisions[].statement` | WorkDecisionsTab, DecisionPackageView, GlobalDecisionsView |
+| `decisions[].recommendation` | WorkDecisionsTab NOVA box, DecisionPackageView |
+| `decisions[].options` | DecisionPackageView option buttons |
+| `events[].change` | WorkActivityTab primary text |
+| `events[].impact` | WorkActivityTab NOVA box |
+| `events[].confFrom/confTo` | WorkActivityTab MONO delta |
+| `events[].sources` | WorkActivityTab source tags |
+| `phaseNum/phaseTotal` | WorkOverviewTab sidebar "Phase N of M" |
+
+---
+
+## STATE × COMPONENT MATRIX
+
+| State | Where defined | Where read |
+|---|---|---|
+| `view` | App | NavRail (active), all screen renders |
+| `activeWork` | App | WorkView (item lookup), HomeView (CTA target) |
+| `activeDecision` | App | DecisionPackageView, DecisionPauseView, DecisionReceiptView |
+| `searchOpen` | App | SearchOverlay (open prop) |
+| `composerOpen` | HomeView | Composer block rendering |
+| `detailOpen` | HomeView | Drawer open prop |
+| `tab` | WorkView | Tab strip active state, tab content render |
+| `filter` | WorkActivityTab | Event list filtering |
+| `filter` | GlobalDecisionsView | Decision list filtering |
+| `drawer` | WorkPeopleTab | Person drawer open/content |
+| `drawer` | WorkSourcesTab | Source drawer open/content |
+| `drawer` | WorkDeliverablesTab | Deliverable drawer open/content |
+| `detailOpen` | WorkOverviewTab | Full analysis drawer |
+| `detailOpen` | DecisionPackageView | Full package drawer |
+| `sel` | DecisionPackageView | Option radio selected state |
+| `step` | DecisionPauseView | Review vs. decide step |
+| `choice` | DecisionPauseView | CTA enabled/disabled |
+| `rationale` | DecisionPauseView | CTA enabled/disabled, border color |
+| `open` | ConfChip | Popover visible |
+| `open` | WhyInline | Expansion visible |
+| `hovered` | Card | Shadow/border hover |
+| `hovered` | Btn | Style hover |
+| `q` | SearchOverlay | Results filtering |
+
+---
+
+## SCREEN COMPLETENESS SUMMARY
+
+| Screen | Visual complete | Interactions complete | Data wired | Notes |
+|---|---|---|---|---|
+| home | ✓ | ✓ | ✓ | Full V6.1 |
+| clarify | ✓ | ✓ | Partial | Static Q&A, no real NLP |
+| canvas | ✓ | Partial | Static | Edit saves nothing |
+| plan | ✓ | ✓ | Static | Phases are hardcoded |
+| confirm | ✓ | ✓ | Partial | Autonomy choice not persisted |
+| work (all tabs) | ✓ | ✓ | ✓ | Full V6.1 |
+| decision-package | ✓ | ✓ | ✓ | Full V6.1 |
+| decision-pause | ✓ | ✓ | Partial | Decision recorded but not stored |
+| decision-receipt | ✓ | Partial | Static | Share/export are placeholders |
+| global-decisions | ✓ | ✓ | ✓ | Filter + navigate |
+| global-deliverables | ✓ | Partial | ✓ | Drawer not implemented |
+
+---
+
+## PLACEHOLDER / STUB INVENTORY
+
+Actions wired to UI but with no handler (no-op):
+1. Composer: Paperclip (attach)
+2. Composer: Mic (voice)
+3. Work header: MoreHorizontal (overflow menu)
+4. Work overview: "Open" CTA in Next Best Action card
+5. WorkSourcesTab: "Add" button on missing sources
+6. WorkSourcesTab: "Refresh" button on stale sources
+7. WorkDeliverablesTab: Eye button (preview)
+8. WorkActivityTab: "Post" button (comment posting)
+9. DecisionReceiptView: "Share receipt" button
+10. DecisionReceiptView: "Export" button
+11. NavRail: Bell (notifications)
+12. NavRail: HelpCircle (help)
+13. NavRail: Settings
+14. NavRail: User profile row

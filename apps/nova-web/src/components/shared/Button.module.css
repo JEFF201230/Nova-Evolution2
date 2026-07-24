@@ -1,0 +1,103 @@
+.button {
+  appearance: none;
+  border: 1.5px solid transparent;
+  border-radius: var(--n-radius-8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--n-space-8);
+  font: inherit;
+  font-weight: var(--n-font-weight-semibold);
+  line-height: var(--n-line-height-130);
+  cursor: pointer;
+  transition:
+    background-color var(--n-duration-fast) var(--n-ease-standard),
+    border-color var(--n-duration-fast) var(--n-ease-standard),
+    color var(--n-duration-fast) var(--n-ease-standard),
+    box-shadow var(--n-duration-fast) var(--n-ease-standard),
+    transform var(--n-duration-fast) var(--n-ease-standard);
+  white-space: nowrap;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--n-color-action) 24%, transparent);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: var(--n-opacity-disabled);
+  transform: none;
+}
+
+.button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+.primary {
+  background: var(--n-color-action);
+  color: #fff;
+}
+
+.primary:not(:disabled):hover {
+  background: var(--n-color-action-hover);
+}
+
+.secondary {
+  background: var(--n-color-surface);
+  border-color: var(--n-color-border-medium);
+  color: var(--n-color-text);
+}
+
+.secondary:not(:disabled):hover {
+  background: var(--n-color-action-bg);
+  border-color: var(--n-color-action);
+}
+
+.quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--n-color-action);
+}
+
+.quiet:not(:disabled):hover {
+  background: var(--n-color-action-bg);
+}
+
+.sm {
+  min-height: var(--n-button-size-sm);
+  padding: 0 var(--n-space-12);
+  font-size: var(--n-font-size-13);
+}
+
+.md {
+  min-height: var(--n-button-size-md);
+  padding: 0 var(--n-space-16);
+  font-size: var(--n-font-size-14);
+}
+
+.lg {
+  min-height: var(--n-button-size-lg);
+  padding: 0 var(--n-space-20);
+  font-size: var(--n-font-size-15);
+}
+
+.full {
+  width: 100%;
+}
+
+.loading {
+  pointer-events: none;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}

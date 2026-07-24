@@ -1,0 +1,209 @@
+# 19 — PIXEL-PERFECT CHECKLIST
+## NOVA V6.1 — Visual Fidelity Verification
+
+---
+
+## HOW TO USE
+
+For each item, verify visually in browser at 100% zoom, 1280×800 viewport. Items marked [CRITICAL] are non-negotiable — failure breaks the design system identity.
+
+---
+
+## DESIGN TOKENS
+
+- [ ] [CRITICAL] Canvas background is #F8FAFC (not white, not gray-100)
+- [ ] [CRITICAL] Cards use #FFFFFF background with `0 1px 3px rgba(15,23,42,.06)` shadow
+- [ ] [CRITICAL] Primary action color is #1D4ED8 (NOT #2563EB or #3B82F6)
+- [ ] [CRITICAL] NOVA AI color is #6D28D9 (NOT #7C3AED or #8B5CF6)
+- [ ] NavRail background is #FFFFFF with 1px solid #E2E8F0 right border
+- [ ] Page background visually distinct from cards (slate-50 vs white)
+- [ ] Inter font loaded (check network tab: fonts.googleapis.com request)
+- [ ] Roboto Mono loaded (check network tab)
+- [ ] Monospace values render in Roboto Mono (confidence deltas, autonomy A0-A3 badges)
+
+---
+
+## NAV RAIL
+
+- [ ] [CRITICAL] NavRail is exactly 56px wide
+- [ ] [CRITICAL] Active nav item: left 2px solid #1D4ED8 border + #EFF6FF background + #1D4ED8 text/icon
+- [ ] [CRITICAL] Inactive nav item: transparent border + transparent background + #475569 color
+- [ ] Logo: 32×32px rounded-9px square with blue→violet gradient containing white Sparkles icon
+- [ ] NavItem label: 9px font, 600 weight, 0.02em letter-spacing
+- [ ] NavItem icon: 16px, strokeWidth 2
+- [ ] User avatar: 28×28 circle with same gradient as logo
+- [ ] Bottom section has border-top separator above user row
+
+---
+
+## HOME SCREEN
+
+- [ ] [CRITICAL] Hero block: gradient `135deg #EFF6FF→#F5F3FF`, border 1px #DDD6FE, shadow SH.hero
+- [ ] [CRITICAL] Hero gain text: 19px 700 -0.022em letter-spacing
+- [ ] [CRITICAL] Next Best Action card: 2px solid #1D4ED8 border + 4px ring `rgba(29,78,216,.06)` — visually dominant
+- [ ] NOVALabel renders purple on purple-tinted background in hero
+- [ ] Timestamp: 11px #94A3B8
+- [ ] Hero sentence: 15px #475569
+- [ ] Active work rows: flat list, no card borders (compact display)
+- [ ] Composer: collapsed state shows placeholder text + Sparkles icon (no visible border on neutral state)
+- [ ] Composer: expanded state shows 1.5px blue border + overlay shadow
+- [ ] Suggestion pills: horizontal wrap, each with 1px solid #E2E8F0 border
+- [ ] Suggestion pill hover: border → #1D4ED8, background → #EFF6FF, color → #1D4ED8
+
+---
+
+## BADGES
+
+- [ ] [CRITICAL] DeadlineBadge urgent (≤4 days): #FEF2F2 bg, #991B1B text, #FECACA border
+- [ ] [CRITICAL] DeadlineBadge warning (≤10 days): #FFFBEB bg, #92400E text, #FDE68A border
+- [ ] [CRITICAL] ConfChip high (≥80%): #F0FDF4 bg, #166534 text
+- [ ] [CRITICAL] ConfChip medium (55–79%): #FFFBEB bg, #B45309 text
+- [ ] [CRITICAL] ConfChip low (<55%): #FEF2F2 bg, #991B1B text
+- [ ] ConfChip has ChevronDown that rotates 180° when open
+- [ ] ConfChip popover: 260px wide, 12px border-radius, SH.overlay shadow
+- [ ] ConfChip popover delta row: innoBg background, MONO font
+- [ ] NOVALabel: 10px 700 uppercase 0.04em letter-spacing, #6D28D9 on #F5F3FF, 1px #DDD6FE border
+- [ ] NOVALabel xs variant: 9px, 1px 6px padding
+- [ ] StatusDot: 7px circle, green/red/amber per status
+
+---
+
+## CARDS
+
+- [ ] Card border-radius: 12px
+- [ ] Card hover: border → #CBD5E1, shadow → SH.cardHv
+- [ ] Card click cursor: pointer only when onClick is provided
+- [ ] NOVA box inside cards: #F5F3FF bg, 1px #DDD6FE border, 8px radius
+- [ ] Phase accordion expanded area: border-top 1px #E2E8F0
+
+---
+
+## BUTTONS
+
+- [ ] Primary button: #1D4ED8 bg, white text, 8px border-radius
+- [ ] Primary hover: #1E40AF bg + `0 2px 8px rgba(29,78,216,.24)` shadow + translateY(-1px)
+- [ ] Primary disabled: opacity 0.4 (still #1D4ED8 background)
+- [ ] Secondary button: white bg, #0F172A text, 1px #CBD5E1 border, SH.card shadow
+- [ ] Secondary hover: #F1F5F9 bg, #94A3B8 border
+- [ ] Quiet button: transparent bg, #475569 text
+- [ ] Quiet hover: #F1F5F9 bg, #0F172A text
+- [ ] Loading spinner: RefreshCw icon spinning at 1s linear
+
+---
+
+## WORK SCREEN
+
+- [ ] [CRITICAL] Breadcrumb: sticky top, 42px height, white bg, bottom border
+- [ ] Tab strip: tabs have bottom 2px border only when active (#1D4ED8)
+- [ ] Active tab: 600 weight, #1D4ED8
+- [ ] Inactive tab: 400 weight, #475569
+- [ ] Progress bar: 3px height, full width, rounded
+- [ ] Progress bar color: #991B1B (blocked), #D97706 (attention), #1D4ED8 (active/complete)
+- [ ] Work overview: 2-column grid (2fr 1fr), 20px gap
+- [ ] Next Best Action card label: 10px 700 uppercase #94A3B8
+
+---
+
+## ACTIVITY TAB
+
+- [ ] Filter pill selected: #0F172A bg, white text
+- [ ] Filter pill unselected: transparent bg, #475569 text, 1px #E2E8F0 border
+- [ ] Activity event type dot: 6px circle, left-aligned
+- [ ] NOVA box: confidence delta in MONO font with colored parenthetical `(N% → N%)`
+- [ ] Source tags in NOVA box: 10px #6D28D9, `rgba(109,40,217,.08)` bg, 4px radius
+
+---
+
+## PEOPLE TAB
+
+- [ ] Human avatar: 38×38 circle, #F1F5F9 bg, User icon #475569
+- [ ] AI avatar: 38×38 circle, #F5F3FF bg, Sparkles icon #6D28D9
+- [ ] NOVA reasoning box: "Current reasoning" label 10px 700 uppercase #6D28D9
+- [ ] Contribution text: #92400E (amber) when pendingRequests > 0
+
+---
+
+## SOURCES TAB
+
+- [ ] Counter strip: inline text `"N available · N stale · N missing"` (NOT a grid)
+- [ ] Source status badge: pill with correct color per status (available=green, stale=amber, missing=red)
+- [ ] Meta: inline single line `"type · Freshness: N days · N sections"`
+- [ ] NOVA comment: Sparkles icon 9px + 12px #6D28D9 text
+- [ ] Action: "Add" for missing, "Refresh" for stale, "Details" always
+
+---
+
+## DRAWERS
+
+- [ ] [CRITICAL] Drawer width: exactly 460px
+- [ ] [CRITICAL] Drawer backdrop: `rgba(15,23,42,.20)` with `blur(2px)`
+- [ ] Drawer header: 18px 20px padding, 1px bottom border, 16px 600 title
+- [ ] Drawer body: 20px padding, scrollable
+- [ ] DrawerSection header: 10px 700 uppercase 0.06em letter-spacing #94A3B8
+- [ ] DrawerRow: flex space-between, 12px label (N.textSec), 12px 600 value
+- [ ] DrawerRow has border-bottom on every row (no last-child removal)
+- [ ] Scrollbar: 4px wide, #CBD5E1 thumb, transparent track
+- [ ] Narrative section order: Summary → Why it matters → What is blocking → Key evidence → History → Technical details
+
+---
+
+## DECISION SCREENS
+
+- [ ] Decision package hero: `135deg #FEF2F2→#FFF7F0`, #FECACA border
+- [ ] Option selected: 2px solid #1D4ED8 border + #EFF6FF bg
+- [ ] Option radio: 16px circle, filled with Check when selected
+- [ ] Dissent block: #FFFBEB bg, #FDE68A border
+- [ ] Decision pause: Lock icon in header (not any other icon)
+- [ ] Step indicator: 24px circles, active=blue, complete=green check, future=gray
+- [ ] Receipt: 64×64 CheckCircle icon on #F0FDF4 circle background
+- [ ] "Record" CTA disabled until choice AND rationale both provided
+
+---
+
+## TYPOGRAPHY HIERARCHY
+
+- [ ] [CRITICAL] Hero gain text: 19px 700 -0.022em (largest text on home)
+- [ ] [CRITICAL] Next Best Action title: 18px 700
+- [ ] Decision statement: 15px 700
+- [ ] Card title / section heading: 15px 700
+- [ ] Body text: 14px N.text lineHeight 1.65
+- [ ] Secondary body: 13px N.textSec lineHeight 1.6
+- [ ] Label / category: 12px N.textSec
+- [ ] Micro label (DrawerSection header, badge): 10px 700 uppercase 0.06em
+- [ ] Timestamp / disabled: 11px #94A3B8
+- [ ] MONO values: Roboto Mono, 11px 700 0.02em letter-spacing
+
+---
+
+## ANIMATIONS / TRANSITIONS
+
+- [ ] All hover states: 120ms cubic-bezier(.2,0,0,1) transition
+- [ ] ChevronDown in phase accordion: 200ms std transition rotation
+- [ ] Loading spinner: CSS `animation: spin 1s linear infinite`
+- [ ] ConfChip ChevronDown: 120ms fast transition rotation
+- [ ] WhyInline ChevronDown: 120ms fast transition rotation
+- [ ] No motion library used (verify: no framer-motion import in App.tsx)
+
+---
+
+## SEARCH OVERLAY
+
+- [ ] Backdrop: `rgba(15,23,42,.35)` with `blur(2px)` (darker than drawer)
+- [ ] Panel: 560px wide, 16px radius, SH.overlay shadow
+- [ ] Input: 15px font, no border, focus outline none
+- [ ] Results: hover → #F1F5F9 background
+- [ ] Backdrop click closes overlay (but internal panel click does not)
+
+---
+
+## WHITESPACE & SPACING
+
+- [ ] Page outer padding: 28px top, 32px left/right
+- [ ] Centered view padding: 48px vertical, 24px horizontal
+- [ ] Card internal padding: 16px default
+- [ ] Hero card padding: 22px 24px
+- [ ] Focal card padding: 22px 26px
+- [ ] Section gap (flex column): 10–16px for lists, 20–24px for sections
+- [ ] DrawerSection margin-bottom: 24px
+- [ ] Activity event gap: 12px
+- [ ] Phase row gap: 8px

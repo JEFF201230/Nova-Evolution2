@@ -1,0 +1,27 @@
+.contentArea {
+  display: grid;
+  gap: var(--n-space-20);
+  padding: var(--n-space-24);
+}
+
+.header {
+  display: grid;
+  gap: var(--n-space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--n-font-size-20);
+  line-height: var(--n-line-height-130);
+}
+
+.description {
+  margin: 0;
+  color: var(--n-color-text-secondary);
+  max-width: 70ch;
+}
+
+.body {
+  display: grid;
+  gap: var(--n-space-16);
+}

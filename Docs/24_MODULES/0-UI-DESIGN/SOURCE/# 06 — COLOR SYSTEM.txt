@@ -1,0 +1,226 @@
+# 06 — COLOR SYSTEM
+## NOVA V6.1 — Complete Color Reference
+
+---
+
+## PRIMITIVE PALETTE (const N)
+
+All colors are light mode only. No dark mode variant exists in V6.1.
+
+| Token | Variable | HEX | RGB | RGBA (full opacity) | Usage |
+|---|---|---|---|---|---|
+| Canvas | N.canvas | #F8FAFC | rgb(248,250,252) | rgba(248,250,252,1) | Page background |
+| Surface | N.surface | #FFFFFF | rgb(255,255,255) | rgba(255,255,255,1) | Card, modal, drawer, input background |
+| Subtle | N.subtle | #F1F5F9 | rgb(241,245,249) | rgba(241,245,249,1) | Hover backgrounds, muted areas, badge bg |
+| Text | N.text | #0F172A | rgb(15,23,42) | rgba(15,23,42,1) | Primary text, headings |
+| TextSec | N.textSec | #475569 | rgb(71,85,105) | rgba(71,85,105,1) | Secondary text, labels |
+| TextDis | N.textDis | #94A3B8 | rgb(148,163,184) | rgba(148,163,184,1) | Disabled, placeholder, timestamp |
+| Border | N.border | #E2E8F0 | rgb(226,232,240) | rgba(226,232,240,1) | Default borders, dividers |
+| BorderMd | N.borderMd | #CBD5E1 | rgb(203,213,225) | rgba(203,213,225,1) | Button secondary, input default |
+| BorderSt | N.borderSt | #94A3B8 | rgb(148,163,184) | rgba(148,163,184,1) | Button secondary hover |
+| Action | N.action | #1D4ED8 | rgb(29,78,216) | rgba(29,78,216,1) | Primary brand, CTA, links |
+| ActionHv | N.actionHv | #1E40AF | rgb(30,64,175) | rgba(30,64,175,1) | Primary button hover |
+| ActionBg | N.actionBg | #EFF6FF | rgb(239,246,255) | rgba(239,246,255,1) | Active nav, selected state bg, info bg |
+| SuccessBg | N.successBg | #F0FDF4 | rgb(240,253,244) | rgba(240,253,244,1) | Success bg states |
+| Success | N.success | #166534 | rgb(22,101,52) | rgba(22,101,52,1) | Success text, icon, border |
+| WarnBg | N.warnBg | #FFFBEB | rgb(255,251,235) | rgba(255,251,235,1) | Warning bg states |
+| Warn | N.warn | #92400E | rgb(146,64,14) | rgba(146,64,14,1) | Warning text, blocker label |
+| CritBg | N.critBg | #FEF2F2 | rgb(254,242,242) | rgba(254,242,242,1) | Critical bg states |
+| Crit | N.crit | #991B1B | rgb(153,27,27) | rgba(153,27,27,1) | Critical text, error, urgent badge |
+| InnoBg | N.innoBg | #F5F3FF | rgb(245,243,255) | rgba(245,243,255,1) | AI/NOVA bg states |
+| Inno | N.inno | #6D28D9 | rgb(109,40,217) | rgba(109,40,217,1) | AI/NOVA text, icon, border |
+| InnoBrd | N.innoBrd | #DDD6FE | rgb(221,214,254) | rgba(221,214,254,1) | AI/NOVA border |
+
+---
+
+## DERIVED / COMPUTED COLORS
+
+| Usage | HEX | RGBA | Context |
+|---|---|---|---|
+| Action focus ring | — | rgba(29,78,216,0.07) | Composer active box-shadow ring |
+| Action focus ring (wider) | — | rgba(29,78,216,0.06) | Next Best Action card ring |
+| Button primary shadow hover | — | rgba(29,78,216,0.24) | Primary button hover box-shadow |
+| SH.card shadow 1 | — | rgba(15,23,42,0.06) | Card shadow outer |
+| SH.card shadow 2 | — | rgba(15,23,42,0.04) | Card shadow inner |
+| SH.cardHv shadow 1 | — | rgba(15,23,42,0.08) | Card hover shadow outer |
+| SH.cardHv shadow 2 | — | rgba(15,23,42,0.04) | Card hover shadow inner |
+| SH.overlay shadow 1 | — | rgba(15,23,42,0.16) | Drawer/search shadow outer |
+| SH.overlay shadow 2 | — | rgba(15,23,42,0.08) | Drawer/search shadow inner |
+| SH.hero shadow 1 | — | rgba(29,78,216,0.10) | Hero block shadow |
+| SH.hero shadow 2 | — | rgba(29,78,216,0.06) | Hero block shadow inner |
+| Drawer backdrop | — | rgba(15,23,42,0.20) | Drawer overlay |
+| Search backdrop | — | rgba(15,23,42,0.35) | Search overlay |
+| Nav hover bg | — | rgba(15,23,42,0.04) | Nav item hover background |
+| NOVA source tag bg | — | rgba(109,40,217,0.08) | Activity NOVA source pill background |
+| Autonomy selected badge bg | — | rgba(29,78,216,0.12) | A0-A3 badge selected background |
+
+---
+
+## SEMANTIC COLOR MAPPING
+
+| Semantic | Background | Text/Icon | Border | Usage |
+|---|---|---|---|---|
+| Default | N.surface | N.text | N.border | Normal cards, inputs |
+| Muted | N.subtle | N.textSec | N.border | Secondary areas |
+| Primary | N.action | #FFFFFF | — | CTA buttons |
+| Primary hover | N.actionHv | #FFFFFF | — | CTA button hover |
+| Info | N.actionBg | N.action / N.text | N.innoBrd | Hero gradient (action side) |
+| AI / NOVA | N.innoBg | N.inno | N.innoBrd | All NOVA-attributed elements |
+| Success | N.successBg | N.success | #BBF7D0 | Phase complete, validated |
+| Warning | N.warnBg | N.warn | #FDE68A | Outdated sources, blockers, assumptions |
+| Critical | N.critBg | N.crit | #FECACA | Blocked items, missing sources, urgent decisions |
+| Active nav | N.actionBg | N.action | N.action (left 2px) | Selected navigation item |
+
+---
+
+## GRADIENTS
+
+| Name | CSS Value | Usage |
+|---|---|---|
+| Home hero gradient | `linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 100%)` | Home hero situation block |
+| Work overview hero | `linear-gradient(135deg, #EFF6FF, #F5F3FF)` | Work overview NOVA situation card |
+| Decision hero gradient | `linear-gradient(135deg, #FEF2F2, #FFF7F0)` | Decision package hero block |
+| NOVA logo mark | `linear-gradient(135deg, #1D4ED8 0%, #6D28D9 100%)` | Nav rail logo icon |
+| User avatar | `linear-gradient(135deg, #2563EB, #7C3AED)` | User profile avatar in nav |
+
+---
+
+## CONFIDENCE COLOR FUNCTION
+
+```typescript
+function confColor(pct: number): { color: string; bg: string; brd: string } {
+  if (pct >= 80) return { color: "#166534", bg: "#F0FDF4", brd: "#BBF7D0" };
+  if (pct >= 55) return { color: "#B45309", bg: "#FFFBEB", brd: "#FDE68A" };
+  return { color: "#991B1B", bg: "#FEF2F2", brd: "#FECACA" };
+}
+```
+
+| Threshold | color | bg | brd |
+|---|---|---|---|
+| pct >= 80 (High) | #166534 (N.success) | #F0FDF4 (N.successBg) | #BBF7D0 |
+| pct >= 55 (Medium) | #B45309 (amber-700) | #FFFBEB (N.warnBg) | #FDE68A |
+| pct < 55 (Low) | #991B1B (N.crit) | #FEF2F2 (N.critBg) | #FECACA |
+
+Note: #B45309 is NOT in the N palette — it is a derived amber value used only in the confidence medium state and probability labels.
+
+---
+
+## INTERACTIVE STATES
+
+### Button — Primary
+| State | Background | Color | Shadow | Transform |
+|---|---|---|---|---|
+| Default | #1D4ED8 | #FFFFFF | none | none |
+| Hover | #1E40AF | #FFFFFF | `0 2px 8px rgba(29,78,216,.24)` | `translateY(-1px)` |
+| Disabled | #1D4ED8 | #FFFFFF | none | none (opacity: 0.4) |
+| Loading | #1D4ED8 | #FFFFFF | none | none |
+
+### Button — Secondary
+| State | Background | Color | Border | Shadow |
+|---|---|---|---|---|
+| Default | #FFFFFF | #0F172A | `1px solid #CBD5E1` | SH.card |
+| Hover | #F1F5F9 | #0F172A | `1px solid #94A3B8` | SH.card |
+| Disabled | — | — | — | opacity: 0.4 |
+
+### Button — Quiet
+| State | Background | Color |
+|---|---|---|
+| Default | transparent | #475569 |
+| Hover | #F1F5F9 | #0F172A |
+
+### Card
+| State | Border | Shadow |
+|---|---|---|
+| Default | `1px solid #E2E8F0` | SH.card |
+| Hover (clickable) | `1px solid #CBD5E1` | SH.cardHv |
+
+### Nav Item
+| State | Background | Color | Left border |
+|---|---|---|---|
+| Default | transparent | #475569 | transparent 2px |
+| Hover | `rgba(15,23,42,.04)` | #0F172A | transparent 2px |
+| Active | #EFF6FF | #1D4ED8 | `#1D4ED8 2px` |
+
+### Suggestion pill (home)
+| State | Background | Border | Color |
+|---|---|---|---|
+| Default | transparent | `1px solid #E2E8F0` | #475569 |
+| Hover | #EFF6FF | `1px solid #1D4ED8` | #1D4ED8 |
+
+### Clarify suggestion button
+| State | Background | Border | Color |
+|---|---|---|---|
+| Unselected | #FFFFFF | `1.5px solid #E2E8F0` | #0F172A |
+| Selected | #EFF6FF | `1.5px solid #1D4ED8` | #1D4ED8 |
+
+### Filter pill (activity tab)
+| State | Background | Border | Color |
+|---|---|---|---|
+| Unselected | transparent | `1px solid #E2E8F0` | #475569 |
+| Selected | #0F172A | `1px solid #0F172A` | #FFFFFF |
+
+### Search result row
+| State | Background |
+|---|---|
+| Default | transparent |
+| Hover | #F1F5F9 |
+
+---
+
+## BADGE COLORS
+
+| Badge type | Background | Color | Border |
+|---|---|---|---|
+| Deadline: urgent (≤4 days) | #FEF2F2 | #991B1B | #FECACA |
+| Deadline: warning (≤10 days) | #FFFBEB | #92400E | #FDE68A |
+| Deadline: normal | #F1F5F9 | #94A3B8 | #E2E8F0 |
+| Confidence: high (≥80%) | #F0FDF4 | #166534 | — |
+| Confidence: medium (55–79%) | #FFFBEB | #B45309 | — |
+| Confidence: low (<55%) | #FEF2F2 | #991B1B | — |
+| NOVA label | #F5F3FF | #6D28D9 | #DDD6FE |
+| Critical event | #FEF2F2 | #991B1B | #FECACA |
+| Decisions nav badge | #FEF2F2 | #991B1B | — |
+| NOVA recommended | #F5F3FF | #6D28D9 | #DDD6FE |
+
+---
+
+## SOURCE STATUS COLORS
+
+| Status | Background | Color | Border |
+|---|---|---|---|
+| available | #F0FDF4 | #166534 | #BBF7D0 |
+| stale | #FFFBEB | #92400E | #FDE68A |
+| missing | #FEF2F2 | #991B1B | #FECACA |
+
+---
+
+## DECISION OPTION RISK COLORS
+
+| Risk | Color |
+|---|---|
+| Low | #166534 (N.success) |
+| Medium | #B45309 (amber-700) |
+| High | #991B1B (N.crit) |
+
+---
+
+## PHASE STATUS COLORS (Work Plan)
+
+| Status | Icon background | Icon color | Accent left |
+|---|---|---|---|
+| complete | #F0FDF4 | #166534 | #166534 |
+| active | #EFF6FF | #1D4ED8 | #1D4ED8 |
+| future | #F1F5F9 | #94A3B8 | none |
+
+---
+
+## HEALTH STATUS → PROGRESS BAR COLOR (Work header)
+
+| Health | Progress bar color |
+|---|---|
+| blocked | #991B1B |
+| attention | #D97706 (amber-600, NOT in N palette) |
+| active | #1D4ED8 |
+| complete | #1D4ED8 |
+
+Note: #D97706 is a derived amber used only in progress bar when `health === "attention"`. Also used as source "stale" accent color.

@@ -1,0 +1,344 @@
+# 10 — DRAWER SPECIFICATIONS
+## NOVA V6.1 — All Drawers
+
+---
+
+## DRAWER SYSTEM OVERVIEW
+
+**Architecture:** Right-panel overlay with backdrop blur
+**Width:** 460px (fixed)
+**Animation:** None (instant appear) — see implementation note
+**Z-index:** 50
+**Close methods:** X button | Backdrop click
+**Scroll:** Panel body scrolls independently (`overflow-y: auto`)
+**Stack:** Single drawer only (no nested drawers)
+
+---
+
+## DRAWER 1: Home Detail Drawer
+
+**Trigger:** "Details" link (top-right of hero block) OR "Details" link on NOVA background strip
+**Title:** "Situation details"
+**State variable:** `detailOpen: boolean` in `HomeView`
+
+### Structure (Summary → Why → Blocking → Later → Technical)
+
+#### Section 1: Summary
+Paragraph: 14px, N.text, lineHeight 1.65
+```
+The board presentation is the highest priority item. It is 72% complete and blocked 
+by 3 open comments and 1 missing source. Resolving these raises confidence from 76% 
+to 92% and unblocks the CFO review.
+```
+
+#### Section 2: Why it matters
+Paragraph: 13px, N.textSec, lineHeight 1.6
+```
+The CFO must review and pre-approve the budget figures before the 18 July board 
+meeting. Without his sign-off, the budget decision cannot be made at the meeting.
+```
+
+#### Section 3: What is blocking
+3 items with AlertTriangle icon + N.crit text, 13px:
+1. "3 open comments in revenue section — Sarah Chen"
+2. "CRM Pipeline Export not loaded — revenue projection provisional"
+3. "Product Roadmap deck outdated by 6 days"
+
+#### Section 4: Later actions
+Items from `WORK_ITEMS.flatMap(w => [...w.laterActions, ...w.backgroundActions])`:
+- Each: `font-size: 13px`, `color: N.textSec`, `padding: 8px 0`, `border-bottom: 1px solid N.border`
+
+#### Section 5: Technical details
+4 DrawerRows:
+- Documents analysed: 42
+- Sources validated: 3 of 4
+- Time saved: ~6 h
+- Conflicts detected: 1
+
+---
+
+## DRAWER 2: Work Overview — Full Analysis Drawer
+
+**Trigger:** "Full analysis" link in the Progress sidebar card
+**Title:** "Full analysis"
+**State variable:** `detailOpen: boolean` in `WorkOverviewTab`
+
+### Structure
+
+#### Section 1: Summary (14px paragraph)
+Full analysis of work item status, blocker context, estimate
+
+#### Section 2: Why it matters (13px paragraph)
+CFO review dependency and critical path explanation
+
+#### Section 3: What is blocking
+3 AlertTriangle items (N.crit):
+1. "3 open comments in revenue section — Sarah Chen"
+2. "CRM Pipeline Export not loaded — revenue projection provisional"
+3. "Product Roadmap deck outdated — 1 timeline conflict detected"
+
+#### Section 4: Key evidence
+7 health bars rendered:
+```
+display: flex; align-items: center; gap: 10px; margin-bottom: 7px
+```
+Per bar:
+- Label: 12px, N.textSec, FONT, width 110px
+- Bar track: flex 1, height 3px, background N.border, border-radius 999px
+- Bar fill: width `${score}%`, height 100%, background confColor(score).color
+- Value: 11px, 700, confColor(score).color, MONO, width 28px, text-align right
+
+Values: Planning 85 / Budget 72 / Risks 61 / Sources 75 / Decisions 40 / Documentation 78 / Team 88
+
+#### Section 5: History
+4 rows with action + impact:
+```
+display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid N.border
+```
+- Action: 13px, N.text
+- Impact: 11px, 600, N.success
+
+Data:
+- Load CRM export → Confidence 76% → 92%
+- Refresh Product Roadmap deck → Removes 1 conflict
+- Prepare CFO pre-review package → Unlocks Phase 4
+- Final consistency check → Validates all figures
+
+#### Section 6: Technical details
+5 quality bars (same format as Key evidence):
+Source quality 81 / Expert validation 60 / Coverage 75 / Freshness 68 / Consistency 84
+Label width: 130px
+
+---
+
+## DRAWER 3: People — Person Detail Drawer
+
+**Trigger:** "Details" button on any person card
+**Title:** `{person.name}`
+**State variable:** `drawer: PersonData | null` in `WorkPeopleTab`
+
+### Structure (varies by person type)
+
+#### Section 1: Summary
+Paragraph: 13px, N.text, lineHeight 1.65
+
+Content formula:
+- `{person.contribution}.`
+- If AI: "NOVA is working continuously on this project and cannot be reassigned."
+- If human with pending requests: "{N} pending request(s) awaiting input. Response time: {responseTime}."
+- If human no requests: "Response time: {responseTime}."
+
+#### Section 2: Why it matters
+Paragraph: 13px, N.textSec, lineHeight 1.55
+
+Content:
+- If AI: "NOVA is the primary source of cross-source validation. Its output determines which assumptions are safe to include in the final deliverable."
+- If human: "{name} has reviewed {docsReviewed} documents and validated {validationCount} sections. Their sign-off is required before CFO review can begin."
+
+#### Section 3: Current reasoning (NOVA only)
+Only rendered if `person.novaState !== null`.
+Content: 13px, N.inno, lineHeight 1.55
+
+#### Section 4: Key evidence
+DrawerRows:
+- Availability: `person.availability`
+- Workload: `{person.workload}%` — color: >85 → N.crit, >65 → #B45309, else N.success
+- Response time: `person.responseTime`
+- Docs reviewed: `person.docsReviewed`
+- Validations: `person.validationCount`
+- Trust score: `{person.trustScore}%` (only if trustScore > 0) — color: confColor(trustScore).color
+
+#### Section 5: Technical details
+Expertise tags rendered as pills:
+```
+display: flex; flex-wrap: wrap; gap: 6px
+```
+Per tag: 12px, N.textSec, N.subtle bg, 1px solid N.border, border-radius 999px, padding 2px 10px
+
+---
+
+## DRAWER 4: Sources — Source Detail Drawer
+
+**Trigger:** "Details" button on any source card
+**Title:** `{source.name}`
+**State variable:** `drawer: SourceData | null` in `WorkSourcesTab`
+
+### Structure
+
+#### Section 1: Summary
+Paragraph: 13px, N.text, lineHeight 1.65
+Content: `{source.aiComment}` (full NOVA assessment)
+
+#### Section 2: Why it matters
+- If decisionsImpacted.length > 0: "Supports: **{decisions joined}**"
+- If referencedBy.length > 0: "Used in: **{deliverables joined}**"
+- If neither: "Not yet referenced by any deliverable or decision."
+Font: 13px, N.textSec, lineHeight 1.6
+
+#### Section 3: Key evidence
+DrawerRows:
+- Type: `source.type`
+- Quality score: `{qualityScore}%` or "—" — color: confColor if > 0
+- Reliability: `{reliability}%` or "—" — color: confColor if > 0
+- Evidence score: `{evidenceScore}%` or "—" — color: confColor if > 0
+- Conflicts: `{conflicts}` or "None" — color: N.crit if conflicts > 0
+
+#### Section 4: History
+DrawerRows:
+- Last verified: `source.lastVerified`
+- Freshness: `source.freshness`
+- Usage: `{uses} sections` or "Unused"
+
+---
+
+## DRAWER 5: Deliverables — Deliverable Detail Drawer
+
+**Trigger:** "Details" button on any deliverable card
+**Title:** `{deliverable.name}`
+**State variable:** `drawer: DeliverableData | null` in `WorkDeliverablesTab`
+
+### Structure
+
+#### Section 1: Summary
+Paragraph: 13px, N.text, lineHeight 1.65
+Content: `{deliverable.aiSummary}`
+
+#### Section 2: Why it matters
+Paragraph: 13px, N.textSec, lineHeight 1.6
+"This deliverable is required for {audience}. Publication score is {publicationScore}% — {ready/not ready} for distribution."
+
+Ready threshold: publicationScore >= 70
+
+#### Section 3: What is blocking
+Each `missingInfo` item rendered with AlertTriangle + N.crit, 13px, gap 7px, marginBottom 5px
+
+#### Section 4: Key evidence
+DrawerRows (color from confColor where applicable):
+- Evidence coverage: `{evidenceCoverage}%`
+- Completeness: `{completeness}%`
+- Publication score: `{publicationScore}%`
+- Pending comments: `{pendingComments}` — N.warn if > 0
+- Outstanding reviews: `{outstandingReviews}` — N.warn if > 0
+
+#### Section 5: History
+Version history rows:
+```
+display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid N.border; font-size: 12px
+```
+Per row:
+- Version: MONO, N.action, 600, width 36px, flex-shrink 0
+- Date: N.textDis, width 44px, flex-shrink 0
+- Note: N.textSec
+
+#### Section 6: Technical details
+DrawerRows:
+- Generated by: `generatedBy`
+- Reviewed by: `reviewedBy` or "Pending"
+- Validated by: `validatedBy` or "Not yet"
+- Format: `format`
+- Audience: `audience`
+
+---
+
+## DRAWER 6: Decision Package — Full Package Drawer
+
+**Trigger:** "Full package" link (right side of hero, ChevronRight icon)
+**Title:** "Decision package"
+**State variable:** `detailOpen: boolean` in `DecisionPackageView`
+
+### Structure
+
+#### Section 1: Summary
+Paragraph: 13px, N.text, lineHeight 1.65
+Content: `{recommendation} {rationale}`
+
+#### Section 2: Why it matters
+Paragraph: 13px, N.textSec, lineHeight 1.6
+Content: `{businessImpact}`
+
+#### Section 3: What is blocking
+- `{uncertainty}` — 13px, N.warn (if exists)
+- `"{dissent}"` — 13px, N.textSec, italic (if exists)
+
+#### Section 4: Key evidence
+DrawerRows:
+- Financial impact: `{financialImpact}`
+- Risk impact: `{riskImpact}`
+Sources listed below as colored links (N.action, 13px, marginTop 6px)
+
+#### Section 5: Technical details (if expertsConsulted.length > 0)
+Each expert: 13px, N.textSec, marginBottom 4px
+
+---
+
+## DRAWER COMMON SPECS
+
+### Close button (all drawers)
+```
+position: absolute ← within header flex
+background: none
+border: none
+cursor: pointer
+color: N.textDis
+padding: 4px
+```
+Icon: `<X size={15} strokeWidth={2} />`
+
+### DrawerSection spacing
+```
+margin-bottom: 24px
+```
+
+### DrawerSection header
+```
+font-size: 10px
+font-weight: 700
+color: N.textDis
+text-transform: uppercase
+letter-spacing: 0.06em
+margin-bottom: 10px
+font-family: FONT
+```
+
+### Section headers (6 possible per drawer)
+| # | Label |
+|---|---|
+| 1 | Summary |
+| 2 | Why it matters |
+| 3 | What is blocking |
+| 4 | Key evidence |
+| 5 | History |
+| 6 | Technical details |
+
+Not all sections appear in every drawer. Sections are omitted when data is empty or not applicable.
+
+### DrawerRow border
+Last DrawerRow in a section has `border-bottom: 1px solid N.border` (no special last-child removal — border always present).
+
+### Scrollbar
+```css
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+```
+
+---
+
+## IMPLEMENTATION NOTE: Adding Slide Animation
+
+Current: No animation (instant appear).
+To add: Apply these styles to the panel div.
+
+```css
+/* Entry */
+transform: translateX(100%);
+opacity: 0;
+transition: transform 280ms cubic-bezier(.2,0,1,1), opacity 200ms ease;
+
+/* Active */
+transform: translateX(0);
+opacity: 1;
+```
+
+Requires AnimatePresence (motion/react) or CSS conditional class based on a mounted state.

@@ -1,0 +1,382 @@
+# 03 — INFORMATION ARCHITECTURE
+## NOVA V6.1 — Structural Hierarchy
+
+---
+
+## TOP-LEVEL LAYOUT
+
+```
+App (full viewport, flex row)
+├── NavRail (56px wide, fixed left, full height)
+└── Main (flex: 1, overflow hidden, flex column)
+    ├── [WorkBreadcrumb] (conditional — only on work/decision screens)
+    └── [Screen Content] (flex: 1, overflow-y auto)
+```
+
+---
+
+## NAV RAIL STRUCTURE
+
+```
+NavRail (56px × 100vh, flex column, background N.surface, border-right N.border)
+├── Logo block (40px × 40px, centered, marginBottom 8px)
+│   └── Sparkles icon on gradient circle
+├── Primary nav group (flex column, gap 2px, padding 8px)
+│   ├── NavItem: Home (icon + "Home" label)
+│   ├── NavItem: Work (icon + "Work" label + badge if has active)
+│   ├── NavItem: Decisions (icon + "Decisions" label + count badge)
+│   └── NavItem: Deliverables (icon + "Deliverables" label)
+├── Spacer (flex: 1)
+└── Bottom group (flex column, gap 2px, padding 8px)
+    ├── NavItem: Search (Cmd+K shortcut shown on hover)
+    ├── NavItem: Notifications
+    ├── NavItem: Help
+    ├── NavItem: Settings
+    └── User profile row (avatar + name + role)
+```
+
+Each NavItem:
+```
+NavItem (full width, flex column, align-items center, gap 3px, padding 7px 4px, border-radius 8px)
+├── Icon (16px, strokeWidth 2)
+└── Label (9px, 600, letter-spacing 0.02em)
+Left border: 2px solid (transparent → N.action when active)
+```
+
+---
+
+## SCREEN CONTENT CONTAINERS
+
+### Home Screen
+```
+HomeView (flex column, padding 28px 32px, gap 24px, max-width centered)
+├── Header row
+│   ├── Title "Good morning, Martin"
+│   └── Date display
+├── Hero situation block (gradient, border: innoBrd, shadow: hero)
+│   ├── Meta row (NOVALabel + timestamp + "Details" link)
+│   ├── heroSentence paragraph
+│   ├── heroGain heading
+│   └── CTA row (button + WhyInline + "Details" link)
+├── Composer block (search + suggestion pills)
+│   ├── Collapsed state (click to expand)
+│   └── Expanded state (textarea + attach/mic icons + CTA + Cancel)
+├── Active work section
+│   ├── Section header ("In progress")
+│   └── Work rows (flat list, no borders when compact)
+└── Decision nudge card (1 decision, clickable)
+```
+
+### Clarify Screen
+```
+ClarifyView (flex column, max-width 640px, centered, padding 48px 24px)
+├── Back button
+├── Progress indicator (step N of M)
+├── Question block
+│   ├── Category label (NOVALabel style)
+│   ├── Question text (24px 700)
+│   └── Why info tooltip
+├── Suggestion buttons (flex column, gap 8px)
+├── OR divider
+├── Textarea (own answer)
+└── Action row (Skip + Continue)
+```
+
+### Canvas Screen
+```
+CanvasView (flex column, padding 28px 32px)
+├── Header + "Prepare plan" CTA
+├── Cards grid (3-col, gap 16px)
+│   └── CanvasCard × N
+│       ├── Label + Edit button
+│       └── Content (display) OR textarea (editing)
+└── Bottom CTA
+```
+
+### Plan Screen
+```
+PlanView (flex column, padding 28px 32px)
+├── Header + "Review and start" CTA
+└── Phases list (flex column, gap 8px)
+    └── PhaseRow × N (accordion, 1 open at a time)
+        ├── Collapsed: outcome + phase name + probability + icon
+        └── Expanded: + AI contribution + Human contribution + NOVA summary
+```
+
+### Confirm Screen
+```
+ConfirmView (max-width 560px, centered, padding 48px 24px)
+├── Header "One last check"
+├── Summary card (work title + phase + confidence)
+├── Autonomy section
+│   └── Autonomy buttons (A0–A3, horizontal row)
+└── "Start work" CTA
+```
+
+### Work Screen
+```
+WorkView (flex column, full height)
+├── WorkBreadcrumb (sticky top, 42px)
+├── Work Header (progress bar + status + actions)
+├── Work Tabs (7 tabs horizontal)
+└── Tab Content (flex: 1, overflow-y auto)
+    ├── WorkOverviewTab
+    ├── WorkPlanTab
+    ├── WorkActivityTab
+    ├── WorkPeopleTab
+    ├── WorkSourcesTab
+    ├── WorkDecisionsTab
+    └── WorkDeliverablesTab
+```
+
+#### WorkOverviewTab
+```
+WorkOverviewTab (3-col grid: "2fr 1fr" layout → left main, right sidebar)
+├── Main column (flex column, gap 16px)
+│   ├── Hero situation card (gradient block)
+│   ├── Next Best Action card (accent border, focal point)
+│   ├── "Later & Background" disclosure (native <details>)
+│   └── Pending decisions section (decision cards)
+└── Sidebar column (flex column, gap 16px)
+    ├── Progress card
+    │   ├── Health bar
+    │   ├── Phase meta row
+    │   ├── Health bars (7 items)
+    │   └── "Full analysis" link
+    └── [optional additional sidebar cards]
+```
+
+#### WorkPlanTab
+```
+WorkPlanTab (same phase list as PlanView, read-only)
+```
+
+#### WorkActivityTab
+```
+WorkActivityTab (flex column, gap 16px)
+├── Filter pills row
+├── Events list (flex column, gap 12px)
+│   └── ActivityEvent × N
+│       ├── Timestamp + type dot
+│       ├── Change description (primary)
+│       └── NOVA box (impact + delta + why + sources)
+└── Comment composer (textarea + post button)
+```
+
+#### WorkPeopleTab
+```
+WorkPeopleTab (flex column, gap 10px)
+└── PersonCard × N
+    ├── Avatar + name + NOVA label (if AI) + StatusDot
+    ├── Role + availability
+    ├── Contribution (warn if pending)
+    ├── NOVA reasoning box (if novaState)
+    └── "Details" button
+```
+
+#### WorkSourcesTab
+```
+WorkSourcesTab (flex column, gap 2px)
+├── Counter strip ("N available · N stale · N missing")
+└── SourceCard × N
+    ├── Name + status badge
+    ├── Meta (type · Freshness · sections) inline
+    ├── NOVA comment (Sparkles + text)
+    └── Action buttons (Add|Refresh + Details)
+```
+
+#### WorkDecisionsTab
+```
+WorkDecisionsTab (flex column, gap 12px)
+└── DecisionCard × N
+    ├── Badge row (DeadlineBadge + ConfChip)
+    ├── Statement (15px 700)
+    ├── NOVA recommendation (Sparkles + text)
+    ├── If/if-rejected grid (2-col)
+    └── "Review & decide" CTA + WhyInline
+```
+
+#### WorkDeliverablesTab
+```
+WorkDeliverablesTab (flex column, gap 10px)
+└── DeliverableCard × N
+    ├── Header: name + ConfChip + Eye button
+    ├── Readiness label + progress bar + percentage
+    ├── Blocker (if any)
+    ├── Next action text
+    └── "Details" button
+```
+
+---
+
+## DECISION SCREENS
+
+### Decision Package
+```
+DecisionPackageView (max-width 800px, centered, padding 28px 32px)
+├── Back breadcrumb
+├── Hero block (gradient FEF2F2→FFF7F0)
+│   ├── NOVALabel + DeadlineBadge + ConfChip
+│   ├── Statement heading
+│   ├── NOVA recommendation block (innoBg)
+│   └── "Full package" link (ChevronRight)
+├── Options section
+│   └── OptionButton × N (toggle, with radio circle)
+│       ├── Radio circle + label
+│       ├── Risk pill
+│       ├── Impact list (2-col: if/if-rejected)
+│       └── WhyInline
+├── Dissent block (if exists)
+└── CTA row ("Review and decide")
+```
+
+### Decision Pause
+```
+DecisionPauseView (max-width 560px, centered, padding 48px 24px)
+├── Lock icon header + "Decision checkpoint"
+├── Steps indicator (1→2)
+└── [Step 1 — review]
+    ├── Consequences block (2-col)
+    ├── Mandatory review checklist
+    └── "I have reviewed — continue" CTA + "Cancel"
+    OR
+    [Step 2 — decide]
+    ├── Choice buttons (approve/reject/escalate)
+    ├── Rationale textarea (required)
+    └── "Record — [choice]" CTA (disabled until choice + rationale) + Back
+```
+
+### Decision Receipt
+```
+DecisionReceiptView (max-width 560px, centered, padding 48px 24px)
+├── CheckCircle success header
+├── Summary card (date + recorder + impact)
+├── Consequences revealed (2-col)
+├── Action buttons (Return to work + Share)
+└── Export button
+```
+
+---
+
+## GLOBAL VIEWS
+
+### Global Decisions (nav: Decisions)
+```
+GlobalDecisionsView (padding 28px 32px)
+├── Header "All decisions" + count
+├── Filter tabs (All / Pending / Waiting / Decided)
+└── Decision list (gap 12px)
+    └── GlobalDecisionCard × N (similar to WorkDecisionsTab card)
+```
+
+### Global Deliverables (nav: Deliverables)
+```
+GlobalDeliverablesView (padding 28px 32px)
+├── Header "All deliverables"
+└── Deliverable list (gap 10px)
+    └── DeliverableCard × N (same as WorkDeliverablesTab card)
+```
+
+---
+
+## OVERLAYS
+
+### Search Overlay
+```
+Overlay (fixed fullscreen, z-index 100, background rgba(15,23,42,.35), backdrop-filter blur 2px)
+└── Search panel (fixed top 20%, left 50% transform, width 560px, border-radius 16px)
+    ├── Input row (Search icon + input + kbd shortcut display)
+    ├── Divider
+    └── Results list
+        └── ResultButton × N (icon + label, hover: N.subtle)
+```
+
+### Drawer
+```
+Drawer (conditional render, fixed right 0 top 0, width 460px, height 100vh, z-index 50)
+├── Backdrop (fixed fullscreen behind, rgba(15,23,42,.20), onClick → close)
+└── Panel (absolute right 0 top 0, 460px × 100%, N.surface, SH.overlay)
+    ├── Header (20px padding, flex, border-bottom N.border)
+    │   ├── Title (16px 600 N.text)
+    │   └── Close button (X icon)
+    └── Body (overflow-y auto, padding 20px)
+        └── DrawerSection × N
+            ├── Section header (10px 700 uppercase N.textDis)
+            └── Content (paragraph | DrawerRow list | tags)
+```
+
+### ConfChip Popover
+```
+ConfChip (inline-flex, relative, position anchor)
+├── Trigger button
+└── [if open] Popover (absolute top -8px left 0, z-index 20, 260px)
+    ├── "Why N%" header + Close X
+    ├── "N% → N% after action" delta row
+    ├── "What's holding it back" label + dot list (N.crit)
+    ├── "What's working" label + dot list (N.success)
+    └── "Missing" warning block (N.warn)
+```
+
+### WhyInline Expansion
+```
+WhyInline (inline, position relative)
+├── Trigger span (dotted underline, N.textSec)
+└── [if open] Expansion box (block, marginTop 6px, innoBg, innoBrd, 11px radius)
+    └── Content text (13px N.textSec)
+```
+
+---
+
+## WORK BREADCRUMB
+```
+WorkBreadcrumb (sticky top 0, z-index 10, background N.surface, border-bottom N.border, 42px height)
+└── Flex row (padding 0 24px, align-items center, gap 6px)
+    ├── "Work" link (N.textDis, onClick → setView("home") — note: goes to home, not work list)
+    ├── ChevronRight (9px N.textDis)
+    └── Current item title (13px 500 N.text)
+```
+
+---
+
+## SECTION HEADER PATTERN
+
+Used throughout (activity filter labels, work tab headers, etc.):
+```
+Section header (10px, 700, N.textDis, uppercase, letter-spacing 0.06em, marginBottom N)
+```
+
+---
+
+## DATA HIERARCHY
+
+```
+App state
+├── view: View (current screen)
+├── activeWork: string (selected WORK_ITEM id)
+├── activeDecision: string (selected DECISION id)
+└── searchOpen: boolean
+
+WorkItem (from WORK_ITEMS array)
+├── id, title, status, health, phaseNum, phaseTotal
+├── heroSentence, heroGain
+├── deadline, confPct, confAfterAction
+├── confReasons[], confPositive[], confMissing
+├── nextActionTime, nextActionGain, nextActionConfDelta, nextActionWhy
+├── laterActions[], backgroundActions[]
+├── sources: SourceData[]
+├── people: PersonData[]
+├── decisions: DecisionData[]
+├── deliverables: DeliverableData[]
+└── events: ActivityEvent[]
+
+DecisionData
+├── id, statement, deadline, confPct
+├── recommendation, rationale
+├── options: DecisionOption[]
+│   └── { id, label, risk, ifApproved, ifRejected }
+├── evidence: EvidenceItem[]
+├── businessImpact, uncertainty, dissent
+├── financialImpact, riskImpact
+├── sources[], expertsConsulted[]
+└── choiceId (after decision-pause), choiceRationale
+```

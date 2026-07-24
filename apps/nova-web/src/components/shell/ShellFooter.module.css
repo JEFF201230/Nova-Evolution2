@@ -1,0 +1,20 @@
+.footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--n-space-12);
+  padding: var(--n-space-16) var(--n-space-24);
+  border-top: 1px solid var(--n-color-border);
+  background: var(--n-color-surface);
+}
+
+.slot {
+  min-width: 0;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-12);
+}
+
+@media (max-width: 960px) {
+  .footer {
+    grid-template-columns: 1fr;
+  }
+}

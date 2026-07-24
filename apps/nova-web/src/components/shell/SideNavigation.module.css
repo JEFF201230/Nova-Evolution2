@@ -1,0 +1,26 @@
+.sideNavigation {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--n-space-22);
+  width: 100%;
+  height: min(995px, 100vh);
+  padding: 20px 14px 16px 11px;
+}
+
+.header {
+  display: grid;
+  padding-left: 13px;
+}
+
+.sections {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 960px) {
+  .sideNavigation {
+    height: auto;
+    min-height: 0;
+  }
+}

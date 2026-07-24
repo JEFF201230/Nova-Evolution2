@@ -1,0 +1,94 @@
+# PROGRAM-001 ARCHIVE MANIFEST
+
+PROGRAM_ID : PROGRAM-001
+
+PROGRAM_NAME : Migration Foundation
+
+ARCHIVE_STATUS : CLOSED
+
+DATE_CLOTURE : 2026-07-03
+
+---
+
+## 1. Inventaire des documents d'archive
+
+| Document | Chemin | Categorie | Statut | References croisees |
+| --- | --- | --- | --- | --- |
+| PROGRAM_001_ARCHIVE_INDEX.md | Docs/18_PROGRAM_ARCHIVES/PROGRAM-001_MIGRATION_FOUNDATION/PROGRAM_001_ARCHIVE_INDEX.md | Archive index | ACTIVE | Archive manifest, certificate, report |
+| PROGRAM_001_ARCHIVE_MANIFEST.md | Docs/18_PROGRAM_ARCHIVES/PROGRAM-001_MIGRATION_FOUNDATION/PROGRAM_001_ARCHIVE_MANIFEST.md | Archive manifest | ACTIVE | Archive index |
+| PROGRAM_001_ARCHIVE_CERTIFICATE.md | Docs/18_PROGRAM_ARCHIVES/PROGRAM-001_MIGRATION_FOUNDATION/PROGRAM_001_ARCHIVE_CERTIFICATE.md | Archive certificate | ACTIVE | PROGRAM_001_FINAL_REPORT.md |
+| PROGRAM_001_ARCHIVE_REPORT.md | Docs/18_PROGRAM_ARCHIVES/PROGRAM-001_MIGRATION_FOUNDATION/PROGRAM_001_ARCHIVE_REPORT.md | Archive report | ACTIVE | Final report, Decision Report |
+| PROGRAM_001_ARCHIVE_CREATION_REPORT.md | Docs/18_PROGRAM_ARCHIVES/PROGRAM-001_MIGRATION_FOUNDATION/PROGRAM_001_ARCHIVE_CREATION_REPORT.md | Archive creation report | ACTIVE | All archive files |
+
+---
+
+## 2. Inventaire des documents de reference PROGRAM-001
+
+| Document | Chemin | Categorie | Statut | References croisees |
+| --- | --- | --- | --- | --- |
+| PROGRAM_001_FINAL_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_FINAL_REPORT.md | Program final report | CLOSED | Archive certificate, archive report |
+| PROGRAM_001_DECISION_REPORT_AGENT_COLLISIONS.md | Docs/15_OPERATIONS/PROGRAM_001_DECISION_REPORT_AGENT_COLLISIONS.md | Decision Report | OPEN_FOR_ARCHITECT | MIG-002, 03_AGENTS |
+| PROGRAM_001_RETROSPECTIVE_AND_LESSONS_LEARNED.md | Docs/15_OPERATIONS/PROGRAM_001_RETROSPECTIVE_AND_LESSONS_LEARNED.md | Capitalization | ACTIVE REFERENCE | PROGRAM-002 recommendations |
+| NOVA_MIGRATION_SQUAD.md | Docs/15_OPERATIONS/NOVA_MIGRATION_SQUAD.md | Operations doctrine | ACTIVE | MIG-001, MIG-002 |
+| NOVA_PROGRAM_GOVERNANCE.md | Docs/15_OPERATIONS/NOVA_PROGRAM_GOVERNANCE.md | Operations governance | ACTIVE | PROGRAM-001, PROGRAM-002 |
+| MIG-001_TERMINOLOGY_MIGRATION_RULE.md | Docs/05_RULES/MIG-001_TERMINOLOGY_MIGRATION_RULE.md | Migration rule | ACTIVE | Terminology migration |
+| MIG-002_AGENT_COLLISION_RESOLUTION_RULE.md | Docs/05_RULES/MIG-002_AGENT_COLLISION_RESOLUTION_RULE.md | Migration rule | ACTIVE | Collision management |
+
+---
+
+## 3. Inventaire des rapports Bootstrap
+
+| Document | Chemin | Categorie | Statut | References croisees |
+| --- | --- | --- | --- | --- |
+| BOOTSTRAP_003_03_AGENTS_BATCH_MIGRATION_REPORT.md | Docs/07_AGENTS/library/BOOTSTRAP_003_03_AGENTS_BATCH_MIGRATION_REPORT.md | Batch migration report | CLOSED | Agent collisions |
+| NOVA_BOOTSTRAP_004_CREATION_REPORT.md | Docs/07_AGENTS/library/NOVA_BOOTSTRAP_004_CREATION_REPORT.md | Historical execution report | CLOSED | Migration Squad creation |
+| NOVA_BOOTSTRAP_008_MIGRATION_REPORT.md | Docs/15_OPERATIONS/NOVA_BOOTSTRAP_008_MIGRATION_REPORT.md | Documentary migration report | CLOSED | NOVA_MIGRATION_SQUAD.md |
+| BOOTSTRAP_009_BATCH_MIGRATION_REPORT.md | Docs/15_OPERATIONS/BOOTSTRAP_009_BATCH_MIGRATION_REPORT.md | Batch migration report | CLOSED | 02_PROJECT_MANAGEMENT |
+
+---
+
+## 4. Inventaire des rapports de batch PROGRAM-001
+
+| Document | Chemin | Categorie | Statut | References croisees |
+| --- | --- | --- | --- | --- |
+| PROGRAM_001_BATCH_ROOT_FILES_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_ROOT_FILES_REPORT.md | Batch report | CLOSED | ROOT FILES |
+| PROGRAM_001_BATCH_01_CORE_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_01_CORE_REPORT.md | Batch report | CLOSED | 01_CORE |
+| PROGRAM_001_BATCH_04_WORKFLOWS_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_04_WORKFLOWS_REPORT.md | Batch report | CLOSED | 04_WORKFLOWS |
+| PROGRAM_001_BATCH_05_RULES_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_05_RULES_REPORT.md | Batch report | CLOSED | 05_RULES |
+| PROGRAM_001_BATCH_06_REFERENCE_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_06_REFERENCE_REPORT.md | Batch report | CLOSED | 06_REFERENCE |
+| PROGRAM_001_BATCH_07_CERTIFICATION_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_07_CERTIFICATION_REPORT.md | Batch report | CLOSED | 07_CERTIFICATION |
+| PROGRAM_001_BATCH_99_ARCHIVES_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_99_ARCHIVES_REPORT.md | Batch report | CLOSED | 99_ARCHIVES |
+| PROGRAM_001_BATCH_99_INCUBATION_REPORT.md | Docs/15_OPERATIONS/PROGRAM_001_BATCH_99_INCUBATION_REPORT.md | Batch report | CLOSED | 99_INCUBATION |
+
+---
+
+## 5. Inventaire des corpus migres ou satisfaits
+
+| Corpus | Chemin NOVA | Categorie | Statut | References croisees |
+| --- | --- | --- | --- | --- |
+| ROOT FILES | Docs/LOT_TEMPLATE.md ; Docs/MASTER_EXECUTION_SPECIFICATION.md ; Docs/README.md | Corpus root | MIGRATED | Root files report |
+| 01_CORE | Docs/01_CORE | Corpus | SATISFIED_IDENTICAL | 01_CORE report |
+| 02_PROJECT_MANAGEMENT | Docs/02_PROJECT_MANAGEMENT | Corpus | MIGRATED | BOOTSTRAP-009 report |
+| 03_AGENTS | Docs/07_AGENTS/library | Corpus | MIGRATED_WITH_COLLISIONS | BOOTSTRAP-003 report |
+| 04_WORKFLOWS | Docs/04_WORKFLOWS | Corpus | MIGRATED | 04_WORKFLOWS report |
+| 05_RULES | Docs/05_RULES | Corpus | SATISFIED_IDENTICAL | 05_RULES report |
+| 06_REFERENCE | Docs/06_REFERENCE | Corpus | SATISFIED_IDENTICAL | 06_REFERENCE report |
+| 07_CERTIFICATION | Docs/12_CERTIFICATION | Corpus | SATISFIED_IDENTICAL | 07_CERTIFICATION report |
+| 99_ARCHIVES | Docs/99_ARCHIVES | Empty corpus | SATISFIED_EMPTY | 99_ARCHIVES report |
+| 99_INCUBATION | Docs/99_INCUBATION | Corpus | MIGRATED | 99_INCUBATION report |
+
+---
+
+## 6. Manifest status
+
+This manifest references existing documents only.
+
+No source document was moved.
+
+No source document was deleted.
+
+No doctrine was modified.
+
+---
+
+Fin du document.

@@ -1,0 +1,28 @@
+.emptyState {
+  display: grid;
+  gap: var(--n-space-16);
+  justify-items: start;
+}
+
+.content {
+  display: grid;
+  gap: var(--n-space-6);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--n-font-size-18);
+  line-height: var(--n-line-height-130);
+}
+
+.description {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--n-color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--n-space-8);
+}

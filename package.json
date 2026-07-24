@@ -1,0 +1,25 @@
+{
+  "name": "nova-core-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Premier parcours durable et vérifiable de NOVA Core.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start:nova-core": "node --import tsx server/nova-core/nova-core.server.ts",
+    "test:kernel:bootstrap": "node --import tsx --test server/runtime/kernel/kernel-bootstrap-readiness.test.ts",
+    "test:runtime": "node --import tsx --test server/runtime/orchestrator/orchestrator-runtime.test.ts",
+    "test:core": "node --import tsx --test server/nova-core/*.test.ts",
+    "test:nova-runtime:syntax": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/nova-core-runtime/Test-NovaCoreSyntax.ps1",
+    "test:nova-runtime:e2e": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/nova-core-runtime/Test-NovaCoreRuntimeE2E.ps1",
+    "test": "npm run test:runtime && npm run test:core",
+    "typecheck:nova-core": "tsc -p tsconfig.nova-core.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "typescript": "^5.9.3",
+    "tsx": "^4.20.0"
+  }
+}

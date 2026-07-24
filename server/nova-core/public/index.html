@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NOVA Core</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --bg: #07111f;
+        --panel: #0e1b2c;
+        --panel-2: #13243a;
+        --line: #243b55;
+        --text: #edf6ff;
+        --muted: #9db0c5;
+        --blue: #55b6ff;
+        --green: #55dda5;
+        --amber: #ffc763;
+        --red: #ff7e8d;
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; background: radial-gradient(circle at top right, #143255 0, var(--bg) 42%); color: var(--text); }
+      button, input, textarea { font: inherit; }
+      button { cursor: pointer; }
+      .shell { max-width: 1260px; margin: 0 auto; padding: 28px; }
+      header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 24px; }
+      .brand { display: flex; gap: 14px; align-items: center; }
+      .logo { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; color: #07111f; background: linear-gradient(135deg, var(--blue), var(--green)); font-weight: 900; }
+      h1, h2, h3, p { margin-top: 0; }
+      h1 { margin-bottom: 3px; font-size: 1.4rem; }
+      h2 { font-size: 1.02rem; margin-bottom: 16px; }
+      .muted { color: var(--muted); }
+      .status { display: flex; align-items: center; gap: 8px; color: var(--green); font-size: .9rem; }
+      .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 14px var(--green); }
+      .grid { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 20px; }
+      .panel { background: color-mix(in srgb, var(--panel) 94%, transparent); border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
+      label { display: block; margin: 13px 0 6px; color: var(--muted); font-size: .85rem; }
+      input, textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text); background: #081525; outline: none; }
+      input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(85,182,255,.12); }
+      textarea { min-height: 76px; resize: vertical; }
+      .button { border: 0; border-radius: 10px; padding: 10px 14px; color: #06111d; background: var(--blue); font-weight: 750; }
+      .button.secondary { color: var(--text); background: var(--panel-2); border: 1px solid var(--line); }
+      .button.green { background: var(--green); }
+      .button.full { width: 100%; margin-top: 16px; }
+      .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+      .mission-list { display: grid; gap: 10px; }
+      .mission { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 14px; padding: 15px; border: 1px solid var(--line); border-radius: 13px; background: #0a1727; }
+      .mission:hover { border-color: #3e6082; }
+      .mission h3 { margin-bottom: 5px; font-size: .98rem; }
+      .pill { align-self: start; white-space: nowrap; padding: 5px 9px; border-radius: 99px; background: rgba(85,182,255,.13); color: var(--blue); font-size: .75rem; font-weight: 750; }
+      .pill.ACCEPTED { color: var(--green); background: rgba(85,221,165,.12); }
+      .pill.HUMAN_VALIDATION { color: var(--amber); background: rgba(255,199,99,.12); }
+      .detail { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 18px; }
+      .detail-head { display: flex; justify-content: space-between; gap: 12px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 9px; margin: 14px 0; }
+      .timeline { display: grid; gap: 8px; margin-top: 15px; }
+      .event { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 8px; color: var(--muted); font-size: .84rem; }
+      .event b { color: var(--text); }
+      .step { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: var(--panel-2); color: var(--blue); font-size: .72rem; }
+      .empty { padding: 34px 10px; text-align: center; color: var(--muted); }
+      .notice { display: none; margin-bottom: 14px; padding: 11px 13px; border-radius: 10px; background: rgba(85,221,165,.1); color: var(--green); }
+      .notice.error { background: rgba(255,126,141,.1); color: var(--red); }
+      #evidenceBox { display: none; padding: 14px; border-radius: 12px; background: #081525; border: 1px solid var(--line); }
+      .report { margin-top: 14px; padding: 14px; border-radius: 12px; background: #081525; border: 1px solid var(--line); }
+      .report ul { margin: 7px 0 0; padding-left: 20px; color: var(--muted); }
+      .report strong { color: var(--text); }
+      @media (max-width: 860px) {
+        .shell { padding: 18px; }
+        .grid { grid-template-columns: 1fr; }
+        header { align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <div class="brand">
+          <div class="logo">N</div>
+          <div>
+            <h1>NOVA Core</h1>
+            <div class="muted">Créer une mission, lancer Codex, vérifier les preuves, garder l’historique.</div>
+          </div>
+        </div>
+        <div class="status">Service actif</div>
+      </header>
+
+      <div id="notice" class="notice"></div>
+
+      <div class="grid">
+        <section class="panel">
+          <h2>Nouvelle mission</h2>
+          <form id="missionForm">
+            <label for="projectId">Projet</label>
+            <input id="projectId" value="NOVA-CORE" required />
+
+            <label for="missionId">Identifiant de mission</label>
+            <input id="missionId" required />
+
+            <label for="objective">Ce que NOVA doit obtenir</label>
+            <textarea id="objective" placeholder="Ex. Relier le tableau de bord au moteur NOVA" required></textarea>
+
+            <label for="scope">Zone autorisée</label>
+            <input id="scope" value="server/nova-core" required />
+
+            <label for="deliverables">Résultats attendus, un par ligne</label>
+            <textarea id="deliverables" placeholder="Service opérationnel&#10;Tests réussis" required></textarea>
+
+            <button class="button full" type="submit">Créer la mission</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="toolbar">
+            <div>
+              <h2 style="margin-bottom:4px">Missions suivies</h2>
+              <div class="muted" style="font-size:.84rem">Chaque changement est enregistré.</div>
+            </div>
+            <button id="refresh" class="button secondary" type="button">Actualiser</button>
+          </div>
+
+          <div id="missionList" class="mission-list"></div>
+          <div id="detail" class="detail" hidden></div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      const stateLabels = {
+        READY: "Prête",
+        ASSIGNED: "Attribuée",
+        LOCKED: "Périmètre protégé",
+        RUNNING: "En cours",
+        SUBMITTED: "Preuves déposées",
+        TECHNICAL_VALIDATION: "Contrôle technique",
+        HUMAN_VALIDATION: "Décision humaine",
+        ACCEPTED: "Acceptée",
+        REJECTED: "Refusée",
+      };
+
+      const eventLabels = {
+        MissionCreated: "Mission créée",
+        MissionAccepted: "Mission préparée",
+        AgentAssigned: "Responsable attribué",
+        LockGranted: "Périmètre protégé",
+        AgentStarted: "Travail déclaré en cours",
+        ReportSubmitted: "Preuves déposées",
+        TechnicalValidationStarted: "Contrôle démarré",
+        TechnicalValidationAccepted: "Contrôle réussi",
+        FinalValidationAccepted: "Décision humaine : acceptée",
+        LockReleased: "Périmètre libéré",
+      };
+
+      let selected = null;
+      const list = document.querySelector("#missionList");
+      const detail = document.querySelector("#detail");
+      const notice = document.querySelector("#notice");
+
+      document.querySelector("#missionId").value = `NOVA-${new Date().toISOString().slice(0,10).replaceAll("-", "")}-01`;
+      document.querySelector("#refresh").addEventListener("click", loadMissions);
+      document.querySelector("#missionForm").addEventListener("submit", createMission);
+
+      async function api(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: { "content-type": "application/json", ...(options.headers || {}) },
+        });
+        const body = await response.json();
+        if (!response.ok) throw new Error(body.error?.message || "Action impossible");
+        return body;
+      }
+
+      async function createMission(event) {
+        event.preventDefault();
+        try {
+          const projectId = value("projectId");
+          const missionId = value("missionId");
+          await api("/api/v1/missions", {
+            method: "POST",
+            body: JSON.stringify({
+              projectId,
+              missionId,
+              missionType: "DEVELOPMENT",
+              objective: value("objective"),
+              authority: "HUMAN_OWNER",
+              scope: { allowed: csv(value("scope")), forbidden: ["secrets", "production"] },
+              deliverables: lines(value("deliverables")),
+              stopCriteria: ["Les preuves sont contrôlées et une décision humaine est prise."],
+              authorizedReferences: [],
+            }),
+          });
+          showNotice("Mission créée et mémorisée.");
+          selected = { projectId, missionId };
+          await loadMissions();
+          await openMission(projectId, missionId);
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      async function loadMissions() {
+        try {
+          const { missions } = await api("/api/v1/missions");
+          if (!missions.length) {
+            list.innerHTML = '<div class="empty">Aucune mission pour le moment.</div>';
+            detail.hidden = true;
+            return;
+          }
+          list.innerHTML = missions.map((mission) => `
+            <button class="mission" data-project="${escapeText(mission.projectId)}" data-mission="${escapeText(mission.missionId)}" type="button">
+              <span style="text-align:left">
+                <h3>${escapeText(mission.objective)}</h3>
+                <span class="muted">${escapeText(mission.projectId)} · ${escapeText(mission.missionId)}</span>
+              </span>
+              <span class="pill ${mission.state}">${stateLabels[mission.state] || mission.state}</span>
+            </button>
+          `).join("");
+          list.querySelectorAll(".mission").forEach((button) => {
+            button.addEventListener("click", () => openMission(button.dataset.project, button.dataset.mission));
+          });
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      async function openMission(projectId, missionId) {
+        try {
+          selected = { projectId, missionId };
+          const data = await api(`/api/v1/missions/${encodeURIComponent(projectId)}/${encodeURIComponent(missionId)}`);
+          const mission = data.mission;
+          detail.hidden = false;
+          detail.innerHTML = `
+            <div class="detail-head">
+              <div>
+                <h2 style="margin-bottom:5px">${escapeText(mission.missionId)}</h2>
+                <div class="muted">${escapeText(mission.objective)}</div>
+              </div>
+              <span class="pill ${mission.state}">${stateLabels[mission.state] || mission.state}</span>
+            </div>
+            <div class="actions">${actionButtons(mission.state)}</div>
+            ${renderReport(data.report)}
+            <div id="evidenceBox">
+              <label for="proofDeliverables">Résultats réellement obtenus</label>
+              <textarea id="proofDeliverables">${escapeText(mission.deliverables.join("\n"))}</textarea>
+              <label for="proofFiles">Fichiers modifiés, un par ligne</label>
+              <textarea id="proofFiles"></textarea>
+              <label for="proofChecks">Contrôles réussis, un par ligne</label>
+              <textarea id="proofChecks" placeholder="Tests automatiques réussis"></textarea>
+              <button id="submitEvidence" class="button full green" type="button">Déposer les preuves</button>
+            </div>
+            <h2 style="margin:18px 0 10px">Historique vérifiable</h2>
+            <div class="timeline">
+              ${data.events.map((event, index) => `
+                <div class="event">
+                  <span class="step">${index + 1}</span>
+                  <span><b>${eventLabels[event.eventName] || event.eventName}</b><br>${new Date(event.occurredAt).toLocaleString("fr-FR")}</span>
+                </div>
+              `).join("")}
+            </div>
+          `;
+          bindActions();
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      function actionButtons(state) {
+        if (state === "READY" || state === "ASSIGNED" || state === "LOCKED") {
+          return [
+            '<button id="execute" class="button green" type="button">Lancer le travail avec NOVA</button>',
+            '<button id="showEvidence" class="button secondary" type="button">Ajouter des preuves manuellement</button>',
+          ].join("");
+        }
+        if (state === "SUBMITTED" || state === "TECHNICAL_VALIDATION") return '<button id="technical" class="button" type="button">Contrôler les preuves</button>';
+        if (state === "HUMAN_VALIDATION") return '<button id="approve" class="button green" type="button">Approuver la mission</button>';
+        if (state === "ACCEPTED") return '<span class="muted">Mission terminée et historique conservé.</span>';
+        return '<span class="muted">Aucune action disponible dans cet état.</span>';
+      }
+
+      function bindActions() {
+        document.querySelector("#execute")?.addEventListener("click", executeMission);
+        document.querySelector("#showEvidence")?.addEventListener("click", () => document.querySelector("#evidenceBox").style.display = "block");
+        document.querySelector("#technical")?.addEventListener("click", () => act("technical-accept", "Les preuves sont suffisantes. Décision humaine demandée."));
+        document.querySelector("#approve")?.addEventListener("click", () => act("approve", "Mission approuvée."));
+        document.querySelector("#submitEvidence")?.addEventListener("click", submitEvidence);
+      }
+
+      async function executeMission() {
+        const button = document.querySelector("#execute");
+        try {
+          button.disabled = true;
+          button.textContent = "NOVA travaille…";
+          showNotice("NOVA Core vient de lancer son moteur Codex. Cette opération peut prendre plusieurs minutes.");
+          await api(`/api/v1/missions/${encodeURIComponent(selected.projectId)}/${encodeURIComponent(selected.missionId)}/execute`, {
+            method: "POST",
+            body: "{}",
+          });
+          showNotice("Travail terminé. Le rapport et les fichiers modifiés ont été récupérés.");
+          await loadMissions();
+          await openMission(selected.projectId, selected.missionId);
+        } catch (error) {
+          showNotice(error.message, true);
+          button.disabled = false;
+          button.textContent = "Lancer le travail avec NOVA";
+          await loadMissions();
+          await openMission(selected.projectId, selected.missionId);
+        }
+      }
+
+      async function act(action, message) {
+        try {
+          await api(`/api/v1/missions/${encodeURIComponent(selected.projectId)}/${encodeURIComponent(selected.missionId)}/${action}`, {
+            method: "POST",
+            body: "{}",
+          });
+          showNotice(message);
+          await loadMissions();
+          await openMission(selected.projectId, selected.missionId);
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      async function submitEvidence() {
+        try {
+          await api(`/api/v1/missions/${encodeURIComponent(selected.projectId)}/${encodeURIComponent(selected.missionId)}/evidence`, {
+            method: "POST",
+            body: JSON.stringify({
+              deliverables: lines(document.querySelector("#proofDeliverables").value),
+              filesChanged: lines(document.querySelector("#proofFiles").value),
+              checks: lines(document.querySelector("#proofChecks").value),
+              blockers: [],
+              errors: [],
+              scopeConfirmed: true,
+            }),
+          });
+          showNotice("Preuves déposées et mémorisées.");
+          await loadMissions();
+          await openMission(selected.projectId, selected.missionId);
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      function showNotice(message, isError = false) {
+        notice.textContent = message;
+        notice.className = `notice${isError ? " error" : ""}`;
+        notice.style.display = "block";
+        setTimeout(() => notice.style.display = "none", 5000);
+      }
+
+      function renderReport(report) {
+        if (!report) return "";
+        return `
+          <div class="report">
+            <strong>Rapport du moteur NOVA</strong>
+            <div class="muted" style="margin-top:5px">${escapeText(report.reportType)}</div>
+            ${renderList("Fichiers modifiés", report.filesChanged)}
+            ${renderList("Contrôles", report.checks)}
+            ${renderList("Blocages", report.blockers)}
+            ${renderList("Erreurs", report.errors)}
+          </div>
+        `;
+      }
+
+      function renderList(title, values) {
+        if (!values?.length) return "";
+        return `<div style="margin-top:10px"><strong>${escapeText(title)}</strong><ul>${values.map((value) => `<li>${escapeText(value)}</li>`).join("")}</ul></div>`;
+      }
+
+      function value(id) { return document.querySelector(`#${id}`).value.trim(); }
+      function lines(text) { return text.split("\n").map((item) => item.trim()).filter(Boolean); }
+      function csv(text) { return text.split(",").map((item) => item.trim()).filter(Boolean); }
+      function escapeText(text) {
+        return String(text).replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+        })[character]);
+      }
+
+      loadMissions();
+    </script>
+  </body>
+</html>

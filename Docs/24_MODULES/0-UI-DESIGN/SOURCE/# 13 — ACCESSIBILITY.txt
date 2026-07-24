@@ -1,0 +1,108 @@
+# 13 — ACCESSIBILITY
+## NOVA V6.1 — A11y Implementation State
+
+---
+
+## SUMMARY
+
+NOVA V6.1 is a prototype/design system demonstration. Accessibility is partially implemented via semantic HTML and native browser behaviour. It is not WCAG 2.1 AA compliant in its current form.
+
+---
+
+## IMPLEMENTED (NATIVE OR EXPLICIT)
+
+### Keyboard navigation
+- All `<button>` elements are natively focusable and keyboard-activatable
+- Textarea elements are natively focusable
+- NavItem, Btn, Card (when onClick), ConfChip trigger, WhyInline trigger — all use `<button>` or `<span>` with cursor pointer
+- Search overlay: `<input>` receives focus on mount via `useEffect` + `autoFocus` equivalent
+- Clarify suggestions: `<button>` elements — natively keyboard accessible
+- Phase toggles: `<button>` elements
+- Decision options: `<button>` elements
+
+### Semantic elements
+- `<button>` for all clickable actions
+- `<textarea>` for all multi-line text inputs
+- `<details>` / `<summary>` for "Later & Background" disclosure (native accessibility built-in)
+- `<section>` / `<div>` for layout containers (no landmark ARIA applied)
+- `<span>` for inline text and badge elements
+
+### Focus management
+- Search overlay: input receives focus when overlay opens (via setTimeout ref.focus())
+- Composer textarea: receives focus when composer expands (via setTimeout ref.focus())
+- No focus trapping in Drawer or Search overlay (not implemented)
+
+### Color contrast
+Approximate ratios (light mode):
+| Pair | Ratio | WCAG AA (4.5:1) |
+|---|---|---|
+| N.text (#0F172A) on N.surface (#FFF) | ~19:1 | PASS |
+| N.textSec (#475569) on N.surface | ~7.4:1 | PASS |
+| N.textDis (#94A3B8) on N.surface | ~3.1:1 | FAIL (decorative only) |
+| N.action (#1D4ED8) on N.surface | ~5.5:1 | PASS |
+| N.inno (#6D28D9) on N.innoBg (#F5F3FF) | ~5.8:1 | PASS |
+| N.success (#166534) on N.successBg | ~6.2:1 | PASS |
+| N.warn (#92400E) on N.warnBg | ~5.1:1 | PASS |
+| N.crit (#991B1B) on N.critBg | ~5.8:1 | PASS |
+| #FFFFFF on N.action (#1D4ED8) | ~5.5:1 | PASS |
+| N.textDis (#94A3B8) on N.subtle (#F1F5F9) | ~2.5:1 | FAIL (decorative metadata only) |
+
+### Icon usage
+Icons are decorative in most contexts (adjacent text carries meaning). No explicit `aria-hidden="true"` applied — should be added in production.
+
+---
+
+## NOT IMPLEMENTED
+
+### ARIA attributes missing
+- Drawer: no `role="dialog"`, no `aria-modal="true"`, no `aria-labelledby`
+- Search overlay: no `role="dialog"`, no `aria-label`
+- ConfChip popover: no `aria-expanded`, no `aria-haspopup`
+- NavItems: no `aria-current="page"` on active item
+- Tab strip: no `role="tablist"`, no `role="tab"`, no `aria-selected`
+- Cards: no `role="article"` or list context
+- Filter pills: no `aria-pressed` state
+- Phase accordion: no `aria-expanded` on toggle button
+- Progress bars: no `role="progressbar"`, no `aria-valuenow`
+- Status dots: no `aria-label` (color-only status indicator)
+
+### Focus trap
+- Drawer does not trap focus (keyboard user can tab behind overlay)
+- Search overlay does not trap focus
+
+### Escape handling
+- Drawer: no Escape-to-close
+- ConfChip popover: no Escape-to-close
+
+### Screen reader support
+- Dynamic content changes (view transitions, drawer open/close) not announced
+- No `aria-live` regions for status updates
+- Icons without text are not labeled
+
+### Skip links
+- No "skip to main content" link implemented
+
+---
+
+## RECOMMENDATIONS FOR PRODUCTION
+
+Priority 1 (critical for basic a11y):
+1. Add `aria-current="page"` to active NavItem
+2. Add `role="dialog" aria-modal="true" aria-labelledby` to Drawer and Search overlay
+3. Add focus trap to Drawer and Search overlay
+4. Add Escape-to-close to Drawer and ConfChip popover
+5. Add `aria-expanded` to ConfChip trigger, phase toggle, WhyInline trigger
+6. Add `role="tablist"` + `role="tab"` + `aria-selected` to Work tab strip
+
+Priority 2 (important for quality):
+7. Add `aria-label` to icon-only buttons (Eye, More, Close)
+8. Add `aria-hidden="true"` to decorative icons
+9. Add `role="progressbar"` + `aria-valuenow/min/max` to all progress bars
+10. Add `aria-label` to StatusDot (e.g., "Status: available")
+11. Add `aria-live="polite"` to loading states and view transitions
+12. Announce drawer content when opened
+
+Priority 3 (completeness):
+13. Add skip-to-main link
+14. Ensure all interactive elements have visible focus rings (browser default may be overridden by CSS reset)
+15. Add `role="list"` / `role="listitem"` where lists use div/flex

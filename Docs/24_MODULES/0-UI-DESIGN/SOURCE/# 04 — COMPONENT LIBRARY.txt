@@ -1,0 +1,576 @@
+# 04 — COMPONENT LIBRARY
+## NOVA V6.1 — Complete Component Catalogue
+
+---
+
+## PRIMITIVE COMPONENTS
+
+### NOVALabel
+**File location:** Inline in App.tsx
+**Purpose:** Identifies NOVA AI attribution on any element
+
+```typescript
+function NOVALabel({ size = "sm" }: { size?: "sm" | "xs" })
+```
+
+**Render:**
+```tsx
+<span style={{
+  display: "inline-flex", alignItems: "center", gap: size === "xs" ? 3 : 4,
+  background: N.innoBg, color: N.inno, border: `1px solid ${N.innoBrd}`,
+  borderRadius: 999, padding: size === "xs" ? "1px 6px" : "2px 8px",
+  fontSize: size === "xs" ? 9 : 10, fontWeight: 700,
+  letterSpacing: "0.04em", fontFamily: FONT,
+}}>
+  <Sparkles size={size === "xs" ? 7 : 8} strokeWidth={2.5} />
+  NOVA
+</span>
+```
+
+**Used in:** Home hero, Work overview hero, Person cards (AI members), Activity events, ConfChip popover, Nav rail
+
+---
+
+### ConfChip
+**Purpose:** Always-visible confidence indicator with "Why?" popover
+
+```typescript
+function ConfChip({ pct, afterAction, reasons, positive, missing }: {
+  pct: number;
+  afterAction?: number;
+  reasons: string[];
+  positive?: string[];
+  missing?: string;
+})
+```
+
+**State:** `open: boolean` (useState)
+
+**Trigger styles:**
+```
+inline-flex, align-items center, gap 4px
+background: confColor(pct).bg
+color: confColor(pct).color
+border-radius: 999px
+padding: 2px 8px
+font-size: 11px, font-weight: 600
+cursor: pointer
+```
+
+**Trigger content:** `{pct}% confidence` + ChevronDown (9px, rotate 180° when open)
+
+**Popover container:**
+```
+position: absolute, top -8px, left 0, z-index 20
+width: 260px
+background: N.surface
+border: 1px solid N.border
+border-radius: 12px
+box-shadow: SH.overlay
+padding: 14px
+```
+
+**Popover sections:**
+1. Header row: `"Why {pct}%"` (13px 600 N.text) + Close X (N.textDis)
+2. Delta row (if afterAction): `"{pct}% → {afterAction}% after action"` (11px 600 confColor(afterAction).color, innoBg bg, innoBrd brd, rounded, inline-flex)
+3. Negative reasons: label "What's holding it back" (10px 700 uppercase N.textDis) + dot list (N.crit circles, 11px N.text)
+4. Positive reasons (if positive.length): label "What's working" + dot list (N.success circles)
+5. Missing (if missing): warning block (warnBg, innoBrd?, AlertTriangle N.warn, 11px N.warn text)
+
+---
+
+### DeadlineBadge
+**Purpose:** Deadline pill with urgency coloring
+
+```typescript
+function DeadlineBadge({ date }: { date: string })
+```
+
+**Logic:**
+```typescript
+const days = Math.ceil((new Date(date).getTime() - Date.now()) / 86400000);
+const urgent = days <= 4;
+const warning = days <= 10;
+const { bg, color, brd } = urgent
+  ? { bg: N.critBg, color: N.crit, brd: "#FECACA" }
+  : warning
+    ? { bg: N.warnBg, color: N.warn, brd: "#FDE68A" }
+    : { bg: N.subtle, color: N.textDis, brd: N.border };
+```
+
+**Render:**
+```
+inline-flex, align-items center, gap 3px
+background: bg, color: color, border: 1px solid brd
+border-radius: 999px, padding: 2px 8px
+font-size: 11px, font-weight: 600
+```
+Content: `<Clock size={9} strokeWidth={2.5} /> {date}` (date shown as-is, not formatted)
+
+---
+
+### StatusDot
+**Purpose:** Availability indicator circle
+
+```typescript
+function StatusDot({ status }: { status: "available" | "busy" | "away" })
+```
+
+| status | color |
+|---|---|
+| available | #166534 (N.success) |
+| busy | #991B1B (N.crit) |
+| away | #B45309 (amber) |
+
+**Render:**
+```
+width: 7px, height: 7px
+border-radius: 50%
+background: [color]
+flex-shrink: 0
+```
+
+---
+
+### Btn
+**Purpose:** All button variants
+
+```typescript
+function Btn({
+  v = "primary",
+  size = "md",
+  icon,
+  loading,
+  disabled,
+  onClick,
+  children,
+}: {
+  v?: "primary" | "secondary" | "quiet";
+  size?: "sm" | "md";
+  icon?: React.ReactNode;
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+})
+```
+
+**Primary:**
+```
+background: N.action, color: #FFFFFF
+border: none
+border-radius: 8px
+padding: size==="sm" ? "6px 14px" : "9px 20px"
+font-size: size==="sm" ? 12 : 13px, font-weight: 600
+cursor: disabled|loading → "not-allowed" : "pointer"
+opacity: disabled → 0.4 : 1
+transition: T.fast
+hover: background → N.actionHv, box-shadow → 0 2px 8px rgba(29,78,216,.24), translateY(-1px)
+```
+
+**Secondary:**
+```
+background: N.surface, color: N.text
+border: 1px solid N.borderMd
+box-shadow: SH.card
+border-radius: 8px
+padding: same as primary
+hover: background → N.subtle, border-color → N.borderSt
+```
+
+**Quiet:**
+```
+background: transparent, color: N.textSec
+border: none
+border-radius: 6px
+padding: size==="sm" ? "4px 10px" : "6px 14px"
+font-size: 12px
+hover: background → N.subtle, color → N.text
+```
+
+**Loading spinner:** `<RefreshCw size={12} style={{ animation: "spin 1s linear infinite" }} />`
+
+---
+
+### Card
+**Purpose:** Generic card container with optional click
+
+```typescript
+function Card({
+  children,
+  onClick,
+  style,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  style?: React.CSSProperties;
+})
+```
+
+**Render:**
+```
+background: N.surface
+border: 1px solid N.border
+border-radius: 12px
+box-shadow: SH.card
+padding: 16px
+cursor: onClick ? "pointer" : "default"
+transition: T.fast
+hover (if onClick): border-color → N.borderMd, box-shadow → SH.cardHv
+```
+
+---
+
+### WhyInline
+**Purpose:** Dotted-underline expandable rationale span
+
+```typescript
+function WhyInline({ children }: { children: React.ReactNode })
+```
+
+**State:** `open: boolean`
+
+**Trigger:**
+```
+display: inline-flex, align-items: center, gap: 3px
+color: N.textSec, font-size: 12px
+text-decoration: underline dotted N.textDis
+cursor: pointer
+```
+Trigger text: "Why?" (+ ChevronDown 8px, rotates 180° when open)
+
+**Expansion box:**
+```
+display: block, margin-top: 6px
+background: N.innoBg
+border: 1px solid N.innoBrd
+border-radius: 8px
+padding: 10px 12px
+```
+Content: `children` at 12px, N.textSec, lineHeight 1.55
+
+---
+
+### Drawer
+**Purpose:** 460px right-panel overlay
+
+```typescript
+function Drawer({ open, onClose, title, children }: {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+})
+```
+
+**Backdrop:**
+```
+position: fixed, inset: 0, z-index: 50
+background: rgba(15,23,42,.20)
+backdrop-filter: blur(2px)
+onClick: onClose
+```
+
+**Panel:**
+```
+position: fixed, top: 0, right: 0, z-index: 51
+width: 460px, height: 100%
+background: N.surface
+box-shadow: SH.overlay
+display: flex, flex-direction: column
+```
+
+**Header:**
+```
+padding: 18px 20px
+border-bottom: 1px solid N.border
+display: flex, justify-content: space-between, align-items: center
+title: 16px 600 N.text
+close: X icon 15px, color N.textDis, background none, border none, cursor pointer
+```
+
+**Body:**
+```
+flex: 1, overflow-y: auto, padding: 20px
+```
+
+---
+
+### DrawerSection
+**Purpose:** Named section within Drawer
+
+```typescript
+function DrawerSection({ label, children }: { label: string; children: React.ReactNode })
+```
+
+**Render:**
+```
+margin-bottom: 24px
+label: 10px 700 N.textDis uppercase letter-spacing 0.06em margin-bottom 10px
+```
+
+---
+
+### DrawerRow
+**Purpose:** Key-value row in DrawerSection
+
+```typescript
+function DrawerRow({ label, value, color }: { label: string; value: string | number; color?: string })
+```
+
+**Render:**
+```
+display: flex, justify-content: space-between, align-items: center
+padding: 8px 0
+border-bottom: 1px solid N.border
+label: 12px N.textSec
+value: 12px 600 (color || N.text)
+```
+
+---
+
+### NavRail
+**Purpose:** Left navigation sidebar
+
+```typescript
+function NavRail({ view, setView, onSearch }: {
+  view: View;
+  setView: (v: View) => void;
+  onSearch: () => void;
+})
+```
+
+**Container:**
+```
+width: 56px, height: 100%, flex-shrink: 0
+background: N.surface
+border-right: 1px solid N.border
+display: flex, flex-direction: column
+padding: 12px 0
+overflow: hidden
+```
+
+**NavItem:**
+```typescript
+function NavItem({ id, icon, label, active, onClick, badge }: {
+  id: string; icon: React.ReactNode; label: string;
+  active: boolean; onClick: () => void; badge?: number;
+})
+```
+```
+width: 100%, display: flex, flex-direction: column
+align-items: center, gap: 3px
+padding: 7px 4px
+border-radius: 8px
+cursor: pointer
+transition: T.fast
+border-left: 2px solid (active ? N.action : transparent)
+background: active ? N.actionBg : transparent
+color: active ? N.action : N.textSec
+hover: background → rgba(15,23,42,.04), color → N.text
+```
+
+---
+
+### WorkView
+**Purpose:** Full work screen with tabs
+
+```typescript
+function WorkView({ item, onDecision, onBack, onDetail }: {
+  item: WorkItem;
+  onDecision: (id: string) => void;
+  onBack: () => void;
+  onDetail?: () => void;
+})
+```
+
+**Structure:** Header + 7-tab strip + tab content
+
+**Tab strip:**
+```
+display: flex, border-bottom: 1px solid N.border
+background: N.surface
+padding: 0 24px
+gap: 0
+```
+
+**Tab button:**
+```
+padding: 10px 16px
+font-size: 13px, font-weight: active ? 600 : 400
+color: active ? N.action : N.textSec
+border-bottom: 2px solid (active ? N.action : transparent)
+background: none, border-top/left/right: none
+cursor: pointer
+transition: T.fast
+```
+
+---
+
+### SearchOverlay
+**Purpose:** Cmd+K command palette
+
+```typescript
+function SearchOverlay({ open, onClose, setView, setActiveWork, setActiveDecision }: {
+  open: boolean;
+  onClose: () => void;
+  setView: (v: View) => void;
+  setActiveWork: (id: string) => void;
+  setActiveDecision: (id: string) => void;
+})
+```
+
+**Structure:**
+- Backdrop: fixed fullscreen, rgba(15,23,42,.35), blur 2px
+- Panel: fixed, top 20%, left 50%, transform translateX(-50%), width 560px, border-radius 16px, SH.overlay
+- Input: width 100%, padding 14px 16px, 15px, border none, focus outline none
+- Divider: 1px solid N.border
+- Results: max-height 320px, overflow-y auto
+
+**Result item:**
+```
+width: 100%, display: flex, align-items: center, gap: 12px
+padding: 12px 16px
+background: transparent (hover: N.subtle)
+border: none, cursor: pointer, text-align: left
+```
+Icon: 14px N.textDis; Label: 14px N.text
+
+---
+
+## COMPOSITE COMPONENTS (Screen-level)
+
+### HomeView
+Screens: home
+State: `composerOpen`, `val`, `loading`, `detailOpen`
+External props: `setView`, `setActiveWork`, `setActiveDecision`, `WORK_ITEMS`, `DECISIONS`
+
+### ClarifyView
+State: `step`, `current`
+Props: `setView`
+
+### CanvasView
+State: `editing: number | null`
+Props: `setView`
+
+### PlanView
+State: `exp: number | null`
+Props: `setView`
+
+### ConfirmView
+State: `aut: number` (0–3)
+Props: `setView`, `setActiveWork`
+
+### WorkView
+Tabs each have own state for drawer/filter/comment/etc.
+Props: `item`, `onDecision`, `onBack`
+
+### DecisionPackageView
+State: `sel: string | null`, `detailOpen: boolean`
+Props: `decision`, `setView`
+
+### DecisionPauseView
+State: `step: "review" | "decide"`, `choice`, `rationale`, `loading`
+Props: `decision`, `setView`
+
+### DecisionReceiptView
+Stateless (display only)
+Props: `decision`, `setView`
+
+### GlobalDecisionsView
+State: `filter: string`
+Props: `setView`, `setActiveDecision`, `DECISIONS`
+
+### GlobalDeliverablesView
+Stateless list rendering
+Props: `WORK_ITEMS.flatMap(w => w.deliverables)`
+
+---
+
+## DATA COMPONENT TYPES
+
+### WorkItem (data shape)
+```typescript
+interface WorkItem {
+  id: string; title: string; status: string; health: string;
+  phaseNum: number; phaseTotal: number;
+  heroSentence: string; heroGain: string;
+  deadline: string; confPct: number; confAfterAction: number;
+  confReasons: string[]; confPositive: string[]; confMissing: string;
+  nextActionTime: string; nextActionGain: string;
+  nextActionConfDelta: string; nextActionWhy: string;
+  laterActions: string[]; backgroundActions: string[];
+  sources: SourceData[]; people: PersonData[];
+  decisions: DecisionData[]; deliverables: DeliverableData[];
+  events: ActivityEvent[];
+}
+```
+
+### PersonData
+```typescript
+interface PersonData {
+  id: string; name: string; role: string; type: "human" | "ai";
+  availability: string; statusDot: "available" | "busy" | "away";
+  contribution: string; pendingRequests: number;
+  novaState: string | null; workload: number;
+  responseTime: string; docsReviewed: number;
+  validationCount: number; trustScore: number;
+  expertise: string[];
+}
+```
+
+### SourceData
+```typescript
+interface SourceData {
+  id: string; name: string; type: string; status: "available" | "stale" | "missing";
+  freshness: number; sections: number; aiComment: string;
+  decisionsImpacted: string[]; referencedBy: string[];
+  qualityScore: number; reliability: number; evidenceScore: number;
+  conflicts: number; lastVerified: string; uses: number;
+}
+```
+
+### DeliverableData
+```typescript
+interface DeliverableData {
+  id: string; name: string; confPct: number; status: string;
+  readiness: number; blocker: string | null; nextAction: string;
+  aiSummary: string; audience: string; publicationScore: number;
+  evidenceCoverage: number; completeness: number;
+  pendingComments: number; outstandingReviews: number;
+  missingInfo: string[]; versionHistory: VersionEntry[];
+  generatedBy: string; reviewedBy: string | null;
+  validatedBy: string | null; format: string;
+}
+```
+
+### DecisionData
+```typescript
+interface DecisionData {
+  id: string; statement: string; deadline: string; confPct: number;
+  recommendation: string; rationale: string;
+  options: DecisionOption[]; evidence: EvidenceItem[];
+  businessImpact: string; uncertainty: string; dissent: string;
+  financialImpact: string; riskImpact: string;
+  sources: string[]; expertsConsulted: string[];
+  choiceId?: string; choiceRationale?: string;
+}
+```
+
+### ActivityEvent
+```typescript
+interface ActivityEvent {
+  id: string; type: "critical" | "ai" | "human" | "decision" | "system";
+  timestamp: string; change: string;
+  impact: string; confDelta: number; confFrom: number; confTo: number;
+  why: string; sources: string[];
+}
+```
+
+### DecisionOption
+```typescript
+interface DecisionOption {
+  id: string; label: string; risk: "Low" | "Medium" | "High";
+  ifApproved: string; ifRejected: string;
+}
+```
