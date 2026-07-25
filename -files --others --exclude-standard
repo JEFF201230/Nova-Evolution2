@@ -1,0 +1,40 @@
+warning: in the working copy of 'DEMARRER_NOVA.bat', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.execution.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.execution.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.http.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.http.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.server.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.service.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.store.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/nova-core/nova-core.types.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/runtime/orchestrator/orchestrator-runtime.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/runtime/orchestrator/orchestrator-runtime.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/runtime/orchestrator/orchestrator-runtime.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'server/runtime/orchestrator/orchestrator-runtime.types.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/nova-core-runtime/Invoke-NovaCoreMission.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/nova-core-runtime/NovaCore.Reporting.psm1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/nova-core-runtime/Test-NovaCoreContextRuntime.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/nova-core-runtime/Test-NovaCoreReporting.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/nova-core-runtime/Test-NovaCoreRuntimeE2E.ps1', LF will be replaced by CRLF the next time Git touches it
+DEMARRER_NOVA.bat
+server/nova-core/README.md
+server/nova-core/nova-core.execution.test.ts
+server/nova-core/nova-core.execution.ts
+server/nova-core/nova-core.http.test.ts
+server/nova-core/nova-core.http.ts
+server/nova-core/nova-core.server.ts
+server/nova-core/nova-core.service.test.ts
+server/nova-core/nova-core.service.ts
+server/nova-core/nova-core.store.ts
+server/nova-core/nova-core.types.ts
+server/runtime/orchestrator/orchestrator-runtime.service.ts
+server/runtime/orchestrator/orchestrator-runtime.test.ts
+server/runtime/orchestrator/orchestrator-runtime.ts
+server/runtime/orchestrator/orchestrator-runtime.types.ts
+tools/nova-core-runtime/Invoke-NovaCoreMission.ps1
+tools/nova-core-runtime/NovaCore.Reporting.psm1
+tools/nova-core-runtime/Test-NovaCoreContextRuntime.ps1
+tools/nova-core-runtime/Test-NovaCoreReporting.ps1
+tools/nova-core-runtime/Test-NovaCoreRuntimeE2E.ps1

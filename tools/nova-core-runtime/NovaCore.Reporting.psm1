@@ -173,11 +173,34 @@ function Compare-NovaCoreWorkspaceSnapshot {
     }
 }
 
+function ConvertTo-NovaCoreCanonicalPath {
+    param([Parameter(Mandatory)][string]$Path)
+    $normalized = $Path.Trim().Replace('\','/') -replace '/+','/'
+    $prefix = if ($normalized -match '^[A-Za-z]:/') { $normalized.Substring(0,3) } elseif ($normalized.StartsWith('/')) { '/' } else { '' }
+    $tail = if ($prefix) { $normalized.Substring($prefix.Length) } else { $normalized }
+    $segments = [System.Collections.Generic.List[string]]::new()
+    foreach ($segment in @($tail.Split('/'))) {
+        if (-not $segment -or $segment -eq '.') { continue }
+        if ($segment -eq '..') {
+            if ($segments.Count -eq 0) { throw "NOVA_CORE_SCOPE_ESCAPES_ROOT:$Path" }
+            $segments.RemoveAt($segments.Count - 1)
+            continue
+        }
+        $segments.Add($segment)
+    }
+    return ($prefix + (($segments.ToArray()) -join '/')).TrimEnd('/')
+}
+
 function Test-NovaCoreRelativePathMatch {
     param([Parameter(Mandatory)][string]$Path, [Parameter(Mandatory)][string]$Pattern)
-    $normalizedPath = $Path.Replace('\','/').TrimStart('/')
-    $normalizedPattern = $Pattern.Replace('\','/').TrimStart('/')
-    return $normalizedPath -like $normalizedPattern
+    $normalizedPath = (ConvertTo-NovaCoreCanonicalPath $Path).TrimStart('/')
+    $normalizedPattern = (ConvertTo-NovaCoreCanonicalPath $Pattern).TrimStart('/')
+    $recursive = $normalizedPattern.EndsWith('/**')
+    $basePattern = if ($recursive) { $normalizedPattern.Substring(0,$normalizedPattern.Length-3).TrimEnd('/') } else { $normalizedPattern }
+    $escaped = [Regex]::Escape($basePattern)
+    $escaped = $escaped.Replace('\*\*','__NOVA_DOUBLE_STAR__').Replace('\*','[^/]*').Replace('\?','[^/]').Replace('__NOVA_DOUBLE_STAR__','.*')
+    $expression = if ($recursive) { '^' + $escaped + '(?:/.*)?$' } else { '^' + $escaped + '$' }
+    return [Regex]::IsMatch($normalizedPath, $expression, [Text.RegularExpressions.RegexOptions]::IgnoreCase)
 }
 
 function Invoke-NovaCoreNamedCommand {
@@ -205,16 +228,59 @@ function Invoke-NovaCoreNamedCommand {
     $startInfo.RedirectStandardOutput = $true
     $startInfo.RedirectStandardError = $true
     $process = [Diagnostics.Process]::Start($startInfo)
-    $standardOutput = $process.StandardOutput.ReadToEnd()
-    $standardError = $process.StandardError.ReadToEnd()
-    $process.WaitForExit()
-    return [PSCustomObject]@{ Passed=($process.ExitCode -eq 0); Message=(($standardOutput,$standardError | Where-Object { $_ }) -join [Environment]::NewLine).Trim() }
+    $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+    $stderrTask = $process.StandardError.ReadToEndAsync()
+    $timeoutMs = if ($env:NOVA_CORE_VALIDATION_TIMEOUT_MS) { [int]$env:NOVA_CORE_VALIDATION_TIMEOUT_MS } else { 600000 }
+    $completed = $process.WaitForExit($timeoutMs)
+    if (-not $completed) {
+        try { & taskkill.exe /PID $process.Id /T /F 2>$null | Out-Null } catch { try { $process.Kill() } catch {} }
+        [void]$process.WaitForExit(5000)
+    }
+    $standardOutput = $stdoutTask.GetAwaiter().GetResult()
+    $standardError = $stderrTask.GetAwaiter().GetResult()
+    $maxOutput = 1000000
+    if ($standardOutput.Length -gt $maxOutput) { $standardOutput = $standardOutput.Substring(0,$maxOutput) + "`n[TRUNCATED]" }
+    if ($standardError.Length -gt $maxOutput) { $standardError = $standardError.Substring(0,$maxOutput) + "`n[TRUNCATED]" }
+    $message = (($standardOutput,$standardError | Where-Object { $_ }) -join [Environment]::NewLine).Trim()
+    if (-not $completed) { $message = "NOVA_CORE_VALIDATION_TIMEOUT:$Name`n$message".Trim() }
+    return [PSCustomObject]@{ Passed=($completed -and $process.ExitCode -eq 0); Message=$message; TimedOut=(-not $completed) }
+}
+
+function Get-NovaCoreDynamicValidations {
+    param($Delta)
+    if ($null -eq $Delta) { return @() }
+    $paths = @($Delta.Created) + @($Delta.Modified) + @($Delta.Deleted) + @($Delta.Renamed | ForEach-Object { $_.From; $_.To })
+    $normalized = @($paths | ForEach-Object { ([string]$_).Replace('\','/').TrimStart('./') } | Sort-Object -Unique)
+    $selected = [ordered]@{}
+    if (@($normalized | Where-Object { $_ -like 'apps/nova-web/*' }).Count -gt 0) {
+        $selected['nova-web-tests'] = [PSCustomObject]@{ name='nova-web-tests'; type='namedCommand'; command='novaWebTests'; required=$true }
+        $selected['nova-web-typecheck'] = [PSCustomObject]@{ name='nova-web-typecheck'; type='namedCommand'; command='novaWebTypecheck'; required=$true }
+        $selected['nova-web-build'] = [PSCustomObject]@{ name='nova-web-build'; type='namedCommand'; command='novaWebBuild'; required=$true }
+    }
+    if (@($normalized | Where-Object { $_ -like 'server/*' -or $_ -in @('package.json','package-lock.json','tsconfig.nova-core.json') }).Count -gt 0) {
+        $selected['nova-core-tests'] = [PSCustomObject]@{ name='nova-core-tests'; type='namedCommand'; command='novaCoreTests'; required=$true }
+        $selected['nova-core-typecheck'] = [PSCustomObject]@{ name='nova-core-typecheck'; type='namedCommand'; command='novaCoreTypecheck'; required=$true }
+    }
+    if (@($normalized | Where-Object { $_ -like 'tools/nova-core-runtime/*' }).Count -gt 0) {
+        $selected['nova-runtime-syntax'] = [PSCustomObject]@{ name='nova-runtime-syntax'; type='namedCommand'; command='powershellSyntax'; required=$true }
+        $selected['nova-runtime-e2e'] = [PSCustomObject]@{ name='nova-runtime-e2e'; type='namedCommand'; command='runtimeE2ETests'; required=$true }
+    }
+    return @($selected.Values)
 }
 
 function Invoke-NovaCoreValidation {
     param([Parameter(Mandatory)]$Mission, [Parameter(Mandatory)][string]$Repository, $Delta = $null)
     $results = @()
     $validations = if ($Mission.PSObject.Properties.Name -contains 'validations') { @($Mission.validations) } else { @() }
+    $usesDynamicPolicy = $Mission.PSObject.Properties.Name -contains 'validationPolicy' -and
+        $Mission.validationPolicy.source -eq 'actual-git-delta'
+    if ($usesDynamicPolicy) {
+        foreach ($dynamicValidation in @(Get-NovaCoreDynamicValidations -Delta $Delta)) {
+            if (@($validations | Where-Object { $_.name -eq $dynamicValidation.name }).Count -eq 0) {
+                $validations += $dynamicValidation
+            }
+        }
+    }
     foreach ($validation in $validations) {
         $started = [DateTimeOffset]::Now
         $passed = $false
@@ -367,6 +433,7 @@ function New-NovaCoreOfficialReport {
     return [PSCustomObject]@{
         SchemaVersion = '1.0.0'
         Mission = [PSCustomObject]@{ MissionId=$Mission.missionId; Program=$Mission.program; Lot=$Mission.lot; Title=$Mission.title }
+        Binding = $(if ($Mission.PSObject.Properties.Name -contains 'binding') { $Mission.binding } else { $null })
         AgenticProfileRequested = [string]$Mission.profile
         AgenticProfileResolved = $resolvedProfile.Name
         ModelResolved = $Execution.Model
@@ -379,7 +446,7 @@ function New-NovaCoreOfficialReport {
         RoutingJustification = "Profil $($Mission.profile) resolu par le registre NOVA_CORE vers $($resolvedProfile.Name)."
         RuntimeStartedAt = $Execution.StartedAt
         Environment = [PSCustomObject]@{ Branch=$After.Branch; Head=$After.Head; CodexVersion=$Execution.CodexVersion; Model=$Execution.Model; Sandbox=$Execution.Sandbox; Approval=$Execution.Approval }
-        Codex = [PSCustomObject]@{ Status=$Execution.Status; ExitCode=$Execution.ExitCode; StartedAt=$Execution.StartedAt; FinishedAt=$Execution.FinishedAt; DurationMs=$Execution.DurationMs; TranscriptPath=$TranscriptPath; TranscriptAuthoritative=$false }
+        Codex = [PSCustomObject]@{ Status=$Execution.Status; ExitCode=$Execution.ExitCode; Version=$Execution.CodexVersion; Path=$Execution.CodexPath; BinaryHash=$Execution.CodexBinaryHash; ConfigPolicy=$Execution.CodexConfigPolicy; StartedAt=$Execution.StartedAt; FinishedAt=$Execution.FinishedAt; DurationMs=$Execution.DurationMs; TranscriptPath=$TranscriptPath; TranscriptAuthoritative=$false }
         Git = $Delta
         Validations = $Validations
         InputEvidence = $InputEvidence

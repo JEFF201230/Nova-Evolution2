@@ -50,9 +50,52 @@ try {
 
         $fakeTranscript = 'zero files created'
         Assert-Equal 'transcript-does-not-override-git' (@($delta.Created).Count -eq 1 -and $fakeTranscript -match 'zero') $true
-        Add-Result 'windows-path-with-spaces' ($tempRoot -is [string])
-        Add-Result 'temporary-files-cleanable' $true
-        Add-Result 'runtime-ok' $true
+        $dynamicDelta = [PSCustomObject]@{
+            Created=@('server/nova-core/new.ts')
+            Modified=@('apps/nova-web/src/App.tsx','tools/nova-core-runtime/NovaCore.Reporting.psm1')
+            Deleted=@()
+            Renamed=@()
+        }
+        $dynamicNames = @(Get-NovaCoreDynamicValidations -Delta $dynamicDelta | ForEach-Object { $_.name })
+        Assert-Equal 'dynamic-validation-server-tests' ($dynamicNames -contains 'nova-core-tests') $true
+        Assert-Equal 'dynamic-validation-web-build' ($dynamicNames -contains 'nova-web-build') $true
+        Assert-Equal 'dynamic-validation-runtime-e2e' ($dynamicNames -contains 'nova-runtime-e2e') $true
+        Add-Result 'scope-grammar-parity' (
+            (Test-NovaCoreRelativePathMatch -Path 'server\nova-core\http\route.ts' -Pattern 'server/nova-core/**') -and
+            (Test-NovaCoreRelativePathMatch -Path 'SERVER\NOVA-CORE\HTTP\route.ts' -Pattern 'server/nova-core/**') -and
+            -not (Test-NovaCoreRelativePathMatch -Path 'server/nova-core-sibling/route.ts' -Pattern 'server/nova-core/**') -and
+            (Test-NovaCoreRelativePathMatch -Path 'apps/nova-web/src/App.tsx' -Pattern 'apps/*/src/*.tsx')
+        )
+        Add-Result 'scope-windows-file-case-parity' (
+            (Test-NovaCoreRelativePathMatch -Path 'C:\DEV\NOVA\File.ts' -Pattern 'c:/dev/nova/file.ts') -and
+            -not (Test-NovaCoreRelativePathMatch -Path 'C:\DEV\NOVA-OLD\File.ts' -Pattern 'c:/dev/nova/**')
+        )
+
+        $syntaxTest = Join-Path $tempRoot 'tools/nova-core-runtime/Test-NovaCoreSyntax.ps1'
+        New-Item -ItemType Directory -Path (Split-Path -Parent $syntaxTest) -Force | Out-Null
+        [IO.File]::WriteAllText(
+            $syntaxTest,
+            "[Console]::Out.Write('o' * 1000101); [Console]::Error.Write('e' * 1000101); exit 0",
+            [Text.UTF8Encoding]::new($false)
+        )
+        $largeOutput = Invoke-NovaCoreNamedCommand -Name 'powershellSyntax' -Repository $tempRoot
+        Add-Result 'named-command-concurrent-bounded-streams' (
+            $largeOutput.Passed -and ([regex]::Matches($largeOutput.Message, '\[TRUNCATED\]')).Count -eq 2
+        )
+
+        [IO.File]::WriteAllText($syntaxTest, "Start-Sleep -Seconds 5; exit 0", [Text.UTF8Encoding]::new($false))
+        $previousTimeout = $env:NOVA_CORE_VALIDATION_TIMEOUT_MS
+        try {
+            $env:NOVA_CORE_VALIDATION_TIMEOUT_MS = '100'
+            $timedOut = Invoke-NovaCoreNamedCommand -Name 'powershellSyntax' -Repository $tempRoot
+            Add-Result 'named-command-timeout-kills-process-tree' (
+                -not $timedOut.Passed -and $timedOut.TimedOut -and $timedOut.Message -match 'NOVA_CORE_VALIDATION_TIMEOUT'
+            )
+        }
+        finally {
+            if ($null -eq $previousTimeout) { Remove-Item Env:NOVA_CORE_VALIDATION_TIMEOUT_MS -ErrorAction SilentlyContinue }
+            else { $env:NOVA_CORE_VALIDATION_TIMEOUT_MS = $previousTimeout }
+        }
     }
     finally { Pop-Location }
 }

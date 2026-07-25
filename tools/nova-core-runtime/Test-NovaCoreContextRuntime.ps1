@@ -52,6 +52,12 @@ exit 0
     $mission=[ordered]@{
         schemaVersion='1.0.0';missionId='CTX-RUNTIME';program='PROGRAM-TEST';lot='LOT-001';title='Runtime context test';profile='FAST';repository=$testRoot;expectedBranch='master';promptFile=(Join-Path $tools 'mission.prompt.md');workingDirectory=$testRoot;reportDirectory=(Join-Path $testRoot 'reports/unit');changesExpected=$false;humanReviewRequired=$false;enabled=$true
         resourceScopes=@('Docs/output/**');allowedPaths=@('Docs/output/**');forbiddenPaths=@('.git/**','server/**');expectedFiles=@();deliverables=@()
+        binding=[ordered]@{
+            codexVersion='0.144.1'
+            codexPath=[IO.Path]::GetFullPath((Join-Path $bin 'codex.cmd'))
+            codexBinaryHash=(Get-FileHash -LiteralPath (Join-Path $bin 'codex.cmd') -Algorithm SHA256).Hash.ToLowerInvariant()
+            codexConfigPolicy='EXPLICIT_RUNTIME_PROFILE'
+        }
     }
     $missionPath=Join-Path $tools 'mission.json';Write-TestJson $missionPath $mission
     & git -C $testRoot init --quiet

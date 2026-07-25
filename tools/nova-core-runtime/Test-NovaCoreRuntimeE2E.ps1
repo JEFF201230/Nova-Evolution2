@@ -24,11 +24,18 @@ function Write-Utf8([string]$Path, [string]$Value) {
 
 function New-TestMission([string]$Id, [array]$Validations=@(), [array]$ExpectedFiles=@(), [bool]$ChangesExpected=$true, [bool]$ReviewRequired=$true, [string]$PromptPath=$null) {
     if (-not $PromptPath) { $PromptPath = Join-Path $tools 'prompt.md' }
+    $codexPath = [IO.Path]::GetFullPath((Join-Path $fakeBin 'codex.cmd'))
     $mission = [ordered]@{
         schemaVersion='1.0.0'; missionId=$Id; program='PROGRAM-NOVA-CORE-REPORTING-E2E'; lot='LOT-009'; title=$Id
         profile='ARCHITECTURE'; repository=$repo; expectedBranch='master'; promptFile=$PromptPath; workingDirectory=$repo
         reportDirectory=$reports; allowedPaths=@('allowed/**','tools/nova-core-runtime/**'); forbiddenPaths=@('forbidden/**')
         expectedFiles=$ExpectedFiles; validations=$Validations; changesExpected=$ChangesExpected; humanReviewRequired=$ReviewRequired; enabled=$true
+        binding=[ordered]@{
+            codexVersion='0.144.1'
+            codexPath=$codexPath
+            codexBinaryHash=(Get-FileHash -LiteralPath $codexPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            codexConfigPolicy='EXPLICIT_RUNTIME_PROFILE'
+        }
     }
     $path = Join-Path $tools "$Id.json"
     Write-Utf8 $path ($mission | ConvertTo-Json -Depth 10)

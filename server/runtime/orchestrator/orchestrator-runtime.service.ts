@@ -10,16 +10,38 @@ import type {
   RuntimeEvent,
   RuntimeExecutionHandler,
   RuntimeExecutionResult,
+  RuntimeDiagnostic,
   RuntimeLock,
   RuntimeMission,
+  RuntimeMissionCertificate,
+  RuntimeObservabilityEvent,
+  RuntimeRecoveryAction,
+  RuntimeRecoveryEvidence,
+  RuntimeRecoveryResult,
+  RuntimeRunRecord,
   RuntimeQueueItem,
   RuntimeQueueSnapshot,
   RuntimeSnapshot,
 } from "./orchestrator-runtime.types.js";
+import { scopesOverlap } from "../../nova-core/scope-validation.js";
+import { isCanonicalTransitionAllowed } from "./canonical-state.js";
+import {
+  classifyRunRecovery,
+  sealRuntimeEvent,
+  verifyRuntimeEventJournal,
+} from "../journal/append-only-journal.js";
 
-const TERMINAL_STATES = new Set<MissionState>(["ACCEPTED", "REJECTED", "CANCELLED"]);
+const TERMINAL_STATES = new Set<MissionState>(["ACCEPTED", "REJECTED", "CANCELLED", "TIMEOUT", "CERTIFIED"]);
+const IMMUTABLE_TERMINAL_STATES = new Set<MissionState>(["REJECTED", "CANCELLED", "CERTIFIED"]);
+const TERMINAL_AUDIT_EVENTS = new Set<MissionEventName>([
+  "LockReleased",
+  "RunReconciled",
+  "RunAbandoned",
+  "RunQuarantined",
+]);
 
-const TRANSITIONS: Partial<Record<MissionEventName, Partial<Record<MissionState, MissionState>>>> = {
+// Event-specific detailed projections; canonical-state.ts is the authoritative transition gate.
+const EVENT_STATE_PROJECTIONS: Partial<Record<MissionEventName, Partial<Record<MissionState, MissionState>>>> = {
   MissionAccepted: { DRAFT: "READY" },
   MissionCancelled: {
     DRAFT: "CANCELLED",
@@ -32,6 +54,7 @@ const TRANSITIONS: Partial<Record<MissionEventName, Partial<Record<MissionState,
     ESCALATED: "CANCELLED",
     NEEDS_REVISION: "CANCELLED",
     FAILED: "CANCELLED",
+    TIMEOUT: "CANCELLED",
   },
   AgentAssigned: { READY: "ASSIGNED" },
   LockGranted: { ASSIGNED: "LOCKED" },
@@ -69,6 +92,7 @@ const TRANSITIONS: Partial<Record<MissionEventName, Partial<Record<MissionState,
   EscalationResolved: { ESCALATED: "RUNNING" },
   EscalationFailed: { ESCALATED: "FAILED" },
   ExecutionFailed: { RUNNING: "FAILED" },
+  ExecutionTimedOut: { RUNNING: "TIMEOUT" },
   BlockingUnresolved: { WAITING_INPUT: "FAILED" },
   ReportSubmitted: { RUNNING: "SUBMITTED" },
   TechnicalValidationStarted: { SUBMITTED: "TECHNICAL_VALIDATION" },
@@ -87,6 +111,7 @@ const TRANSITIONS: Partial<Record<MissionEventName, Partial<Record<MissionState,
     DOCUMENTARY_VALIDATION: "HUMAN_VALIDATION",
   },
   FinalValidationAccepted: { HUMAN_VALIDATION: "ACCEPTED" },
+  MissionCertified: { ACCEPTED: "CERTIFIED" },
   FinalValidationRejected: { HUMAN_VALIDATION: "REJECTED" },
   ValidationRejected: {
     SUBMITTED: "REJECTED",
@@ -100,6 +125,7 @@ const TRANSITIONS: Partial<Record<MissionEventName, Partial<Record<MissionState,
   RevisionRejected: { NEEDS_REVISION: "REJECTED" },
   MissionRequalified: {
     FAILED: "READY",
+    TIMEOUT: "READY",
     ESCALATED: "READY",
   },
 };
@@ -127,7 +153,11 @@ interface RuntimeStores {
   reports: Map<string, MissionReport>;
   queues: Map<string, RuntimeQueueItem[]>;
   agents: Map<string, RuntimeAgent>;
+  observabilityEvents: RuntimeObservabilityEvent[];
+  runs: Map<string, RuntimeRunRecord>;
 }
+
+export type RuntimeObservabilityListener = (event: RuntimeObservabilityEvent) => void;
 
 export class RuntimeFailure extends Error {
   constructor(readonly runtimeError: RuntimeError) {
@@ -136,13 +166,17 @@ export class RuntimeFailure extends Error {
 }
 
 export class OrchestratorEventBus {
-  constructor(private readonly stores: RuntimeStores) {}
+  constructor(
+    private readonly stores: RuntimeStores,
+    private readonly observabilityListeners: Set<RuntimeObservabilityListener>,
+  ) {}
 
   publish(input: PublishInput): RuntimeEvent {
     const missionKey = key(input.projectId, input.missionId);
     const sequence = this.nextSequence(input.projectId, input.missionId);
     const now = new Date().toISOString();
-    const event: RuntimeEvent = {
+    const previousHash = this.eventsFor(input.projectId, input.missionId).at(-1)?.eventHash ?? null;
+    const event = sealRuntimeEvent({
       eventId: `EVT-${input.projectId}-${input.missionId}-${sequence}`,
       eventName: input.eventName,
       projectId: input.projectId,
@@ -158,7 +192,7 @@ export class OrchestratorEventBus {
       publishedAt: now,
       payload: input.payload ?? {},
       metadata: input.metadata ?? {},
-    };
+    }, previousHash);
 
     const validationError = this.validate(event);
     if (validationError) {
@@ -173,10 +207,18 @@ export class OrchestratorEventBus {
       mission.updatedAt = now;
     }
     this.audit(event, "accepted", "Canonical event accepted.");
+    this.publishObservability(event, mission);
     return event;
   }
 
   replay(projectId: string, missionId: string): MissionState | null {
+    const integrity = verifyRuntimeEventJournal(this.stores.events);
+    if (!integrity.valid) {
+      throw new RuntimeFailure({
+        code: "ORCH-ERR-017",
+        message: `Journal integrity failure: ${integrity.firstError?.code ?? "UNKNOWN"}.`,
+      });
+    }
     let state: MissionState | null = null;
     for (const event of this.eventsFor(projectId, missionId)) {
       if (event.targetState) {
@@ -214,7 +256,27 @@ export class OrchestratorEventBus {
         : { code: "ORCH-ERR-004", message: "MissionCreated must create DRAFT from no state." };
     }
 
-    if (event.eventName === "LockRenewed" || event.eventName === "LockReleased" || event.eventName === "LockExpired") {
+    if (
+      event.sourceState &&
+      IMMUTABLE_TERMINAL_STATES.has(event.sourceState) &&
+      !TERMINAL_AUDIT_EVENTS.has(event.eventName)
+    ) {
+      return {
+        code: "ORCH-ERR-004",
+        message: `No event ${event.eventName} is allowed after terminal state ${event.sourceState}.`,
+      };
+    }
+
+    if (
+      event.eventName === "LockRenewed" ||
+      event.eventName === "LockReleased" ||
+      event.eventName === "LockExpired" ||
+      event.eventName === "RunReconciled" ||
+      event.eventName === "RunAbandoned" ||
+      event.eventName === "RunQuarantined" ||
+      event.eventName === "RunRecoveryAuthorized" ||
+      event.eventName === "ProcessOutput"
+    ) {
       return null;
     }
 
@@ -222,7 +284,7 @@ export class OrchestratorEventBus {
       return { code: "ORCH-ERR-004", message: "Transition event requires source and target states." };
     }
 
-    const expectedTarget = TRANSITIONS[event.eventName]?.[event.sourceState];
+    const expectedTarget = EVENT_STATE_PROJECTIONS[event.eventName]?.[event.sourceState];
     if (!expectedTarget) {
       return {
         code: "ORCH-ERR-004",
@@ -245,6 +307,12 @@ export class OrchestratorEventBus {
       };
     }
 
+    if (!isCanonicalTransitionAllowed(event.sourceState, event.targetState)) {
+      return {
+        code: "ORCH-ERR-004",
+        message: `Canonical transition ${event.sourceState} -> ${event.targetState} is not allowed.`,
+      };
+    }
     return null;
   }
 
@@ -265,6 +333,54 @@ export class OrchestratorEventBus {
       cause,
       actor: event.producer,
       createdAt: new Date().toISOString(),
+    });
+  }
+
+  private publishObservability(event: RuntimeEvent, mission: RuntimeMission | undefined): void {
+    const phases = observabilityPhases(event.eventName);
+    if (phases.length === 0) return;
+    const runId = event.runId ?? mission?.runId ?? null;
+    const run = runId ? this.stores.runs.get(runId) : undefined;
+    const startedAt = run?.startedAt ? Date.parse(run.startedAt) : NaN;
+    const durationMs = Number.isFinite(startedAt) ? Math.max(0, Date.now() - startedAt) : 0;
+    const diagnostics = readDiagnostics(event.payload.diagnostics);
+    const baseSequence = this.stores.observabilityEvents.length;
+
+    phases.forEach((phase, index) => {
+      const timestamp = new Date().toISOString();
+      const observabilityEvent: RuntimeObservabilityEvent = {
+        observabilityEventId: `${event.eventId}-${phase}-${baseSequence + index + 1}`,
+        runtimeEventId: event.eventId,
+        sequence: baseSequence + index + 1,
+        timestamp,
+        projectId: event.projectId,
+        missionId: event.missionId,
+        runId,
+        correlationId: event.correlationId,
+        phase,
+        progression: observabilityProgression(phase),
+        durationMs,
+        message: observabilityMessage(phase, event.payload),
+        level: phase === "FAILED" ? "ERROR" : phase === "VALIDATING" ? "WARN" : "INFO",
+        ...(diagnostics.length > 0 ? { diagnostics } : {}),
+      };
+      this.stores.observabilityEvents.push(observabilityEvent);
+      if (run) {
+        run.lastPhase = phase;
+        run.updatedAt = timestamp;
+        if (phase === "FAILED") {
+          run.status = "FAILED";
+          run.finishedAt = timestamp;
+          if (diagnostics.length > 0) run.diagnostics = diagnostics;
+        }
+      }
+      for (const listener of this.observabilityListeners) {
+        try {
+          listener(structuredClone(observabilityEvent));
+        } catch {
+          // Observability subscribers must never alter runtime behavior.
+        }
+      }
     });
   }
 }
@@ -326,18 +442,44 @@ export class OrchestratorRuntimeService {
   readonly queue: OrchestratorQueue;
 
   private readonly stores: RuntimeStores;
+  private readonly observabilityListeners = new Set<RuntimeObservabilityListener>();
 
   constructor(agents: RuntimeAgent[] = [], snapshot?: RuntimeSnapshot) {
     this.stores = snapshot ? storesFromSnapshot(snapshot) : emptyStores();
     for (const agent of agents) {
       this.stores.agents.set(agent.agentId, agent);
     }
-    this.eventBus = new OrchestratorEventBus(this.stores);
+    this.eventBus = new OrchestratorEventBus(this.stores, this.observabilityListeners);
     this.queue = new OrchestratorQueue(this.stores);
+    this.assertProjectionMatchesJournal();
   }
 
   registerAgent(agent: RuntimeAgent): void {
     this.stores.agents.set(agent.agentId, agent);
+  }
+
+  subscribeObservability(listener: RuntimeObservabilityListener): () => void {
+    this.observabilityListeners.add(listener);
+    return () => this.observabilityListeners.delete(listener);
+  }
+
+  publishExecutionOutput(
+    projectId: string,
+    missionId: string,
+    diagnostic: RuntimeDiagnostic,
+  ): RuntimeEvent {
+    const mission = this.requireMission(projectId, missionId);
+    return this.eventBus.publish({
+      eventName: "ProcessOutput",
+      projectId,
+      missionId,
+      sourceState: mission.state,
+      targetState: mission.state,
+      producer: "Execution Engine",
+      correlationId: this.correlationId(mission),
+      runId: mission.runId ?? undefined,
+      payload: { message: diagnostic.message ?? "Process output", diagnostics: [diagnostic] },
+    });
   }
 
   createMission(definition: MissionDefinition): RuntimeMission {
@@ -404,7 +546,7 @@ export class OrchestratorRuntimeService {
       (lock) =>
         lock.projectId === projectId &&
         lock.status === "ACTIVE" &&
-        lock.scope.some((entry) => lockScope.includes(entry)),
+        lock.scope.some((entry) => lockScope.some((candidate) => scopesOverlap(entry, candidate))),
     );
     if (conflict) {
       throw new RuntimeFailure({ code: "ORCH-ERR-013", message: "Active lock conflicts with requested scope." });
@@ -418,7 +560,7 @@ export class OrchestratorRuntimeService {
       agentId: mission.assignedAgentId,
       scope: lockScope,
       status: "ACTIVE",
-      releaseCondition: "Release when mission reaches ACCEPTED, REJECTED or CANCELLED.",
+      releaseCondition: "Release when mission reaches ACCEPTED, REJECTED, CANCELLED, TIMEOUT or FAILED.",
       grantedAt: now,
       updatedAt: now,
     };
@@ -455,6 +597,20 @@ export class OrchestratorRuntimeService {
       throw new RuntimeFailure({ code: "ORCH-ERR-012", message: "Mission requires an active lock before execution." });
     }
     mission.runId = `RUN-${projectId}-${missionId}-${Date.now()}`;
+    const now = new Date().toISOString();
+    this.stores.runs.set(mission.runId, {
+      runId: mission.runId,
+      projectId,
+      missionId,
+      correlationId: this.correlationId(mission),
+      startedAt: now,
+      updatedAt: now,
+      status: "RUNNING",
+      lastPhase: "STARTED",
+      attempt: 1 + [...this.stores.runs.values()].filter(
+        (run) => run.projectId === projectId && run.missionId === missionId,
+      ).length,
+    });
     this.buildContext(projectId, missionId);
     this.transition(mission, "AgentStarted", "Agent Executor", { contextId: mission.contextId }, mission.runId);
     return mission;
@@ -483,9 +639,19 @@ export class OrchestratorRuntimeService {
         events: this.eventBus.eventsFor(projectId, missionId),
       };
     } catch (error) {
-      this.transition(mission, "ExecutionFailed", "Agent Executor", {
+      const diagnostics = diagnosticsFromError(error);
+      const termination = executionTermination(error);
+      this.markRunTerminated(mission, termination, diagnostics);
+      const eventName: MissionEventName =
+        termination === "CANCELLED" ? "MissionCancelled" :
+        termination === "TIMEOUT" ? "ExecutionTimedOut" :
+        "ExecutionFailed";
+      this.transition(mission, eventName, "Agent Executor", {
         message: error instanceof Error ? error.message : "Execution failed.",
+        termination,
+        ...(diagnostics.length > 0 ? { diagnostics } : {}),
       });
+      this.releaseLockIfTerminal(mission);
       throw error;
     }
   }
@@ -499,7 +665,18 @@ export class OrchestratorRuntimeService {
 
     this.stores.reports.set(key(report.projectId, report.reportId), report);
     mission.reportId = report.reportId;
-    this.transition(mission, "ReportSubmitted", "Agent Executor", { reportId: report.reportId }, mission.runId ?? undefined);
+    this.markRunCompleted(mission);
+    this.transition(
+      mission,
+      "ReportSubmitted",
+      "Agent Executor",
+      {
+        reportId: report.reportId,
+        ...(report.reportFingerprint ? { reportFingerprint: report.reportFingerprint } : {}),
+        ...(report.diagnostics && report.diagnostics.length > 0 ? { diagnostics: report.diagnostics } : {}),
+      },
+      mission.runId ?? undefined,
+    );
     return report;
   }
 
@@ -533,11 +710,112 @@ export class OrchestratorRuntimeService {
     return mission;
   }
 
-  approveMission(projectId: string, missionId: string): RuntimeMission {
+  certifyMission(
+    projectId: string,
+    missionId: string,
+    certificate: RuntimeMissionCertificate,
+  ): RuntimeMission {
     const mission = this.requireMission(projectId, missionId);
-    this.transition(mission, "FinalValidationAccepted", "Authority");
+    this.assertState(mission, "HUMAN_VALIDATION");
+    const report = this.getReport(projectId, missionId);
+    if (!report) {
+      throw new RuntimeFailure({ code: "ORCH-ERR-018", message: "Certification requires an existing report." });
+    }
+    report.certificate = structuredClone(certificate);
+    this.transition(mission, "FinalValidationAccepted", "Certification Authority", {
+      authorityId: certificate.decision.authorityId,
+      decision: certificate.decision.decision,
+    });
+    this.transition(mission, "MissionCertified", "Certification Authority", {
+      certificateId: certificate.certificateId,
+      reportFingerprint: certificate.binding.reportFingerprint,
+      authorityId: certificate.decision.authorityId,
+    });
     this.releaseLockIfTerminal(mission);
     return mission;
+  }
+
+  recoverMission(
+    projectId: string,
+    missionId: string,
+    runId: string,
+    action: RuntimeRecoveryAction,
+    evidence: RuntimeRecoveryEvidence,
+  ): RuntimeRecoveryResult {
+    const mission = this.requireMission(projectId, missionId);
+    if (mission.runId !== runId) {
+      throw new RuntimeFailure({ code: "ORCH-ERR-017", message: "Recovery runId does not match the mission current run." });
+    }
+    const run = this.stores.runs.get(runId);
+    if (!run) {
+      throw new RuntimeFailure({ code: "ORCH-ERR-017", message: "Recovery run does not exist." });
+    }
+    const previousState = mission.state;
+    const activeLock = mission.lockId ? this.stores.locks.get(mission.lockId)?.status === "ACTIVE" : false;
+    const recoveryEvidence = {
+      ...evidence,
+      lockPresent: activeLock,
+    };
+    const recovery = classifyRunRecovery({
+      runId,
+      status: run.status,
+      ...recoveryEvidence,
+    });
+
+    if (action === "reconcile") {
+      run.recoveryStatus = recovery.requiresReconciliation ? "INTERRUPTED" : "RECONCILED";
+      run.recoveryClassification = recovery.classification;
+      this.publishRecoveryEvent(mission, "RunReconciled", action, recovery.classification);
+    } else if (action === "abandon") {
+      this.assertState(mission, "RUNNING");
+      this.markRunTerminated(mission, "CANCELLED", []);
+      run.recoveryStatus = "ABANDONED";
+      run.recoveryClassification = recovery.classification;
+      this.transition(mission, "MissionCancelled", "Recovery Authority", { action, classification: recovery.classification });
+      this.releaseLockIfTerminal(mission);
+      this.publishRecoveryEvent(mission, "RunAbandoned", action, recovery.classification);
+    } else if (action === "quarantine") {
+      this.assertState(mission, "RUNNING");
+      this.markRunTerminated(mission, "FAILED", []);
+      run.recoveryStatus = "QUARANTINED";
+      run.recoveryClassification = recovery.classification;
+      this.transition(mission, "ExecutionFailed", "Recovery Authority", { action, classification: recovery.classification });
+      this.releaseLockIfTerminal(mission);
+      this.publishRecoveryEvent(mission, "RunQuarantined", action, recovery.classification);
+    } else {
+      if (
+        recovery.classification === "INSPECTION_UNKNOWN" ||
+        recovery.classification === "JOURNAL_INVALID" ||
+        recovery.classification === "SNAPSHOT_INVALID" ||
+        recovery.classification === "ARTIFACTS_INVALID" ||
+        recovery.classification === "INTERRUPTED_PROCESS_ACTIVE" ||
+        recovery.classification === "WORKTREE_DRIFT"
+      ) {
+        throw new RuntimeFailure({
+          code: "ORCH-ERR-017",
+          message: `Recovery is unsafe while classification is ${recovery.classification}.`,
+        });
+      }
+      if (!["FAILED", "TIMEOUT"].includes(mission.state)) {
+        throw new RuntimeFailure({ code: "ORCH-ERR-017", message: "Only FAILED or TIMEOUT missions can be recovered." });
+      }
+      run.recoveryStatus = action === "resume" ? "RECONCILED" : "RECOVERABLE";
+      run.recoveryClassification = recovery.classification;
+      this.transition(mission, "MissionRequalified", "Recovery Authority", { action, classification: recovery.classification });
+      this.queue.enqueue(mission);
+      this.publishRecoveryEvent(mission, "RunRecoveryAuthorized", action, recovery.classification);
+    }
+
+    return {
+      action,
+      runId,
+      missionId,
+      previousState,
+      state: mission.state,
+      classification: recovery.classification,
+      attempt: run.attempt ?? 1,
+      evidence: recoveryEvidence,
+    };
   }
 
   rejectMission(projectId: string, missionId: string): RuntimeMission {
@@ -581,6 +859,25 @@ export class OrchestratorRuntimeService {
     return this.eventBus.eventsFor(projectId, missionId);
   }
 
+  getObservabilityEvents(projectId: string, missionId: string): RuntimeObservabilityEvent[] {
+    return structuredClone(
+      this.stores.observabilityEvents.filter(
+        (event) => event.projectId === projectId && event.missionId === missionId,
+      ),
+    );
+  }
+
+  getIncompleteRuns(projectId?: string, missionId?: string): RuntimeRunRecord[] {
+    return structuredClone(
+      [...this.stores.runs.values()].filter(
+        (run) =>
+          run.status === "RUNNING" &&
+          (!projectId || run.projectId === projectId) &&
+          (!missionId || run.missionId === missionId),
+      ),
+    );
+  }
+
   getAudits(): AuditEntry[] {
     return [...this.stores.audits];
   }
@@ -590,6 +887,7 @@ export class OrchestratorRuntimeService {
   }
 
   exportSnapshot(): RuntimeSnapshot {
+    this.assertProjectionMatchesJournal();
     return structuredClone({
       version: 1,
       missions: [...this.stores.missions.values()],
@@ -600,7 +898,32 @@ export class OrchestratorRuntimeService {
       reports: [...this.stores.reports.values()],
       queues: [...this.stores.queues.entries()].map(([projectId, items]) => ({ projectId, items })),
       agents: [...this.stores.agents.values()],
+      observabilityEvents: this.stores.observabilityEvents,
+      runs: [...this.stores.runs.values()],
     });
+  }
+
+  private assertProjectionMatchesJournal(): void {
+    const integrity = verifyRuntimeEventJournal(this.stores.events);
+    if (!integrity.valid) {
+      throw new RuntimeFailure({
+        code: "ORCH-ERR-017",
+        message: `Journal integrity failure: ${integrity.firstError?.code ?? "UNKNOWN"}.`,
+      });
+    }
+    for (const mission of this.stores.missions.values()) {
+      const lastState = this.stores.events
+        .filter((event) => event.projectId === mission.projectId && event.missionId === mission.missionId)
+        .map((event) => event.targetState)
+        .filter((state): state is MissionState => Boolean(state))
+        .at(-1);
+      if (lastState && lastState !== mission.state) {
+        throw new RuntimeFailure({
+          code: "ORCH-ERR-017",
+          message: `Mission projection ${mission.state} contradicts authoritative journal state ${lastState}.`,
+        });
+      }
+    }
   }
 
   private transition(
@@ -611,7 +934,7 @@ export class OrchestratorRuntimeService {
     runId?: string,
     targetOverride?: MissionState,
   ): RuntimeEvent {
-    const targetState = targetOverride ?? TRANSITIONS[eventName]?.[mission.state] ?? null;
+    const targetState = targetOverride ?? EVENT_STATE_PROJECTIONS[eventName]?.[mission.state] ?? null;
     return this.eventBus.publish({
       eventName,
       projectId: mission.projectId,
@@ -626,7 +949,7 @@ export class OrchestratorRuntimeService {
   }
 
   private releaseLockIfTerminal(mission: RuntimeMission): void {
-    if (!mission.lockId || !TERMINAL_STATES.has(mission.state)) {
+    if (!mission.lockId || (!TERMINAL_STATES.has(mission.state) && mission.state !== "FAILED")) {
       return;
     }
 
@@ -647,6 +970,69 @@ export class OrchestratorRuntimeService {
       correlationId: this.correlationId(mission),
       payload: { lockId: lock.lockId },
     });
+  }
+
+  private publishRecoveryEvent(
+    mission: RuntimeMission,
+    eventName: "RunReconciled" | "RunAbandoned" | "RunQuarantined" | "RunRecoveryAuthorized",
+    action: RuntimeRecoveryAction,
+    classification: string,
+  ): void {
+    this.eventBus.publish({
+      eventName,
+      projectId: mission.projectId,
+      missionId: mission.missionId,
+      sourceState: mission.state,
+      targetState: mission.state,
+      producer: "Recovery Authority",
+      correlationId: this.correlationId(mission),
+      runId: mission.runId ?? undefined,
+      payload: { action, classification },
+    });
+  }
+
+  restoreSnapshot(snapshot: RuntimeSnapshot): void {
+    const restored = storesFromSnapshot(snapshot);
+    this.stores.missions.clear();
+    for (const [entryKey, mission] of restored.missions) this.stores.missions.set(entryKey, mission);
+    this.stores.events.splice(0, this.stores.events.length, ...restored.events);
+    this.stores.audits.splice(0, this.stores.audits.length, ...restored.audits);
+    this.stores.locks.clear();
+    for (const [entryKey, lock] of restored.locks) this.stores.locks.set(entryKey, lock);
+    this.stores.contexts.clear();
+    for (const [entryKey, context] of restored.contexts) this.stores.contexts.set(entryKey, context);
+    this.stores.reports.clear();
+    for (const [entryKey, report] of restored.reports) this.stores.reports.set(entryKey, report);
+    this.stores.queues.clear();
+    for (const [entryKey, queue] of restored.queues) this.stores.queues.set(entryKey, queue);
+    this.stores.agents.clear();
+    for (const [entryKey, agent] of restored.agents) this.stores.agents.set(entryKey, agent);
+    this.stores.observabilityEvents.splice(0, this.stores.observabilityEvents.length, ...restored.observabilityEvents);
+    this.stores.runs.clear();
+    for (const [entryKey, run] of restored.runs) this.stores.runs.set(entryKey, run);
+  }
+
+  private markRunCompleted(mission: RuntimeMission): void {
+    if (!mission.runId) return;
+    const run = this.stores.runs.get(mission.runId);
+    if (!run) return;
+    run.status = "COMPLETED";
+    run.finishedAt = new Date().toISOString();
+    run.updatedAt = run.finishedAt;
+  }
+
+  private markRunTerminated(
+    mission: RuntimeMission,
+    status: "FAILED" | "CANCELLED" | "TIMEOUT",
+    diagnostics: RuntimeDiagnostic[],
+  ): void {
+    if (!mission.runId) return;
+    const run = this.stores.runs.get(mission.runId);
+    if (!run) return;
+    run.status = status;
+    run.finishedAt = new Date().toISOString();
+    run.updatedAt = run.finishedAt;
+    if (diagnostics.length > 0) run.diagnostics = diagnostics;
   }
 
   private selectAgent(mission: RuntimeMission, requestedAgentId?: string): RuntimeAgent {
@@ -727,6 +1113,8 @@ function emptyStores(): RuntimeStores {
     reports: new Map(),
     queues: new Map(),
     agents: new Map(),
+    observabilityEvents: [],
+    runs: new Map(),
   };
 }
 
@@ -745,5 +1133,87 @@ function storesFromSnapshot(snapshot: RuntimeSnapshot): RuntimeStores {
     reports: new Map(data.reports.map((report) => [key(report.projectId, report.reportId), report])),
     queues: new Map(data.queues.map((queue) => [queue.projectId, queue.items])),
     agents: new Map(data.agents.map((agent) => [agent.agentId, agent])),
+    observabilityEvents: data.observabilityEvents ?? [],
+    runs: new Map((data.runs ?? []).map((run) => [run.runId, run])),
   };
+}
+
+function observabilityPhases(eventName: MissionEventName): RuntimeObservabilityEvent["phase"][] {
+  switch (eventName) {
+    case "MissionCreated": return ["CREATED"];
+    case "AgentAssigned": return ["ASSIGNED"];
+    case "AgentStarted": return ["STARTED", "RUNNING"];
+    case "TechnicalValidationStarted":
+    case "DocumentaryValidationStarted":
+    case "HumanValidationStarted": return ["VALIDATING"];
+    case "ReportSubmitted": return ["COMPLETED"];
+    case "MissionCertified": return ["COMPLETED"];
+    case "ExecutionFailed": return ["FAILED"];
+    case "MissionCancelled": return ["CANCELLED"];
+    case "ExecutionTimedOut": return ["TIMEOUT"];
+    case "RunReconciled":
+    case "RunAbandoned":
+    case "RunQuarantined":
+    case "RunRecoveryAuthorized": return ["RECOVERY"];
+    case "ProcessOutput": return ["OUTPUT"];
+    default: return [];
+  }
+}
+
+function observabilityProgression(phase: RuntimeObservabilityEvent["phase"]): number {
+  return {
+    CREATED: 0,
+    ASSIGNED: 20,
+    STARTED: 35,
+    RUNNING: 50,
+    VALIDATING: 75,
+    COMPLETED: 90,
+    FAILED: 100,
+    CANCELLED: 100,
+    TIMEOUT: 100,
+    OUTPUT: 55,
+    RECOVERY: 100,
+  }[phase];
+}
+
+function observabilityMessage(phase: RuntimeObservabilityEvent["phase"], payload: Record<string, unknown>): string {
+  if (typeof payload.message === "string" && payload.message.length > 0) return payload.message;
+  if (phase === "OUTPUT") return "Sortie de processus disponible.";
+  if (phase === "RECOVERY") return "Action de recovery enregistrée.";
+  if (phase === "CANCELLED") return "Exécution annulée.";
+  if (phase === "TIMEOUT") return "Exécution interrompue après expiration du délai.";
+  return {
+    CREATED: "Mission créée.",
+    ASSIGNED: "Mission assignée.",
+    STARTED: "Exécution démarrée.",
+    RUNNING: "Exécution en cours.",
+    VALIDATING: "Validation en cours.",
+    COMPLETED: "Exécution terminée, rapport disponible.",
+    FAILED: "Exécution échouée.",
+  }[phase];
+}
+
+function executionTermination(error: unknown): "FAILED" | "CANCELLED" | "TIMEOUT" {
+  if (typeof error !== "object" || error === null) return "FAILED";
+  const code = (error as { code?: unknown }).code;
+  if (code === "NOVA_CORE_EXECUTION_CANCELLED") return "CANCELLED";
+  if (code === "NOVA_CORE_EXECUTION_TIMEOUT") return "TIMEOUT";
+  return "FAILED";
+}
+
+function readDiagnostics(value: unknown): RuntimeDiagnostic[] {
+  return Array.isArray(value) ? value.filter(isRuntimeDiagnostic) : [];
+}
+
+function isRuntimeDiagnostic(value: unknown): value is RuntimeDiagnostic {
+  return typeof value === "object" && value !== null && typeof (value as { phase?: unknown }).phase === "string";
+}
+
+function diagnosticsFromError(error: unknown): RuntimeDiagnostic[] {
+  if (error instanceof RuntimeFailure && error.runtimeError.diagnostics) return error.runtimeError.diagnostics;
+  if (typeof error === "object" && error !== null) {
+    const diagnostics = (error as { diagnostics?: unknown }).diagnostics;
+    return readDiagnostics(diagnostics);
+  }
+  return [];
 }

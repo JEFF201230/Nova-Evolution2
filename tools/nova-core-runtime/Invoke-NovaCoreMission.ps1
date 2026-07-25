@@ -44,7 +44,7 @@ $reportsRoot = if ($missionBootstrap -and $missionBootstrap.PSObject.Properties.
 } else {
     Join-Path $PSScriptRoot 'reports'
 }
-$runDirectory = Join-Path $reportsRoot $runId
+$runDirectory = if ((Split-Path -Leaf $reportsRoot) -eq $runId) { $reportsRoot } else { Join-Path $reportsRoot $runId }
 $beforeBackupDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ("nova-core-before-$runId")
 New-Item -ItemType Directory -Path $runDirectory -Force | Out-Null
 $journalPath = Join-Path $runDirectory 'execution-journal.jsonl'
@@ -259,6 +259,19 @@ try {
         }
         return $parsedVersion.ToString()
     } -Repository $validatedMission.Repository
+    $codexPath = [System.IO.Path]::GetFullPath([string]$codexCommand.Source)
+    $codexBinaryHash = (Get-FileHash -LiteralPath $codexPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($mission.PSObject.Properties.Name -notcontains 'binding') {
+        throw 'NOVA_CORE_CODEX_BINDING_MISSING'
+    }
+    if (
+        [string]$mission.binding.codexVersion -ne $codexVersion -or
+        -not $codexPath.Equals([System.IO.Path]::GetFullPath([string]$mission.binding.codexPath), [System.StringComparison]::OrdinalIgnoreCase) -or
+        [string]$mission.binding.codexBinaryHash -ne $codexBinaryHash -or
+        [string]$mission.binding.codexConfigPolicy -ne 'EXPLICIT_RUNTIME_PROFILE'
+    ) {
+        throw 'NOVA_CORE_CODEX_BINDING_MISMATCH'
+    }
 
     $startedAt = [DateTimeOffset]::Now
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -310,10 +323,14 @@ try {
 
         $codexArguments = @(
             "exec"
+            "--ignore-user-config"
+            "--strict-config"
             "--model"
             $profile.Model
             "--config"
             ('model_reasoning_effort="{0}"' -f $profile.ReasoningEffort)
+            "--config"
+            ('approval_policy="{0}"' -f $profile.ApprovalPolicy)
             "--sandbox"
             $profile.Sandbox
             "--cd"
@@ -425,7 +442,7 @@ try {
             -EvidenceStatus ([string]$outputEvidenceRegistry.status) `
             -ReviewRequired $reviewRequired
     } -Repository $validatedMission.Repository
-    $executionFacts = [PSCustomObject]@{ Status=$status; ExitCode=$exitCode; StartedAt=$startedAt; FinishedAt=$finishedAt; DurationMs=$stopwatch.ElapsedMilliseconds; CodexVersion=$codexVersion; Model=$profile.Model; Sandbox=$profile.Sandbox; Approval=$profile.ApprovalPolicy }
+    $executionFacts = [PSCustomObject]@{ Status=$status; ExitCode=$exitCode; StartedAt=$startedAt; FinishedAt=$finishedAt; DurationMs=$stopwatch.ElapsedMilliseconds; CodexVersion=$codexVersion; CodexPath=$codexPath; CodexBinaryHash=$codexBinaryHash; CodexConfigPolicy='EXPLICIT_RUNTIME_PROFILE'; Model=$profile.Model; Sandbox=$profile.Sandbox; Approval=$profile.ApprovalPolicy }
     $officialReport = Invoke-NovaCoreInstrumentedStage -StageName 'REPORT_GENERATED' -Action {
         $lockEvidence = if ($null -ne $missionLock) {
             [PSCustomObject]@{

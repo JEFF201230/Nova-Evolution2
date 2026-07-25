@@ -1,4 +1,4 @@
-import type { MissionDefinition } from "../runtime/orchestrator/orchestrator-runtime.js";
+import type { MissionDefinition, RuntimeDiagnostic } from "../runtime/orchestrator/orchestrator-runtime.js";
 
 export interface EvidenceSubmission {
   reportId?: string;
@@ -23,6 +23,8 @@ export class NovaCoreError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    readonly details?: string,
+    readonly diagnostics: RuntimeDiagnostic[] = [],
   ) {
     super(message);
     this.name = "NovaCoreError";

@@ -15,7 +15,9 @@ export type MissionState =
   | "ACCEPTED"
   | "REJECTED"
   | "FAILED"
-  | "CANCELLED";
+  | "TIMEOUT"
+  | "CANCELLED"
+  | "CERTIFIED";
 
 export type MissionEventName =
   | "MissionCreated"
@@ -37,6 +39,7 @@ export type MissionEventName =
   | "EscalationResolved"
   | "EscalationFailed"
   | "ExecutionFailed"
+  | "ExecutionTimedOut"
   | "BlockingUnresolved"
   | "ReportSubmitted"
   | "TechnicalValidationStarted"
@@ -49,6 +52,12 @@ export type MissionEventName =
   | "DocumentaryValidationRejectedFinal"
   | "HumanValidationStarted"
   | "FinalValidationAccepted"
+  | "MissionCertified"
+  | "RunReconciled"
+  | "RunAbandoned"
+  | "RunQuarantined"
+  | "RunRecoveryAuthorized"
+  | "ProcessOutput"
   | "FinalValidationRejected"
   | "ValidationRejected"
   | "RevisionRequested"
@@ -141,6 +150,86 @@ export interface MissionReport {
   errors: string[];
   scopeConfirmed: boolean;
   submittedAt: string;
+  diagnostics?: RuntimeDiagnostic[];
+  runId?: string;
+  promptHash?: string;
+  executionRequestHash?: string;
+  manifestHash?: string;
+  reportFingerprint?: string;
+  reportPath?: string;
+  promptPath?: string;
+  manifestPath?: string;
+  executionRequestPath?: string;
+  runBindingPath?: string;
+  repositoryRoot?: string;
+  codexVersion?: string;
+  codexPath?: string;
+  codexBinaryHash?: string;
+  codexConfigPolicy?: string;
+  branch?: string;
+  head?: string;
+  deliverableEvidence?: Array<{
+    path: string;
+    size: number;
+    sha256: string;
+    modifiedAt: string;
+    runId: string;
+  }>;
+  certificate?: RuntimeMissionCertificate;
+}
+
+export interface RuntimeCertificationBinding {
+  projectId: string;
+  missionId: string;
+  reportId: string;
+  runId: string;
+  promptHash: string;
+  executionRequestHash: string;
+  manifestHash: string;
+  reportFingerprint: string;
+  codexVersion: string;
+  codexPath: string;
+  codexBinaryHash: string;
+}
+
+export interface RuntimeCertificationDecision {
+  authorityId: string;
+  authorityType: string;
+  keyId: string;
+  decision: "CERTIFIED";
+  missionId: string;
+  runId: string;
+  reportFingerprint: string;
+  decidedAt: string;
+  correlationId: string;
+  attestation?: string;
+}
+
+export interface RuntimeMissionCertificate {
+  schemaVersion: "1.0.0";
+  certificateId: string;
+  algorithm: "HMAC-SHA256";
+  binding: RuntimeCertificationBinding;
+  decision: RuntimeCertificationDecision;
+  certificateFingerprint: string;
+  signature: string;
+}
+
+export type RuntimeDiagnosticLevel = "INFO" | "WARN" | "ERROR";
+
+export interface RuntimeDiagnostic {
+  code?: string;
+  phase: string;
+  message?: string;
+  exitCode?: number;
+  processExitCode?: number;
+  stdout?: string;
+  stderr?: string;
+  command?: string;
+  args?: string[];
+  cwd?: string;
+  runId?: string | null;
+  correlationId?: string;
 }
 
 export interface RuntimeEvent {
@@ -159,6 +248,80 @@ export interface RuntimeEvent {
   publishedAt: string;
   payload: Record<string, unknown>;
   metadata: Record<string, unknown>;
+  previousHash?: string | null;
+  eventHash?: string;
+  schemaVersion?: number;
+}
+
+export type MissionObservabilityPhase =
+  | "CREATED"
+  | "ASSIGNED"
+  | "STARTED"
+  | "RUNNING"
+  | "VALIDATING"
+  | "COMPLETED"
+  | "FAILED"
+  | "CANCELLED"
+  | "TIMEOUT"
+  | "OUTPUT"
+  | "RECOVERY";
+
+export interface RuntimeObservabilityEvent {
+  observabilityEventId: string;
+  runtimeEventId: string;
+  sequence: number;
+  timestamp: string;
+  projectId: string;
+  missionId: string;
+  runId: string | null;
+  correlationId: string;
+  phase: MissionObservabilityPhase;
+  progression: number;
+  durationMs: number;
+  message: string;
+  level: RuntimeDiagnosticLevel;
+  diagnostics?: RuntimeDiagnostic[];
+}
+
+export interface RuntimeRunRecord {
+  runId: string;
+  projectId: string;
+  missionId: string;
+  correlationId: string;
+  startedAt: string;
+  updatedAt: string;
+  finishedAt?: string;
+  status: "RUNNING" | "COMPLETED" | "FAILED" | "CANCELLED" | "TIMEOUT";
+  lastPhase: MissionObservabilityPhase;
+  diagnostics?: RuntimeDiagnostic[];
+  attempt?: number;
+  recoveryStatus?: "INTERRUPTED" | "RECONCILED" | "ABANDONED" | "QUARANTINED" | "RECOVERABLE";
+  recoveryClassification?: string;
+}
+
+export type RuntimeRecoveryAction = "reconcile" | "resume" | "abandon" | "quarantine" | "recover";
+
+export type RuntimeRecoverySignal = boolean | "UNKNOWN";
+
+export interface RuntimeRecoveryEvidence {
+  processAlive: RuntimeRecoverySignal;
+  processTreeAlive: RuntimeRecoverySignal;
+  reportPresent: RuntimeRecoverySignal;
+  worktreeModified: RuntimeRecoverySignal;
+  journalValid: RuntimeRecoverySignal;
+  snapshotValid: RuntimeRecoverySignal;
+  artifactsValid: RuntimeRecoverySignal;
+}
+
+export interface RuntimeRecoveryResult {
+  action: RuntimeRecoveryAction;
+  runId: string;
+  missionId: string;
+  previousState: MissionState;
+  state: MissionState;
+  classification: string;
+  attempt: number;
+  evidence: RuntimeRecoveryEvidence & { lockPresent: RuntimeRecoverySignal };
 }
 
 export interface AuditEntry {
@@ -197,6 +360,8 @@ export interface RuntimeSnapshot {
   reports: MissionReport[];
   queues: RuntimeQueueSnapshot[];
   agents: RuntimeAgent[];
+  observabilityEvents?: RuntimeObservabilityEvent[];
+  runs?: RuntimeRunRecord[];
 }
 
 export interface RuntimeAgent {
@@ -218,4 +383,5 @@ export interface RuntimeExecutionResult {
 export interface RuntimeError {
   code: RuntimeErrorCode;
   message: string;
+  diagnostics?: RuntimeDiagnostic[];
 }

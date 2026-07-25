@@ -9,27 +9,33 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+node -e "if (Number(process.versions.node.split('.')[0]) < 22) process.exit(1)"
+if errorlevel 1 (
+  echo NOVA exige Node.js 22 ou plus recent.
+  pause
+  exit /b 1
+)
 
 if not exist node_modules (
-  echo Premiere preparation de NOVA...
-  call npm install
-  if errorlevel 1 (
-    echo La preparation n'a pas reussi. Verifiez la connexion Internet puis recommencez.
-    pause
-    exit /b 1
-  )
+  echo Dependances absentes. Executez d'abord : npm ci
+  pause
+  exit /b 1
 )
 
 where git >nul 2>&1
 if errorlevel 1 (
-  echo ATTENTION : Git est absent. Le tableau NOVA peut demarrer, mais le moteur ne pourra pas executer de mission.
+  echo Git est obligatoire pour demarrer NOVA.
+  pause
+  exit /b 1
 )
 
 where codex >nul 2>&1
 if errorlevel 1 (
   where codex.cmd >nul 2>&1
   if errorlevel 1 (
-    echo ATTENTION : Codex CLI est absent. Le tableau NOVA peut demarrer, mais le moteur ne pourra pas executer de mission.
+    echo Codex CLI est obligatoire pour demarrer NOVA.
+    pause
+    exit /b 1
   )
 )
 

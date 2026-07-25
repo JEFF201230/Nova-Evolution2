@@ -6,6 +6,8 @@ import test from "node:test";
 import type { MissionDefinition } from "../runtime/orchestrator/orchestrator-runtime.js";
 import { NovaCoreService } from "./nova-core.service.js";
 
+const TEST_ATTESTATION_KEY = "nova-test-journal-attestation-key-003";
+
 function mission(overrides: Partial<MissionDefinition> = {}): MissionDefinition {
   return {
     projectId: "CEREBRAU",
@@ -28,7 +30,7 @@ function mission(overrides: Partial<MissionDefinition> = {}): MissionDefinition 
 test("NOVA Core conserve une mission et ses preuves après un redémarrage", async () => {
   const directory = await mkdtemp(join(tmpdir(), "nova-core-service-"));
   const dataFile = join(directory, "runtime.json");
-  let core = await NovaCoreService.open(dataFile);
+  let core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
 
   const created = await core.createMission(mission());
   assert.equal(created.created, true);
@@ -49,18 +51,15 @@ test("NOVA Core conserve une mission et ses preuves après un redémarrage", asy
   assert.equal(report.reportId, "REPORT-NOVA-MVP-001");
   assert.equal(core.getMission("CEREBRAU", "NOVA-MVP-001")?.state, "SUBMITTED");
 
-  core = await NovaCoreService.open(dataFile);
+  core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
   assert.equal(core.getMission("CEREBRAU", "NOVA-MVP-001")?.state, "SUBMITTED");
   assert.equal(core.getReport("CEREBRAU", "NOVA-MVP-001")?.checks[0], "test de persistance");
 
   const awaitingHuman = await core.acceptTechnicalValidation("CEREBRAU", "NOVA-MVP-001");
   assert.equal(awaitingHuman.state, "HUMAN_VALIDATION");
 
-  const accepted = await core.approveMission("CEREBRAU", "NOVA-MVP-001");
-  assert.equal(accepted.state, "ACCEPTED");
-
-  core = await NovaCoreService.open(dataFile);
-  assert.equal(core.getMission("CEREBRAU", "NOVA-MVP-001")?.state, "ACCEPTED");
+  core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
+  assert.equal(core.getMission("CEREBRAU", "NOVA-MVP-001")?.state, "HUMAN_VALIDATION");
   assert.deepEqual(
     core.getEvents("CEREBRAU", "NOVA-MVP-001").map((event) => event.eventName),
     [
@@ -72,15 +71,13 @@ test("NOVA Core conserve une mission et ses preuves après un redémarrage", asy
       "ReportSubmitted",
       "TechnicalValidationStarted",
       "TechnicalValidationAccepted",
-      "FinalValidationAccepted",
-      "LockReleased",
     ],
   );
 });
 
 test("NOVA Core refuse la validation quand un problème reste ouvert", async () => {
   const directory = await mkdtemp(join(tmpdir(), "nova-core-blocker-"));
-  const core = await NovaCoreService.open(join(directory, "runtime.json"));
+  const core = await NovaCoreService.open(join(directory, "runtime.json"), undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
 
   await core.createMission(mission({ missionId: "NOVA-MVP-BLOCKED" }));
   await core.submitEvidence("CEREBRAU", "NOVA-MVP-BLOCKED", {
@@ -97,4 +94,21 @@ test("NOVA Core refuse la validation quand un problème reste ouvert", async () 
     /bloquée tant que des problèmes ou erreurs restent ouverts/,
   );
   assert.equal(core.getMission("CEREBRAU", "NOVA-MVP-BLOCKED")?.state, "SUBMITTED");
+});
+
+test("Une erreur de verrou annule toute l’assignation intermédiaire", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "nova-core-rollback-lock-"));
+  const dataFile = join(directory, "runtime.json");
+  const core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
+  const scoped = { allowed: ["server/nova-core"], forbidden: [] };
+  await core.createMission(mission({ missionId: "NOVA-LOCK-A", scope: scoped }));
+  await core.createMission(mission({ missionId: "NOVA-LOCK-B", scope: scoped }));
+  await core.assignAndLock("CEREBRAU", "NOVA-LOCK-A");
+
+  await assert.rejects(() => core.assignAndLock("CEREBRAU", "NOVA-LOCK-B"), /conflict/i);
+  assert.equal(core.getMission("CEREBRAU", "NOVA-LOCK-B")?.state, "READY");
+  assert.equal(core.getMission("CEREBRAU", "NOVA-LOCK-B")?.lockId, null);
+  const reopened = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
+  assert.equal(reopened.getMission("CEREBRAU", "NOVA-LOCK-B")?.state, "READY");
+  assert.equal(reopened.getMission("CEREBRAU", "NOVA-LOCK-B")?.lockId, null);
 });

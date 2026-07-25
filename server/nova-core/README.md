@@ -17,7 +17,7 @@ Elle sait :
 ## Démarrer
 
 ```bash
-npm install
+npm ci
 npm run start:nova-core
 ```
 
