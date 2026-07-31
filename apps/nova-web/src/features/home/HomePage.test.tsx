@@ -1,12 +1,52 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
+import type { HomeActiveWorkItem } from '../../../../../contracts/home-active-work.contract';
 import { NavigationProvider } from '../../routes/NavigationProvider';
 import { buildRoutePath, resolveRouteLocation } from '../../routes/routeResolver';
 import { homeFixture } from './homeFixture';
 import { HomePage, type HomePageProps } from './HomePage';
 
+const activeWorks: readonly HomeActiveWorkItem[] = [{
+  workIdentity: {
+    workId: 'HOME-001',
+    projectId: 'NOVA',
+  },
+  mission: {
+    projectId: 'NOVA',
+    missionId: 'MISSION-HOME-001',
+  },
+  goal: 'Connect HOME Active Work to WCF-001',
+  lifecycle: 'ACTIVE',
+  progress: 50,
+  updatedAt: '2026-07-30T12:00:00.000Z',
+  provenance: {
+    identity: {
+      sourceDomain: 'MISSIONS',
+      producer: 'ORCHESTRATOR_RUNTIME',
+      sourceId: 'NOVA/MISSION-HOME-001',
+      observedAt: '2026-07-30T11:00:00.000Z',
+    },
+    lifecycle: {
+      sourceDomain: 'WORK',
+      producer: 'WCF-001-LIFECYCLE-001',
+      sourceId: 'NOVA/HOME-001/ACTIVE',
+      observedAt: '2026-07-30T12:00:00.000Z',
+    },
+    progress: {
+      sourceDomain: 'MONITORING',
+      producer: 'ORCHESTRATOR_OBSERVABILITY',
+      sourceId: 'OBS-HOME-001',
+      observedAt: '2026-07-30T12:00:00.000Z',
+      sequence: 3,
+      correlationId: 'CORR-HOME-001',
+      runId: 'RUN-HOME-001',
+    },
+  },
+}];
+
 const defaultProps: HomePageProps = {
+  activeWork: activeWorks,
   onOpenDecision: vi.fn(),
   onOpenDetails: vi.fn(),
   onOpenWork: vi.fn(),
@@ -44,8 +84,10 @@ describe('HomePage', () => {
     expect(screen.queryByText('CRM source reconciliation')).not.toBeInTheDocument();
     expect(screen.queryByText('Open comment review')).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Prepare Q3 budget review presentation for the board' }),
+      screen.getByRole('button', { name: 'Connect HOME Active Work to WCF-001' }),
     ).toBeInTheDocument();
+    expect(screen.getByText('50% progress')).toBeInTheDocument();
+    expect(screen.getByText('2026-07-30T12:00:00.000Z')).toBeInTheDocument();
   });
 
   it('routes Open Presentation and Pending Decision through their fixture identifiers', async () => {
@@ -90,15 +132,36 @@ describe('HomePage', () => {
 
     renderHome({ onOpenWork });
 
-    for (const work of homeFixture.activeWork) {
-      await user.click(screen.getByRole('button', { name: work.title }));
+    for (const work of activeWorks) {
+      await user.click(screen.getByRole('button', { name: work.goal }));
       expect(window.location.pathname).toBe(
-        buildRoutePath('work.detail', { workId: work.workId }),
+        buildRoutePath('work.detail', { workId: work.workIdentity.workId }),
       );
-      expect(resolveRouteLocation(window.location.pathname).pathParams.workId).toBe(work.workId);
+      expect(resolveRouteLocation(window.location.pathname).pathParams.workId).toBe(
+        work.workIdentity.workId,
+      );
     }
 
     expect(onOpenWork).not.toHaveBeenCalled();
+  });
+
+  it('loads Active Work from the canonical read service without the production fixture', async () => {
+    const activeWorkLoader = vi.fn(async () => activeWorks);
+
+    renderHome({
+      activeWork: undefined,
+      activeWorkLoader,
+    });
+
+    expect(
+      await screen.findByRole('button', {
+        name: 'Connect HOME Active Work to WCF-001',
+      }),
+    ).toBeInTheDocument();
+    expect(activeWorkLoader).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByText('Prepare Q3 budget review presentation for the board'),
+    ).not.toBeInTheDocument();
   });
 
   it('opens Situation details only from its Details CTA and closes through every supported method', async () => {

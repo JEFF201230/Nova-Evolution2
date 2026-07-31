@@ -22,7 +22,7 @@
 
       * { box-sizing: border-box; }
       body { margin: 0; background: radial-gradient(circle at top right, #143255 0, var(--bg) 42%); color: var(--text); }
-      button, input, textarea { font: inherit; }
+      button, input, select, textarea { font: inherit; }
       button { cursor: pointer; }
       .shell { max-width: 1260px; margin: 0 auto; padding: 28px; }
       header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 24px; }
@@ -37,8 +37,8 @@
       .grid { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 20px; }
       .panel { background: color-mix(in srgb, var(--panel) 94%, transparent); border: 1px solid var(--line); border-radius: 18px; padding: 20px; box-shadow: 0 18px 55px rgba(0,0,0,.25); }
       label { display: block; margin: 13px 0 6px; color: var(--muted); font-size: .85rem; }
-      input, textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text); background: #081525; outline: none; }
-      input:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(85,182,255,.12); }
+      input, select, textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: var(--text); background: #081525; outline: none; }
+      input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(85,182,255,.12); }
       textarea { min-height: 76px; resize: vertical; }
       .button { border: 0; border-radius: 10px; padding: 10px 14px; color: #06111d; background: var(--blue); font-weight: 750; }
       .button.secondary { color: var(--text); background: var(--panel-2); border: 1px solid var(--line); }
@@ -93,7 +93,13 @@
           <h2>Nouvelle mission</h2>
           <form id="missionForm">
             <label for="projectId">Projet</label>
-            <input id="projectId" value="NOVA-CORE" required />
+            <select id="projectId" required></select>
+
+            <label for="missionType">Type de mission</label>
+            <select id="missionType" required>
+              <option value="ANALYSIS">Analyse sans modification</option>
+              <option value="DEVELOPMENT">Développement</option>
+            </select>
 
             <label for="missionId">Identifiant de mission</label>
             <input id="missionId" required />
@@ -160,6 +166,7 @@
       document.querySelector("#missionId").value = `NOVA-${new Date().toISOString().slice(0,10).replaceAll("-", "")}-01`;
       document.querySelector("#refresh").addEventListener("click", loadMissions);
       document.querySelector("#missionForm").addEventListener("submit", createMission);
+      document.querySelector("#projectId").addEventListener("change", applyProjectDefaults);
 
       async function api(path, options = {}) {
         const response = await fetch(path, {
@@ -181,7 +188,7 @@
             body: JSON.stringify({
               projectId,
               missionId,
-              missionType: "DEVELOPMENT",
+              missionType: value("missionType"),
               objective: value("objective"),
               authority: "HUMAN_OWNER",
               scope: { allowed: csv(value("scope")), forbidden: ["secrets", "production"] },
@@ -196,6 +203,28 @@
           await openMission(projectId, missionId);
         } catch (error) {
           showNotice(error.message, true);
+        }
+      }
+
+      async function loadProjects() {
+        try {
+          const { projects } = await api("/api/v1/projects");
+          const selector = document.querySelector("#projectId");
+          const available = projects.length > 0
+            ? projects
+            : [{ projectId: "NOVA-CORE", repositoryRoot: "Mode compatible" }];
+          selector.innerHTML = available.map((project) =>
+            `<option value="${escapeText(project.projectId)}">${escapeText(project.projectId)} — ${escapeText(project.repositoryRoot)}</option>`
+          ).join("");
+          applyProjectDefaults();
+        } catch (error) {
+          showNotice(error.message, true);
+        }
+      }
+
+      function applyProjectDefaults() {
+        if (value("projectId") === "VEEDDA") {
+          document.querySelector("#scope").value = "client/**,server/**,Docs/**";
         }
       }
 
@@ -378,6 +407,7 @@
         })[character]);
       }
 
+      void loadProjects();
       loadMissions();
     </script>
   </body>

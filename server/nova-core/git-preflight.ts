@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import type { NovaCoreCommandResult, NovaCoreCommandRunner } from "./nova-core.execution.js";
 
@@ -9,6 +10,8 @@ export interface GitPreflight {
   head: string;
   worktreeStatus: string;
   worktreeFingerprint: string;
+  conflicts: string[];
+  gitLockPath: string;
   submodules: string[];
 }
 
@@ -51,6 +54,21 @@ export async function inspectGitPreflight(
     );
   }
 
+  const gitLockResult = await git(
+    commandRunner,
+    root,
+    ["rev-parse", "--git-path", "index.lock"],
+    "NOVA_CORE_GIT_LOCK_PATH_UNRESOLVED",
+  );
+  const gitLockPath = resolve(root, gitLockResult.stdout.trim());
+  if (existsSync(gitLockPath)) {
+    throw new GitPreflightError(
+      "NOVA_CORE_GIT_INDEX_LOCKED",
+      `Le dépôt Git est verrouillé par ${gitLockPath}.`,
+      gitLockResult,
+    );
+  }
+
   const headResult = await git(commandRunner, root, ["rev-parse", "--verify", "HEAD"], "NOVA_CORE_GIT_UNBORN_HEAD");
   const head = headResult.stdout.trim();
   if (!/^[0-9a-f]{40,64}$/i.test(head)) {
@@ -74,6 +92,23 @@ export async function inspectGitPreflight(
     ["status", "--porcelain=v1", "--untracked-files=all"],
     "NOVA_CORE_GIT_STATUS_FAILED",
   );
+  const conflictsResult = await git(
+    commandRunner,
+    root,
+    ["diff", "--name-only", "--diff-filter=U"],
+    "NOVA_CORE_GIT_CONFLICT_CHECK_FAILED",
+  );
+  const conflicts = conflictsResult.stdout
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (conflicts.length > 0) {
+    throw new GitPreflightError(
+      "NOVA_CORE_GIT_CONFLICTS_DETECTED",
+      `Le dépôt contient des conflits Git non résolus : ${conflicts.join(", ")}.`,
+      conflictsResult,
+    );
+  }
   const submoduleResult = await git(
     commandRunner,
     root,
@@ -98,6 +133,8 @@ export async function inspectGitPreflight(
     head,
     worktreeStatus,
     worktreeFingerprint: createHash("sha256").update(worktreeStatus).digest("hex"),
+    conflicts,
+    gitLockPath,
     submodules,
   };
 }
@@ -105,6 +142,8 @@ export async function inspectGitPreflight(
 export function assertStableGitPreflight(initial: GitPreflight, current: GitPreflight): void {
   const changed = (["gitVersion", "topLevel", "branch", "head", "worktreeFingerprint"] as const)
     .filter((field) => normalizeValue(field, initial[field]) !== normalizeValue(field, current[field]));
+  if (JSON.stringify(initial.conflicts) !== JSON.stringify(current.conflicts)) changed.push("worktreeFingerprint");
+  if (normalizePath(initial.gitLockPath) !== normalizePath(current.gitLockPath)) changed.push("worktreeFingerprint");
   if (JSON.stringify(initial.submodules) !== JSON.stringify(current.submodules)) changed.push("worktreeFingerprint");
   if (changed.length > 0) {
     throw new GitPreflightError(

@@ -1,0 +1,436 @@
+{
+  "version": 1,
+  "missions": [
+    {
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "missionType": "DEVELOPMENT",
+      "objective": "Corriger uniquement la taille, les proportions et la lisibilité des icônes de la navigation verticale gauche de la page Work pour reproduire WORK-PAGE 1. Les icônes Home, Work, Decisions, Deliverables, Search, Notifications, Help et Preferences doivent retrouver une empreinte visuelle d’environ 14 à 16 px, sans écrasement. Ne pas modifier le header, la largeur de la navigation, les textes ni le contenu de la page.",
+      "authority": "HUMAN_OWNER",
+      "scope": {
+        "allowed": [
+          "apps/nova-web/src/components/shell/NavigationShell.tsx",
+          "apps/nova-web/src/components/shell/NavigationShell.module.css",
+          "apps/nova-web/src/components/shell/NavigationItem.module.css",
+          "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+        ],
+        "forbidden": [
+          "secrets",
+          "production"
+        ]
+      },
+      "deliverables": [
+        "Icônes de navigation conformes à WORK-PAGE 1",
+        "Icônes lisibles et non écrasées",
+        "Alignement et espacement conservés",
+        "Header et contenu de Work inchangés",
+        "Tests, typecheck et build réussis"
+      ],
+      "stopCriteria": [
+        "Les preuves sont contrôlées et une décision humaine est prise."
+      ],
+      "authorizedReferences": [],
+      "priority": 100,
+      "createdAt": "2026-07-24T16:22:04.520Z",
+      "state": "FAILED",
+      "assignedAgentId": "NOVA-DEVELOPER",
+      "lockId": "LOCK-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "runId": "RUN-NOVA-CORE-UX-WORK-NAV-ICONS-001-1784910162556",
+      "contextId": "CTX-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "reportId": null,
+      "updatedAt": "2026-07-24T16:22:42.608Z"
+    },
+    {
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "missionType": "DEVELOPMENT",
+      "objective": "Corriger uniquement la taille, les proportions et la lisibilité des icônes de la navigation verticale gauche de la page Work pour reproduire WORK-PAGE 1. Les icônes Home, Work, Decisions, Deliverables, Search, Notifications, Help et Preferences doivent retrouver une empreinte visuelle d’environ 14 à 16 px, sans écrasement. Ne pas modifier le header, la largeur de la navigation, les textes ni le contenu de la page.",
+      "authority": "HUMAN_OWNER",
+      "scope": {
+        "allowed": [
+          "apps/nova-web/src/components/shell/NavigationShell.tsx",
+          "apps/nova-web/src/components/shell/NavigationShell.module.css",
+          "apps/nova-web/src/components/shell/NavigationItem.module.css",
+          "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+        ],
+        "forbidden": [
+          "secrets",
+          "production"
+        ]
+      },
+      "deliverables": [
+        "Icônes de navigation conformes à WORK-PAGE 1",
+        "Icônes lisibles et non écrasées",
+        "Alignement et espacement conservés",
+        "Header et contenu de Work inchangés",
+        "Tests, typecheck et build réussis"
+      ],
+      "stopCriteria": [
+        "Les preuves sont contrôlées et une décision humaine est prise."
+      ],
+      "authorizedReferences": [],
+      "priority": 100,
+      "createdAt": "2026-07-24T16:50:37.925Z",
+      "state": "ASSIGNED",
+      "assignedAgentId": "NOVA-DEVELOPER",
+      "lockId": null,
+      "runId": null,
+      "contextId": null,
+      "reportId": null,
+      "updatedAt": "2026-07-24T16:51:06.482Z"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-1",
+      "eventName": "MissionCreated",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 1,
+      "sourceState": null,
+      "targetState": "DRAFT",
+      "producer": "Mission Intake",
+      "occurredAt": "2026-07-24T16:22:04.521Z",
+      "publishedAt": "2026-07-24T16:22:04.521Z",
+      "payload": {
+        "missionType": "DEVELOPMENT",
+        "objective": "Corriger uniquement la taille, les proportions et la lisibilité des icônes de la navigation verticale gauche de la page Work pour reproduire WORK-PAGE 1. Les icônes Home, Work, Decisions, Deliverables, Search, Notifications, Help et Preferences doivent retrouver une empreinte visuelle d’environ 14 à 16 px, sans écrasement. Ne pas modifier le header, la largeur de la navigation, les textes ni le contenu de la page."
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-2",
+      "eventName": "MissionAccepted",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 2,
+      "sourceState": "DRAFT",
+      "targetState": "READY",
+      "producer": "Mission Intake",
+      "occurredAt": "2026-07-24T16:22:04.521Z",
+      "publishedAt": "2026-07-24T16:22:04.521Z",
+      "payload": {},
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-3",
+      "eventName": "AgentAssigned",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 3,
+      "sourceState": "READY",
+      "targetState": "ASSIGNED",
+      "producer": "Agent Registry",
+      "occurredAt": "2026-07-24T16:22:42.556Z",
+      "publishedAt": "2026-07-24T16:22:42.556Z",
+      "payload": {
+        "agentId": "NOVA-DEVELOPER"
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-4",
+      "eventName": "LockGranted",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 4,
+      "sourceState": "ASSIGNED",
+      "targetState": "LOCKED",
+      "producer": "Lock Manager",
+      "occurredAt": "2026-07-24T16:22:42.556Z",
+      "publishedAt": "2026-07-24T16:22:42.556Z",
+      "payload": {
+        "lockId": "LOCK-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+        "scope": [
+          "apps/nova-web/src/components/shell/NavigationShell.tsx",
+          "apps/nova-web/src/components/shell/NavigationShell.module.css",
+          "apps/nova-web/src/components/shell/NavigationItem.module.css",
+          "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+        ]
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-5",
+      "eventName": "AgentStarted",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "runId": "RUN-NOVA-CORE-UX-WORK-NAV-ICONS-001-1784910162556",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 5,
+      "sourceState": "LOCKED",
+      "targetState": "RUNNING",
+      "producer": "Agent Executor",
+      "occurredAt": "2026-07-24T16:22:42.556Z",
+      "publishedAt": "2026-07-24T16:22:42.556Z",
+      "payload": {
+        "contextId": "CTX-NOVA-CORE-UX-WORK-NAV-ICONS-001"
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-6",
+      "eventName": "ExecutionFailed",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 6,
+      "sourceState": "RUNNING",
+      "targetState": "FAILED",
+      "producer": "Agent Executor",
+      "occurredAt": "2026-07-24T16:22:42.608Z",
+      "publishedAt": "2026-07-24T16:22:42.608Z",
+      "payload": {
+        "message": "NOVA Core doit être placé dans un dépôt Git avec une branche active avant de lancer Codex."
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-1",
+      "eventName": "MissionCreated",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 1,
+      "sourceState": null,
+      "targetState": "DRAFT",
+      "producer": "Mission Intake",
+      "occurredAt": "2026-07-24T16:50:37.925Z",
+      "publishedAt": "2026-07-24T16:50:37.925Z",
+      "payload": {
+        "missionType": "DEVELOPMENT",
+        "objective": "Corriger uniquement la taille, les proportions et la lisibilité des icônes de la navigation verticale gauche de la page Work pour reproduire WORK-PAGE 1. Les icônes Home, Work, Decisions, Deliverables, Search, Notifications, Help et Preferences doivent retrouver une empreinte visuelle d’environ 14 à 16 px, sans écrasement. Ne pas modifier le header, la largeur de la navigation, les textes ni le contenu de la page."
+      },
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-2",
+      "eventName": "MissionAccepted",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 2,
+      "sourceState": "DRAFT",
+      "targetState": "READY",
+      "producer": "Mission Intake",
+      "occurredAt": "2026-07-24T16:50:37.925Z",
+      "publishedAt": "2026-07-24T16:50:37.925Z",
+      "payload": {},
+      "metadata": {}
+    },
+    {
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-3",
+      "eventName": "AgentAssigned",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 3,
+      "sourceState": "READY",
+      "targetState": "ASSIGNED",
+      "producer": "Agent Registry",
+      "occurredAt": "2026-07-24T16:51:06.482Z",
+      "publishedAt": "2026-07-24T16:51:06.482Z",
+      "payload": {
+        "agentId": "NOVA-DEVELOPER"
+      },
+      "metadata": {}
+    }
+  ],
+  "audits": [
+    {
+      "auditId": "AUD-1",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-1",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 1,
+      "action": "MissionCreated",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Mission Intake",
+      "createdAt": "2026-07-24T16:22:04.521Z"
+    },
+    {
+      "auditId": "AUD-2",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-2",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 2,
+      "action": "MissionAccepted",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Mission Intake",
+      "createdAt": "2026-07-24T16:22:04.521Z"
+    },
+    {
+      "auditId": "AUD-3",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-3",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 3,
+      "action": "AgentAssigned",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Agent Registry",
+      "createdAt": "2026-07-24T16:22:42.556Z"
+    },
+    {
+      "auditId": "AUD-4",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-4",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 4,
+      "action": "LockGranted",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Lock Manager",
+      "createdAt": "2026-07-24T16:22:42.556Z"
+    },
+    {
+      "auditId": "AUD-5",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-5",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 5,
+      "action": "AgentStarted",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Agent Executor",
+      "createdAt": "2026-07-24T16:22:42.556Z"
+    },
+    {
+      "auditId": "AUD-6",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-001-6",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "sequence": 6,
+      "action": "ExecutionFailed",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Agent Executor",
+      "createdAt": "2026-07-24T16:22:42.608Z"
+    },
+    {
+      "auditId": "AUD-7",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-1",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 1,
+      "action": "MissionCreated",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Mission Intake",
+      "createdAt": "2026-07-24T16:50:37.925Z"
+    },
+    {
+      "auditId": "AUD-8",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-2",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 2,
+      "action": "MissionAccepted",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Mission Intake",
+      "createdAt": "2026-07-24T16:50:37.925Z"
+    },
+    {
+      "auditId": "AUD-9",
+      "eventId": "EVT-NOVA-CORE-UX-WORK-NAV-ICONS-002-3",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-002",
+      "correlationId": "CORR-NOVA-CORE-UX-WORK-NAV-ICONS-002",
+      "sequence": 3,
+      "action": "AgentAssigned",
+      "result": "accepted",
+      "cause": "Canonical event accepted.",
+      "actor": "Agent Registry",
+      "createdAt": "2026-07-24T16:51:06.482Z"
+    }
+  ],
+  "locks": [
+    {
+      "lockId": "LOCK-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "agentId": "NOVA-DEVELOPER",
+      "scope": [
+        "apps/nova-web/src/components/shell/NavigationShell.tsx",
+        "apps/nova-web/src/components/shell/NavigationShell.module.css",
+        "apps/nova-web/src/components/shell/NavigationItem.module.css",
+        "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+      ],
+      "status": "ACTIVE",
+      "releaseCondition": "Release when mission reaches ACCEPTED, REJECTED or CANCELLED.",
+      "grantedAt": "2026-07-24T16:22:42.556Z",
+      "updatedAt": "2026-07-24T16:22:42.556Z"
+    }
+  ],
+  "contexts": [
+    {
+      "projectId": "NOVA-CORE",
+      "missionId": "UX-WORK-NAV-ICONS-001",
+      "contextId": "CTX-NOVA-CORE-UX-WORK-NAV-ICONS-001",
+      "objective": "Corriger uniquement la taille, les proportions et la lisibilité des icônes de la navigation verticale gauche de la page Work pour reproduire WORK-PAGE 1. Les icônes Home, Work, Decisions, Deliverables, Search, Notifications, Help et Preferences doivent retrouver une empreinte visuelle d’environ 14 à 16 px, sans écrasement. Ne pas modifier le header, la largeur de la navigation, les textes ni le contenu de la page.",
+      "scope": {
+        "allowed": [
+          "apps/nova-web/src/components/shell/NavigationShell.tsx",
+          "apps/nova-web/src/components/shell/NavigationShell.module.css",
+          "apps/nova-web/src/components/shell/NavigationItem.module.css",
+          "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+        ],
+        "forbidden": [
+          "secrets",
+          "production"
+        ]
+      },
+      "deliverables": [
+        "Icônes de navigation conformes à WORK-PAGE 1",
+        "Icônes lisibles et non écrasées",
+        "Alignement et espacement conservés",
+        "Header et contenu de Work inchangés",
+        "Tests, typecheck et build réussis"
+      ],
+      "stopCriteria": [
+        "Les preuves sont contrôlées et une décision humaine est prise."
+      ],
+      "authorizedReferences": [],
+      "state": "LOCKED",
+      "lockScope": [
+        "apps/nova-web/src/components/shell/NavigationShell.tsx",
+        "apps/nova-web/src/components/shell/NavigationShell.module.css",
+        "apps/nova-web/src/components/shell/NavigationItem.module.css",
+        "apps/nova-web/src/components/shell/NavigationShell.test.tsx"
+      ]
+    }
+  ],
+  "reports": [],
+  "queues": [
+    {
+      "projectId": "NOVA-CORE",
+      "items": []
+    }
+  ],
+  "agents": [
+    {
+      "agentId": "NOVA-DEVELOPER",
+      "missionTypes": [
+        "*"
+      ],
+      "authorizedScopes": [
+        "*"
+      ]
+    }
+  ]
+}

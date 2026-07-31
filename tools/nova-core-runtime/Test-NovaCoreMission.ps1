@@ -80,7 +80,11 @@ $allowedNamedCommands = @(
     'novaCoreTypecheck',
     'novaWebTests',
     'novaWebTypecheck',
-    'novaWebBuild'
+    'novaWebBuild',
+    'veeddaRootTests',
+    'veeddaClientCheck',
+    'veeddaClientBuild',
+    'veeddaServerBuild'
 )
 
 if ($mission.PSObject.Properties.Name.Contains("validations")) {
@@ -145,8 +149,30 @@ if ($mission.PSObject.Properties.Name.Contains('inputEvidence')) {
 
 if ($mission.PSObject.Properties.Name.Contains("reportDirectory")) {
     $reportDirectory = [System.IO.Path]::GetFullPath([string]$mission.reportDirectory)
-    if (-not $reportDirectory.StartsWith($resolvedRepository, [System.StringComparison]::OrdinalIgnoreCase)) {
-        throw "NOVA_CORE_REPORT_DIRECTORY_OUTSIDE_REPOSITORY"
+    $repositoryBoundary = $resolvedRepository.TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
+    $reportInsideRepository = $reportDirectory.Equals(
+        $resolvedRepository,
+        [System.StringComparison]::OrdinalIgnoreCase
+    ) -or $reportDirectory.StartsWith(
+        $repositoryBoundary,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+    if (-not $reportInsideRepository) {
+        if ($mission.PSObject.Properties.Name -notcontains 'artifactRoot') {
+            throw "NOVA_CORE_ARTIFACT_ROOT_REQUIRED"
+        }
+        $artifactRoot = [System.IO.Path]::GetFullPath([string]$mission.artifactRoot).TrimEnd('\','/')
+        $artifactBoundary = $artifactRoot + [IO.Path]::DirectorySeparatorChar
+        $reportInsideArtifactRoot = $reportDirectory.Equals(
+            $artifactRoot,
+            [System.StringComparison]::OrdinalIgnoreCase
+        ) -or $reportDirectory.StartsWith(
+            $artifactBoundary,
+            [System.StringComparison]::OrdinalIgnoreCase
+        )
+        if (-not $reportInsideArtifactRoot) {
+            throw "NOVA_CORE_REPORT_DIRECTORY_OUTSIDE_ARTIFACT_ROOT"
+        }
     }
 }
 

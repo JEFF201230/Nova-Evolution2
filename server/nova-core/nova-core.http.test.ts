@@ -91,6 +91,65 @@ test("l’API NOVA expose le parcours complet d’une mission", async (context) 
   assert.equal(missionBody.events.at(-1)?.eventName, "TechnicalValidationAccepted");
 });
 
+test("l'API expose et protège le projet cible local VEEDDA", async (context) => {
+  const directory = await mkdtemp(join(tmpdir(), "nova-core-project-target-"));
+  const repository = join(directory, "veedda");
+  await mkdir(repository, { recursive: true });
+  const engine = new NovaCoreExecutionEngine({
+    repositoryRoot: repository,
+    dataRoot: join(directory, "execution"),
+    commandRunner: async (command, args) => {
+      assert.equal(command, "git");
+      return gitPreflightResult(args, repository, "fix/local-veedda");
+    },
+    codexInspector: async () => TEST_CODEX,
+    validationTarget: "VEEDDA",
+    contextAssemblyEnabled: false,
+    protectRepositoryFromRuntimeArtifacts: true,
+  });
+  const core = await NovaCoreService.open(
+    join(directory, "runtime.json"),
+    [{ projectId: "VEEDDA", repositoryRoot: repository, engine }],
+    { journalAttestationKey: TEST_ATTESTATION_KEY },
+  );
+  const server = createNovaCoreHttpServer(core);
+  server.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  context.after(() => server.close());
+
+  const address = server.address() as AddressInfo;
+  const baseUrl = `http://127.0.0.1:${address.port}`;
+  const projectsResponse = await fetch(`${baseUrl}/api/v1/projects`);
+  assert.equal(projectsResponse.status, 200);
+  const projectsBody = await projectsResponse.json() as {
+    projects: Array<{ projectId: string; repositoryRoot: string }>;
+  };
+  assert.deepEqual(projectsBody.projects, [{ projectId: "VEEDDA", repositoryRoot: repository }]);
+
+  const preflightResponse = await fetch(`${baseUrl}/api/v1/projects/VEEDDA/preflight`);
+  assert.equal(preflightResponse.status, 200);
+  const preflightBody = await preflightResponse.json() as {
+    git: { branch: string; head: string; conflicts: string[]; gitLockPath: string };
+  };
+  assert.equal(preflightBody.git.branch, "fix/local-veedda");
+  assert.equal(preflightBody.git.head, "a".repeat(40));
+  assert.deepEqual(preflightBody.git.conflicts, []);
+  assert.match(preflightBody.git.gitLockPath, /index\.lock$/);
+
+  const rejected = await post(`${baseUrl}/api/v1/missions`, {
+    projectId: "UNKNOWN",
+    missionId: "TARGET-REJECTED",
+    missionType: "ANALYSIS",
+    objective: "Ne jamais router une mission vers un dépôt implicite.",
+    authority: "HUMAN_OWNER",
+    scope: { allowed: ["**"], forbidden: [".git/**"] },
+    deliverables: ["Aucun"],
+    stopCriteria: ["Projet inconnu."],
+    authorizedReferences: [],
+  });
+  assert.equal(rejected.status, 400);
+});
+
 test("l’API lance le moteur NOVA Core autonome et enregistre ses preuves", async (context) => {
   const repository = await mkdtemp(join(tmpdir(), "nova-core-http-execution-"));
   const dataRoot = join(repository, ".nova-data", "execution");
@@ -482,9 +541,11 @@ function gitPreflightResult(
   if (key === "--version") return { exitCode: 0, stdout: "git version 2.50.1\n", stderr: "" };
   if (key === "rev-parse --is-inside-work-tree") return { exitCode: 0, stdout: "true\n", stderr: "" };
   if (key === "rev-parse --show-toplevel") return { exitCode: 0, stdout: `${repository}\n`, stderr: "" };
+  if (key === "rev-parse --git-path index.lock") return { exitCode: 0, stdout: ".git/index.lock\n", stderr: "" };
   if (key === "rev-parse --verify HEAD") return { exitCode: 0, stdout: `${"a".repeat(40)}\n`, stderr: "" };
   if (key === "symbolic-ref --quiet --short HEAD") return { exitCode: 0, stdout: `${branch}\n`, stderr: "" };
   if (key === "status --porcelain=v1 --untracked-files=all") return { exitCode: 0, stdout: "", stderr: "" };
+  if (key === "diff --name-only --diff-filter=U") return { exitCode: 0, stdout: "", stderr: "" };
   if (key === "ls-files --stage -z") return { exitCode: 0, stdout: "", stderr: "" };
   if (key === "submodule status --recursive") return { exitCode: 0, stdout: "", stderr: "" };
   return { exitCode: 1, stdout: "", stderr: `unexpected git command: ${key}` };

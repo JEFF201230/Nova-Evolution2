@@ -8,9 +8,13 @@
     "node": ">=22"
   },
   "scripts": {
+    "start:bff": "node --import tsx server/nova-bff/nova-bff.server.ts",
+    "build:bff": "tsc -p tsconfig.nova-bff.json",
+    "lint:bff": "tsc -p tsconfig.nova-bff.json --noEmit --noUnusedLocals --noUnusedParameters --noFallthroughCasesInSwitch",
+    "test:bff": "node --import tsx --test server/nova-bff/*.test.ts",
     "start:nova-core": "node --import tsx server/nova-core/nova-core.server.ts",
     "test:kernel:bootstrap": "node --import tsx --test server/runtime/kernel/kernel-bootstrap-readiness.test.ts",
-    "test:runtime": "node --import tsx --test server/runtime/orchestrator/orchestrator-runtime.test.ts",
+    "test:runtime": "node --import tsx --test server/runtime/orchestrator/orchestrator-runtime.test.ts server/runtime/work/work-core-foundation.test.ts",
     "test:core": "node --import tsx --test server/nova-core/*.test.ts",
     "test:nova-runtime:syntax": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/nova-core-runtime/Test-NovaCoreSyntax.ps1",
     "test:nova-runtime:e2e": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/nova-core-runtime/Test-NovaCoreRuntimeE2E.ps1",

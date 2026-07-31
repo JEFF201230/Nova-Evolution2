@@ -13,6 +13,11 @@ Le moteur a été copié depuis le runtime unitaire CEREBRAU puis adapté :
 - les fichiers sensibles ne sont jamais copiés dans la sauvegarde temporaire du moteur ;
 - les rapports et verrous sont isolés sous `.nova-data/execution`.
 
+Le dépôt cible peut être extérieur au dépôt NOVA. Dans ce cas, le manifeste lie
+explicitement `repository` au dépôt piloté et `artifactRoot` à la mémoire NOVA.
+Le validateur refuse tout répertoire de rapport qui ne se trouve ni dans le dépôt
+historique, ni sous cet `artifactRoot` explicite.
+
 ## Entrée principale
 
 `Invoke-NovaCoreMission.ps1`

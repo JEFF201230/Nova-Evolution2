@@ -1,0 +1,16 @@
+{
+    "MissionId":  "P3-PEOPLE-001C-CERTIFICATION",
+    "DomainId":  "PEOPLE",
+    "LotId":  "P3-PEOPLE-001D",
+    "Status":  "PENDING_EVIDENCE",
+    "CertifiedAt":  null,
+    "Evidence":  [
+
+                 ],
+    "Tests":  [
+
+              ],
+    "Regressions":  "NOT_EVALUATED",
+    "PreviousLot":  "P3-PEOPLE-001C",
+    "NextAuthorizedLot":  "P3-PEOPLE-001E"
+}

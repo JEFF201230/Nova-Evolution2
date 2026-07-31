@@ -27,6 +27,38 @@ Sa mémoire est enregistrée dans `.nova-data/runtime.json`.
 
 Ouvrir `http://127.0.0.1:4100` dans un navigateur affiche le tableau de pilotage.
 
+### Cibler le dépôt Git local VEEDDA
+
+Le Runtime NOVA et le dépôt piloté sont deux racines distinctes. Les preuves, rapports et
+verrous restent dans NOVA ; les commandes de lecture, build et test s'exécutent dans le
+dépôt cible.
+
+Sous PowerShell :
+
+```powershell
+$env:NOVA_TARGET_PROJECT_ID = "VEEDDA"
+$env:NOVA_TARGET_REPOSITORY = "C:\DEV\veedda-cseV7-core"
+$env:NOVA_TARGET_VALIDATION_PROFILE = "VEEDDA"
+$env:NOVA_JOURNAL_ATTESTATION_KEY = "<clé locale d'au moins 32 caractères>"
+npm.cmd run start:nova-core
+```
+
+`NOVA_TARGET_PROJECT_ID` et `NOVA_TARGET_REPOSITORY` doivent toujours être définis
+ensemble. Le profil VEEDDA désactive l'assemblage intelligent de contexte à ce stade,
+protège `tools/cerebrau/**` en écriture et sélectionne les validations du dépôt VEEDDA.
+
+Les projets configurés et leur état Git sont consultables sans lancer Codex :
+
+```text
+GET /api/v1/projects
+GET /api/v1/projects/VEEDDA/preflight
+```
+
+Le preflight refuse un dépôt non Git, un top-level différent, un HEAD absent ou détaché,
+une branche inattendue, des conflits, un `index.lock` actif ou un sous-module invalide.
+Un worktree déjà modifié est accepté comme baseline uniquement pour une mission
+`READ_ONLY`; toute dérive produite pendant la mission reste bloquante.
+
 ## Parcours disponible
 
 1. `POST /api/v1/missions` — créer une mission.

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { HomeActiveWorkItem } from '../../../../../contracts/home-active-work.contract';
 import { EmptyState } from '../../components/surfaces/EmptyState';
 import { Skeleton } from '../../components/shared/Skeleton';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -11,10 +12,14 @@ import { PendingDecisionCard } from './PendingDecisionCard';
 import { ActiveWorkSection } from './ActiveWorkSection';
 import { BackgroundWorkSection } from './BackgroundWorkSection';
 import styles from './HomePage.module.css';
+import type { HomeActiveWorkLoader } from './homeActiveWork.service';
+import { useHomeActiveWork } from './useHomeActiveWork';
 
 export type HomePageState = 'default' | 'loading' | 'empty' | 'error' | 'blocked';
 
 export interface HomePageProps {
+  activeWork?: readonly HomeActiveWorkItem[];
+  activeWorkLoader?: HomeActiveWorkLoader;
   state?: HomePageState;
   onOpenWork: () => void;
   onOpenDecision: () => void;
@@ -23,6 +28,8 @@ export interface HomePageProps {
 }
 
 export function HomePage({
+  activeWork,
+  activeWorkLoader,
   state = 'default',
   onOpenWork,
   onOpenDecision,
@@ -31,6 +38,14 @@ export function HomePage({
 }: HomePageProps) {
   const { navigate } = useNavigation();
   const [situationDetailsOpen, setSituationDetailsOpen] = useState(false);
+  const activeWorkRuntime = useHomeActiveWork(
+    state === 'default' && activeWork === undefined,
+    activeWorkLoader,
+  );
+  const activeWorks = activeWork ?? activeWorkRuntime.works;
+  const activeWorkState = activeWork === undefined
+    ? activeWorkRuntime.state
+    : 'ready';
 
   function openWork(workId: string) {
     navigate('work.detail', { pathParams: { workId } });
@@ -130,7 +145,11 @@ export function HomePage({
 
         <PendingDecisionCard onOpenDecision={openDecision} />
 
-        <ActiveWorkSection onOpenWork={openWork} />
+        <ActiveWorkSection
+          works={activeWorks}
+          state={activeWorkState}
+          onOpenWork={openWork}
+        />
 
         <BackgroundWorkSection onOpenDetails={onOpenDetails} />
       </div>

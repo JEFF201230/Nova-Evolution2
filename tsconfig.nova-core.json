@@ -10,6 +10,7 @@
   },
   "include": [
     "server/runtime/orchestrator/**/*.ts",
+    "server/runtime/work/**/*.ts",
     "server/nova-core/**/*.ts"
   ]
 }

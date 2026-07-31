@@ -216,6 +216,10 @@ function Invoke-NovaCoreNamedCommand {
         'novaWebTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('test'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
         'novaWebTypecheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','typecheck'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
         'novaWebBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
+        'veeddaRootTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','test:run'); WorkingDirectory=$Repository }
+        'veeddaClientCheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','check'); WorkingDirectory=(Join-Path $Repository 'client') }
+        'veeddaClientBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'client') }
+        'veeddaServerBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'server') }
     }
     if (-not $commands.ContainsKey($Name)) { throw "NOVA_CORE_NAMED_COMMAND_NOT_ALLOWED:$Name" }
     $command = $commands[$Name]
@@ -247,11 +251,29 @@ function Invoke-NovaCoreNamedCommand {
 }
 
 function Get-NovaCoreDynamicValidations {
-    param($Delta)
+    param($Delta, [string]$Target = 'NOVA_CORE')
     if ($null -eq $Delta) { return @() }
     $paths = @($Delta.Created) + @($Delta.Modified) + @($Delta.Deleted) + @($Delta.Renamed | ForEach-Object { $_.From; $_.To })
     $normalized = @($paths | ForEach-Object { ([string]$_).Replace('\','/').TrimStart('./') } | Sort-Object -Unique)
     $selected = [ordered]@{}
+    if ($Target -eq 'VEEDDA') {
+        if (@($normalized | Where-Object { $_ -like 'client/*' }).Count -gt 0) {
+            $selected['veedda-root-tests'] = [PSCustomObject]@{ name='veedda-root-tests'; type='namedCommand'; command='veeddaRootTests'; required=$true }
+            $selected['veedda-client-check'] = [PSCustomObject]@{ name='veedda-client-check'; type='namedCommand'; command='veeddaClientCheck'; required=$true }
+            $selected['veedda-client-build'] = [PSCustomObject]@{ name='veedda-client-build'; type='namedCommand'; command='veeddaClientBuild'; required=$true }
+        }
+        if (@($normalized | Where-Object { $_ -like 'server/*' }).Count -gt 0) {
+            $selected['veedda-root-tests'] = [PSCustomObject]@{ name='veedda-root-tests'; type='namedCommand'; command='veeddaRootTests'; required=$true }
+            $selected['veedda-server-build'] = [PSCustomObject]@{ name='veedda-server-build'; type='namedCommand'; command='veeddaServerBuild'; required=$true }
+        }
+        if (@($normalized | Where-Object { $_ -in @('package.json','package-lock.json') }).Count -gt 0) {
+            $selected['veedda-root-tests'] = [PSCustomObject]@{ name='veedda-root-tests'; type='namedCommand'; command='veeddaRootTests'; required=$true }
+            $selected['veedda-client-check'] = [PSCustomObject]@{ name='veedda-client-check'; type='namedCommand'; command='veeddaClientCheck'; required=$true }
+            $selected['veedda-client-build'] = [PSCustomObject]@{ name='veedda-client-build'; type='namedCommand'; command='veeddaClientBuild'; required=$true }
+            $selected['veedda-server-build'] = [PSCustomObject]@{ name='veedda-server-build'; type='namedCommand'; command='veeddaServerBuild'; required=$true }
+        }
+        return @($selected.Values)
+    }
     if (@($normalized | Where-Object { $_ -like 'apps/nova-web/*' }).Count -gt 0) {
         $selected['nova-web-tests'] = [PSCustomObject]@{ name='nova-web-tests'; type='namedCommand'; command='novaWebTests'; required=$true }
         $selected['nova-web-typecheck'] = [PSCustomObject]@{ name='nova-web-typecheck'; type='namedCommand'; command='novaWebTypecheck'; required=$true }
@@ -275,7 +297,12 @@ function Invoke-NovaCoreValidation {
     $usesDynamicPolicy = $Mission.PSObject.Properties.Name -contains 'validationPolicy' -and
         $Mission.validationPolicy.source -eq 'actual-git-delta'
     if ($usesDynamicPolicy) {
-        foreach ($dynamicValidation in @(Get-NovaCoreDynamicValidations -Delta $Delta)) {
+        $validationTarget = if ($Mission.validationPolicy.PSObject.Properties.Name -contains 'target') {
+            [string]$Mission.validationPolicy.target
+        } else {
+            'NOVA_CORE'
+        }
+        foreach ($dynamicValidation in @(Get-NovaCoreDynamicValidations -Delta $Delta -Target $validationTarget)) {
             if (@($validations | Where-Object { $_.name -eq $dynamicValidation.name }).Count -eq 0) {
                 $validations += $dynamicValidation
             }
@@ -310,9 +337,11 @@ function Invoke-NovaCoreValidation {
                     $startInfo.RedirectStandardOutput = $true
                     $startInfo.RedirectStandardError = $true
                     $process = [Diagnostics.Process]::Start($startInfo)
-                    $standardOutput = $process.StandardOutput.ReadToEnd()
-                    $standardError = $process.StandardError.ReadToEnd()
+                    $standardOutputTask = $process.StandardOutput.ReadToEndAsync()
+                    $standardErrorTask = $process.StandardError.ReadToEndAsync()
                     $process.WaitForExit()
+                    $standardOutput = $standardOutputTask.GetAwaiter().GetResult()
+                    $standardError = $standardErrorTask.GetAwaiter().GetResult()
                     $passed = $process.ExitCode -eq 0
                     $message = (($standardOutput,$standardError | Where-Object { $_ }) -join [Environment]::NewLine).Trim()
                 }
@@ -325,7 +354,12 @@ function Invoke-NovaCoreValidation {
             }
         }
         catch { $message = $_.Exception.Message }
-        $results += [PSCustomObject]@{ Type=$validation.type; Name=$validation.name; Passed=$passed; Required=($validation.required -ne $false); Message=$message; DurationMs=([DateTimeOffset]::Now-$started).TotalMilliseconds }
+        $durationMs = [long][Math]::Round(
+            ([DateTimeOffset]::Now-$started).TotalMilliseconds,
+            0,
+            [MidpointRounding]::AwayFromZero
+        )
+        $results += [PSCustomObject]@{ Type=$validation.type; Name=$validation.name; Passed=$passed; Required=($validation.required -ne $false); Message=$message; DurationMs=$durationMs }
     }
     foreach ($expectedFile in @($(if ($Mission.PSObject.Properties.Name -contains 'expectedFiles') { $Mission.expectedFiles }))) {
         $exists = Test-Path -LiteralPath (Join-Path $Repository $expectedFile) -PathType Leaf

@@ -1,22 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "missionId": "NOVA-CORE-EXAMPLE-001",
-  "program": "NOVA-CORE",
+  "missionId": "VEEDDA-READ-ONLY-EXAMPLE-001",
+  "program": "VEEDDA",
   "lot": "NOVA-CORE-MVP",
-  "title": "Exemple de mission NOVA Core",
-  "missionType": "DEVELOPMENT",
-  "profile": "BUILD",
-  "repository": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24",
-  "expectedBranch": "develop",
-  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24\\.nova-data\\execution\\missions\\NOVA-CORE\\NOVA-CORE-EXAMPLE-001\\prompt.md",
-  "workingDirectory": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24",
-  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_PHASE_1_V2_2026-07-24\\.nova-data\\execution\\reports\\NOVA-CORE\\NOVA-CORE-EXAMPLE-001",
+  "title": "Exemple de mission locale VEEDDA sans écriture",
+  "missionType": "ANALYSIS",
+  "profile": "READ_ONLY",
+  "repository": "C:\\DEV\\veedda-cseV7-core",
+  "expectedBranch": "fix/simulation-star",
+  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\missions\\VEEDDA\\VEEDDA-READ-ONLY-EXAMPLE-001\\prompt.md",
+  "workingDirectory": "C:\\DEV\\veedda-cseV7-core",
+  "artifactRoot": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\VEEDDA\\VEEDDA-READ-ONLY-EXAMPLE-001",
   "allowedPaths": [
-    "server/nova-core/**"
+    "**"
   ],
   "forbiddenPaths": [
     ".git/**",
-    ".nova-data/**",
+    "tools/cerebrau/**",
     "node_modules/**",
     ".env*",
     "*.pem",
@@ -34,21 +35,14 @@
       "name": "git-diff-check",
       "type": "gitDiffCheck",
       "required": true
-    },
-    {
-      "name": "nova-core-tests",
-      "type": "namedCommand",
-      "command": "novaCoreTests",
-      "required": true
-    },
-    {
-      "name": "nova-core-typecheck",
-      "type": "namedCommand",
-      "command": "novaCoreTypecheck",
-      "required": true
     }
   ],
-  "changesExpected": true,
+  "validationPolicy": {
+    "version": 1,
+    "source": "actual-git-delta",
+    "target": "VEEDDA"
+  },
+  "changesExpected": false,
   "humanReviewRequired": true,
   "enabled": false
 }

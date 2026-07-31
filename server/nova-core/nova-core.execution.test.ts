@@ -15,6 +15,10 @@ import {
   runCommand,
   type NovaCoreCommandRunner,
 } from "./nova-core.execution.js";
+import {
+  NovaCoreMissionFileProducer,
+  type NovaCoreMissionFileProducerContract,
+} from "./nova-core.mission-file-producer.js";
 import { fingerprintReport, identitySlug, runDirectory, sha256 } from "./run-binding.js";
 
 const TEST_CODEX = {
@@ -71,11 +75,26 @@ test("le moteur copié prépare une mission NOVA autonome et récupère le rappo
         ],
         Errors: [],
       };
-    officialReport.ReportFingerprint = fingerprintReport(officialReport);
+    officialReport.ReportFingerprint = fingerprintReport(officialReport).toUpperCase();
     await writeFile(join(runDirectory, "official-report.json"), JSON.stringify(officialReport), "utf8");
     return { exitCode: 0, stdout: "NOVA Core runtime completed", stderr: "" };
   };
 
+  const canonicalProducer = new NovaCoreMissionFileProducer({
+    repositoryRoot: repository,
+    dataRoot,
+    commandRunner,
+    readOnlyAllowedPaths: [],
+    protectedPaths: [],
+    validationTarget: "NOVA_CORE",
+  });
+  let producerCalls = 0;
+  const delegatedProducer: NovaCoreMissionFileProducerContract = {
+    async produce(input) {
+      producerCalls += 1;
+      return canonicalProducer.produce(input);
+    },
+  };
   const engine = new NovaCoreExecutionEngine({
     repositoryRoot: repository,
     dataRoot,
@@ -83,11 +102,13 @@ test("le moteur copié prépare une mission NOVA autonome et récupère le rappo
     powershellCommand: "powershell.exe",
     commandRunner,
     codexInspector: async () => TEST_CODEX,
+    missionFileProducer: delegatedProducer,
   });
   const mission = createMission();
   const report = await engine.execute(createContext(), mission);
 
   assert.equal(calls[0]?.command, "git");
+  assert.equal(producerCalls, 1);
   const invocationCall = calls.find((call) => call.command === "powershell.exe");
   assert.ok(invocationCall);
   assert.ok(invocationCall.args.includes(join(runtimeDirectory, "Invoke-NovaCoreMission.ps1")));
@@ -229,27 +250,72 @@ test("READ_ONLY routing and the generated prompt contract cannot be overridden",
   );
 });
 
-test("READ_ONLY refuses a dirty initial worktree before spawning", async () => {
-  const repository = await mkdtemp(join(tmpdir(), "nova-core-read-only-dirty-"));
+test("READ_ONLY preserves a dirty baseline while keeping runtime artifacts outside the target", async () => {
+  const parent = await mkdtemp(join(tmpdir(), "nova-core-read-only-dirty-"));
+  const repository = join(parent, "target");
+  const dataRoot = join(parent, "nova-data");
+  await mkdir(repository, { recursive: true });
   const runner: NovaCoreCommandRunner = async (command, args) => {
-    if (command !== "git") throw new Error("PowerShell must not be spawned.");
-    const result = gitPreflightResult(args, repository);
-    if (args.join(" ") === "status --porcelain=v1 --untracked-files=all") {
-      return { ...result, stdout: " M tracked.txt\n" };
+    if (command === "git") {
+      const result = gitPreflightResult(args, repository);
+      if (args.join(" ") === "status --porcelain=v1 --untracked-files=all") {
+        return { ...result, stdout: " M tracked.txt\n" };
+      }
+      return result;
     }
-    return result;
+    const missionFile = args[args.indexOf("-MissionFile") + 1];
+    const manifest = JSON.parse(await readFile(missionFile, "utf8")) as {
+      reportDirectory: string;
+      artifactRoot: string;
+      forbiddenPaths: string[];
+      validationPolicy: { target: string };
+      binding: Record<string, string>;
+    };
+    assert.equal(manifest.artifactRoot, dataRoot);
+    assert.ok(manifest.forbiddenPaths.includes("tools/cerebrau/**"));
+    assert.equal(manifest.validationPolicy.target, "VEEDDA");
+    assert.equal(args.includes("-ContextAssemblyEnabled"), false);
+    const officialReport = {
+      ReportFingerprint: null as string | null,
+      Status: "NO_CHANGE",
+      Binding: manifest.binding,
+      Codex: { Status: "SUCCESS", ExitCode: 0, Version: TEST_CODEX.version },
+      Git: { Created: [], Modified: [], Deleted: [], Renamed: [], BranchChanged: false, HeadChanged: false },
+      OutputEvidence: { entries: [] },
+      Validations: [{ Type: "gitDiffCheck", Name: "git-diff-check", Passed: true, Required: true }],
+      Errors: [],
+    };
+    officialReport.ReportFingerprint = fingerprintReport(officialReport);
+    await writeFile(
+      join(manifest.reportDirectory, "official-report.json"),
+      JSON.stringify(officialReport),
+      "utf8",
+    );
+    return { exitCode: 0, stdout: "", stderr: "" };
   };
   const engine = new NovaCoreExecutionEngine({
     repositoryRoot: repository,
-    dataRoot: join(repository, ".nova-data"),
+    dataRoot,
     commandRunner: runner,
     codexInspector: async () => TEST_CODEX,
+    contextAssemblyEnabled: false,
+    protectRepositoryFromRuntimeArtifacts: true,
+    validationTarget: "VEEDDA",
+    protectedPaths: ["tools/cerebrau/**"],
   });
   const auditMission = createMission();
   auditMission.missionType = "AUDIT";
-  await assert.rejects(
-    () => engine.execute(createContext(), auditMission, {}),
-    (error) => error instanceof NovaCoreExecutionError && error.code === "NOVA_CORE_READ_ONLY_DIRTY_WORKTREE",
+  const report = await engine.execute(createContext(), auditMission, {});
+  assert.deepEqual(report.filesChanged, []);
+  assert.equal(report.repositoryRoot, repository);
+  assert.throws(
+    () => new NovaCoreExecutionEngine({
+      repositoryRoot: repository,
+      dataRoot: join(repository, ".nova-data"),
+      protectRepositoryFromRuntimeArtifacts: true,
+    }),
+    (error) => error instanceof NovaCoreExecutionError &&
+      error.code === "NOVA_CORE_RUNTIME_ARTIFACT_ROOT_INSIDE_TARGET",
   );
 });
 
@@ -519,9 +585,11 @@ function gitPreflightResult(
   if (key === "--version") return { exitCode: 0, stdout: "git version 2.50.1\n", stderr: "" };
   if (key === "rev-parse --is-inside-work-tree") return { exitCode: 0, stdout: "true\n", stderr: "" };
   if (key === "rev-parse --show-toplevel") return { exitCode: 0, stdout: `${repository}\n`, stderr: "" };
+  if (key === "rev-parse --git-path index.lock") return { exitCode: 0, stdout: ".git/index.lock\n", stderr: "" };
   if (key === "rev-parse --verify HEAD") return { exitCode: 0, stdout: `${"a".repeat(40)}\n`, stderr: "" };
   if (key === "symbolic-ref --quiet --short HEAD") return { exitCode: 0, stdout: `${branch}\n`, stderr: "" };
   if (key === "status --porcelain=v1 --untracked-files=all") return { exitCode: 0, stdout: "", stderr: "" };
+  if (key === "diff --name-only --diff-filter=U") return { exitCode: 0, stdout: "", stderr: "" };
   if (key === "ls-files --stage -z") return { exitCode: 0, stdout: "", stderr: "" };
   if (key === "submodule status --recursive") return { exitCode: 0, stdout: "", stderr: "" };
   return { exitCode: 1, stdout: "", stderr: `unexpected git command: ${key}` };

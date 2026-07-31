@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { resolve } from "node:path";
 import test from "node:test";
 import { assertStableGitPreflight, GitPreflightError, inspectGitPreflight } from "./git-preflight.js";
 import type { NovaCoreCommandRunner } from "./nova-core.execution.js";
@@ -12,9 +13,11 @@ test("preflight validates version, worktree, top-level, HEAD, branch and submodu
     if (key === "--version") return ok("git version 2.50.1\n");
     if (key === "rev-parse --is-inside-work-tree") return ok("true\n");
     if (key === "rev-parse --show-toplevel") return ok(`${root}\n`);
+    if (key === "rev-parse --git-path index.lock") return ok(".git/index.lock\n");
     if (key === "rev-parse --verify HEAD") return ok(`${"a".repeat(40)}\n`);
     if (key === "symbolic-ref --quiet --short HEAD") return ok("main\n");
     if (key === "status --porcelain=v1 --untracked-files=all") return ok(" M server/runtime.ts\n");
+    if (key === "diff --name-only --diff-filter=U") return ok("");
     if (key === "submodule status --recursive") return ok("");
     return fail("unexpected");
   };
@@ -22,7 +25,8 @@ test("preflight validates version, worktree, top-level, HEAD, branch and submodu
   const result = await inspectGitPreflight(root, runner);
   assert.equal(result.branch, "main");
   assert.equal(result.head, "a".repeat(40));
-  assert.equal(calls.length, 7);
+  assert.deepEqual(result.conflicts, []);
+  assert.equal(calls.length, 9);
   assertStableGitPreflight(result, { ...result });
 });
 
@@ -33,6 +37,7 @@ test("preflight rejects detached, unborn and drifting repositories", async () =>
     if (key === "--version") return ok("git version 2.50.1\n");
     if (key === "rev-parse --is-inside-work-tree") return ok("true\n");
     if (key === "rev-parse --show-toplevel") return ok(`${root}\n`);
+    if (key === "rev-parse --git-path index.lock") return ok(".git/index.lock\n");
     if (key === "rev-parse --verify HEAD") return ok(`${"b".repeat(40)}\n`);
     if (key === "symbolic-ref --quiet --short HEAD") return fail("");
     return ok("");
@@ -45,6 +50,7 @@ test("preflight rejects detached, unborn and drifting repositories", async () =>
     if (key === "--version") return ok("git version 2.50.1\n");
     if (key === "rev-parse --is-inside-work-tree") return ok("true\n");
     if (key === "rev-parse --show-toplevel") return ok(`${root}\n`);
+    if (key === "rev-parse --git-path index.lock") return ok(".git/index.lock\n");
     if (key === "rev-parse --verify HEAD") return fail("Needed a single revision");
     return ok("");
   };
@@ -56,9 +62,11 @@ test("preflight rejects detached, unborn and drifting repositories", async () =>
     if (key === "--version") return ok("git version 2.50.1\n");
     if (key === "rev-parse --is-inside-work-tree") return ok("true\n");
     if (key === "rev-parse --show-toplevel") return ok(`${root}\n`);
+    if (key === "rev-parse --git-path index.lock") return ok(".git/index.lock\n");
     if (key === "rev-parse --verify HEAD") return ok(`${"c".repeat(40)}\n`);
     if (key === "symbolic-ref --quiet --short HEAD") return ok("main\n");
     if (key === "status --porcelain=v1 --untracked-files=all") return ok("");
+    if (key === "diff --name-only --diff-filter=U") return ok("");
     if (key === "submodule status --recursive") return ok(`-${"d".repeat(40)} vendor/module\n`);
     return fail("unexpected");
   };
@@ -72,12 +80,28 @@ test("preflight rejects detached, unborn and drifting repositories", async () =>
     head: "a".repeat(40),
     worktreeStatus: "",
     worktreeFingerprint: "one",
+    conflicts: [],
+    gitLockPath: resolve(root, ".git/index.lock"),
     submodules: [],
   };
   assert.throws(
     () => assertStableGitPreflight(stable, { ...stable, head: "b".repeat(40) }),
     /état Git a changé/,
   );
+  const conflicted: NovaCoreCommandRunner = async (_command, args) => {
+    const key = args.join(" ");
+    if (key === "--version") return ok("git version 2.50.1\n");
+    if (key === "rev-parse --is-inside-work-tree") return ok("true\n");
+    if (key === "rev-parse --show-toplevel") return ok(`${root}\n`);
+    if (key === "rev-parse --git-path index.lock") return ok(".git/index.lock\n");
+    if (key === "rev-parse --verify HEAD") return ok(`${"c".repeat(40)}\n`);
+    if (key === "symbolic-ref --quiet --short HEAD") return ok("main\n");
+    if (key === "status --porcelain=v1 --untracked-files=all") return ok("UU conflicted.ts\n");
+    if (key === "diff --name-only --diff-filter=U") return ok("conflicted.ts\n");
+    return ok("");
+  };
+  await assert.rejects(() => inspectGitPreflight(root, conflicted), (error) =>
+    error instanceof GitPreflightError && error.code === "NOVA_CORE_GIT_CONFLICTS_DETECTED");
 });
 
 function ok(stdout: string) {

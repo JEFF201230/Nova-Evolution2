@@ -1,0 +1,29 @@
+{
+    "MissionId":  "P3-PEOPLE-001B-CERTIFICATION",
+    "DomainId":  "PEOPLE",
+    "LotId":  "P3-PEOPLE-001B",
+    "Status":  "CERTIFIED",
+    "CertifiedAt":  "2026-07-30T21:44:42.6236893+00:00",
+    "Evidence":  [
+                     "FILES_VERIFIED: business-person.aggregate.ts; work-people.aggregate.ts; work-assignment.entity.ts; role-assignment.entity.ts; people.value-objects.ts; people.errors.ts; people-foundation-access.ts; index.ts",
+                     "AGGREGATES_VERIFIED: BusinessPerson; WorkPeople",
+                     "ENTITIES_VERIFIED: WorkAssignment; RoleAssignment",
+                     "VALUE_OBJECTS_VERIFIED: BusinessPersonId; WorkAssignmentId; BusinessRole; Responsibility; AssignmentStatus; AssignmentPeriod; WorkReference; PeopleProvenance",
+                     "FOUNDATION_BOUNDARY_VERIFIED: PeopleAuthorityAccess; assertPeopleAuthorityAccess",
+                     "REQUIRED_ABSENCES_VERIFIED: ParticipationType; ResponsibilityAssignment",
+                     "ARCHITECTURE_VERIFIED: no Foundation to Authority import; Authority consumes Foundation boundary; Foundation index pure",
+                     "INVARIANTS_VERIFIED: immutable value objects and aggregates; unique current Owner; canonical assignments; authoritative provenance; no technical-agent dependency"
+                 ],
+    "Tests":  [
+                  "People strict typecheck: PASS",
+                  "People targeted compilation: PASS; 13 JavaScript files emitted in isolated temporary directory",
+                  "People tests: PASS; 10/10",
+                  "NOVA Core typecheck: PASS",
+                  "Runtime tests: PASS; 24/24",
+                  "Core tests: PASS; 506/506",
+                  "git diff --check: PASS"
+              ],
+    "Regressions":  "NONE",
+    "PreviousLot":  "P3-PEOPLE-001A",
+    "NextAuthorizedLot":  "P3-PEOPLE-001C"
+}

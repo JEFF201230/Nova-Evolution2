@@ -20,3 +20,18 @@ test("missing required dynamic validations are reported", () => {
   );
   assert.deepEqual(missing.map((validation) => validation.name), ["nova-runtime-e2e"]);
 });
+
+test("VEEDDA routes build and tests to the selected local repository", () => {
+  assert.deepEqual(
+    validationsForChangedFiles([
+      "client/src/App.tsx",
+      "server/routes.ts",
+    ], "VEEDDA").map((validation) => validation.name),
+    [
+      "veedda-root-tests",
+      "veedda-client-check",
+      "veedda-client-build",
+      "veedda-server-build",
+    ],
+  );
+});

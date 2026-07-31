@@ -9,6 +9,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:GIT_OPTIONAL_LOCKS = "0"
 
 $missionValidator = Join-Path $PSScriptRoot "Test-NovaCoreMission.ps1"
 $profileResolver = Join-Path $PSScriptRoot "Resolve-NovaCoreProfile.ps1"
@@ -538,6 +539,7 @@ try {
         $report.OutputEvidence.registryFingerprint = Get-NovaCoreGovernanceStringHash (
             ConvertTo-NovaCoreGovernanceCanonicalJson @($report.OutputEvidence.entries)
         )
+        $report = ConvertTo-NovaCorePortableJsonValue -Value $report
         $report.ReportFingerprint = Get-NovaCoreOfficialReportFingerprint -Report $report
         Write-NovaCoreUtf8Json -Value $report.OutputEvidence -Path (Join-Path $runDirectory 'output-evidence.json')
         Write-NovaCoreUtf8Json -Value $report -Path $reportJsonPath

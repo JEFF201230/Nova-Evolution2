@@ -1,0 +1,37 @@
+{
+    "SchemaVersion":  1,
+    "Entries":  [
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/PEOPLE_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-PEOPLE-001B"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001A",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001C"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001C",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001C.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001B",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001D"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001D",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001D.certification.json",
+                        "Status":  "PENDING_EVIDENCE",
+                        "PreviousLot":  "P3-PEOPLE-001C",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001E"
+                    }
+                ]
+}

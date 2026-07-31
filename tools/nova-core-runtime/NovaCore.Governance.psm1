@@ -16,12 +16,51 @@ function Test-NovaCoreProperty {
     return $null -ne $Value -and $Value.PSObject.Properties.Name -contains $Name
 }
 
+function ConvertTo-NovaCoreGovernanceJsonString {
+    param([AllowEmptyString()][string]$Value)
+    $builder = [Text.StringBuilder]::new()
+    [void]$builder.Append('"')
+    for ($index = 0; $index -lt $Value.Length; $index++) {
+        $character = $Value[$index]
+        $code = [int]$character
+        $escape = $null
+        switch ($code) {
+            8 { $escape = '\b'; break }
+            9 { $escape = '\t'; break }
+            10 { $escape = '\n'; break }
+            12 { $escape = '\f'; break }
+            13 { $escape = '\r'; break }
+            34 { $escape = '\"'; break }
+            92 { $escape = '\\'; break }
+        }
+        if ($null -ne $escape) {
+            [void]$builder.Append($escape)
+            continue
+        }
+        if ($code -lt 32 -or
+            ([char]::IsSurrogate($character) -and
+                -not ($code -ge 0xD800 -and $code -le 0xDBFF -and
+                    $index + 1 -lt $Value.Length -and [char]::IsLowSurrogate($Value[$index + 1])))) {
+            [void]$builder.Append('\u')
+            [void]$builder.Append($code.ToString('x4', [Globalization.CultureInfo]::InvariantCulture))
+            continue
+        }
+        [void]$builder.Append($character)
+        if ($code -ge 0xD800 -and $code -le 0xDBFF) {
+            $index++
+            [void]$builder.Append($Value[$index])
+        }
+    }
+    [void]$builder.Append('"')
+    return $builder.ToString()
+}
+
 function ConvertTo-NovaCoreGovernanceCanonicalJson {
     param($Value)
     if ($null -eq $Value) { return 'null' }
     if ($Value -is [bool]) { return $(if ($Value) { 'true' } else { 'false' }) }
     if ($Value -is [string] -or $Value -is [char] -or $Value -is [DateTime] -or $Value -is [DateTimeOffset] -or $Value -is [Guid]) {
-        return ([string]$Value | ConvertTo-Json -Compress)
+        return ConvertTo-NovaCoreGovernanceJsonString ([string]$Value)
     }
     if ($Value -is [byte] -or $Value -is [sbyte] -or $Value -is [int16] -or $Value -is [uint16] -or
         $Value -is [int32] -or $Value -is [uint32] -or $Value -is [int64] -or $Value -is [uint64]) {
@@ -62,6 +101,22 @@ function Get-NovaCoreGovernanceFileHash {
     $algorithm = [Security.Cryptography.SHA256]::Create()
     try { return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-','') }
     finally { $algorithm.Dispose(); $stream.Dispose() }
+}
+
+function ConvertTo-NovaCorePortableJsonValue {
+    param([Parameter(Mandatory)]$Value)
+    $json = $Value | ConvertTo-Json -Depth 100
+    $portableJson = [regex]::Replace(
+        $json,
+        '\\/Date\((-?\d+)(?:[+-]\d+)?\)\\/',
+        {
+            param($match)
+            return [DateTimeOffset]::FromUnixTimeMilliseconds(
+                [long]$match.Groups[1].Value
+            ).UtcDateTime.ToString('o', [Globalization.CultureInfo]::InvariantCulture)
+        }
+    )
+    return $portableJson | ConvertFrom-Json
 }
 
 function Test-NovaCoreGovernanceRelativePath {
@@ -574,6 +629,7 @@ function Get-NovaCoreOfficialReportFingerprint {
 
 Export-ModuleMember -Function `
     ConvertTo-NovaCoreGovernanceCanonicalJson,Get-NovaCoreGovernanceStringHash,Get-NovaCoreGovernanceFileHash,`
+    ConvertTo-NovaCorePortableJsonValue,`
     Get-NovaCoreGovernedMissionInputFingerprint,Get-NovaCoreMissionScopeFingerprint,Test-NovaCoreGovernedAdmission,`
     Test-NovaCoreFreezeAdmission,Enter-NovaCoreMissionLock,Exit-NovaCoreMissionLock,`
     New-NovaCoreInputEvidenceRegistry,New-NovaCoreOutputEvidenceRegistry,`

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
-import { access, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import type {
   MissionReport,
@@ -10,10 +10,8 @@ import type {
 } from "../runtime/orchestrator/orchestrator-runtime.js";
 import { assertStableGitPreflight, GitPreflightError, inspectGitPreflight } from "./git-preflight.js";
 import {
-  buildRunBinding,
   createRunIdentity,
   fingerprintReport,
-  identitySlug,
   reportBindingMismatches,
   runDirectory,
   sha256,
@@ -22,8 +20,22 @@ import {
 } from "./run-binding.js";
 import { isCanonicalPathWithin, normalizeScopeEntries } from "./scope-validation.js";
 import { missingDynamicValidations } from "./validation-matrix.js";
+import {
+  compactProcessDetails,
+  NovaCoreExecutionError,
+  NovaCoreMissionFileProducer,
+  unique,
+  type NovaCoreMissionFileProducerContract,
+} from "./nova-core.mission-file-producer.js";
+
+export {
+  buildPrompt,
+  NovaCoreExecutionError,
+  selectProfile,
+} from "./nova-core.mission-file-producer.js";
 
 export type NovaCoreExecutionProfile = "FAST" | "BUILD" | "ARCHITECTURE" | "READ_ONLY";
+export type NovaCoreValidationTarget = "NOVA_CORE" | "VEEDDA";
 
 export interface NovaCoreExecutionRequest {
   profile?: NovaCoreExecutionProfile;
@@ -76,7 +88,12 @@ export interface NovaCoreExecutionEngineOptions {
   outputObserver?: NovaCoreExecutionOutputObserver;
   codexInspector?: NovaCoreCodexInspector;
   readOnlyAllowedPaths?: readonly string[];
+  protectedPaths?: readonly string[];
+  validationTarget?: NovaCoreValidationTarget;
+  contextAssemblyEnabled?: boolean;
+  protectRepositoryFromRuntimeArtifacts?: boolean;
   recoveryInspector?: (runId: string) => Promise<NovaCoreRecoveryInspection>;
+  missionFileProducer?: NovaCoreMissionFileProducerContract;
 }
 
 export interface NovaCoreCodexIdentity {
@@ -107,13 +124,6 @@ export interface NovaCoreRecoveryInspection {
   worktreeModified: NovaCoreRecoverySignal;
   reportPresent: NovaCoreRecoverySignal;
   artifactsValid: NovaCoreRecoverySignal;
-}
-
-interface NovaCoreValidation {
-  name: string;
-  type: "gitDiffCheck" | "namedCommand";
-  command?: string;
-  required: boolean;
 }
 
 interface NovaCoreOfficialReport {
@@ -151,18 +161,6 @@ interface NovaCoreOfficialReport {
   };
 }
 
-export class NovaCoreExecutionError extends Error {
-  constructor(
-    readonly code: string,
-    message: string,
-    readonly details?: string,
-    readonly diagnostics: RuntimeDiagnostic[] = [],
-  ) {
-    super(message);
-    this.name = "NovaCoreExecutionError";
-  }
-}
-
 export class NovaCoreExecutionEngine {
   private readonly repositoryRoot: string;
   private readonly dataRoot: string;
@@ -174,17 +172,30 @@ export class NovaCoreExecutionEngine {
   private readonly maxStdoutBytes: number;
   private readonly maxStderrBytes: number;
   private readonly readOnlyAllowedPaths: readonly string[];
+  private readonly protectedPaths: readonly string[];
+  private readonly validationTarget: NovaCoreValidationTarget;
+  private readonly contextAssemblyEnabled: boolean;
   private readonly recoveryInspector?: (runId: string) => Promise<NovaCoreRecoveryInspection>;
   private outputObserver?: NovaCoreExecutionOutputObserver;
   private readonly codexInspector: NovaCoreCodexInspector;
+  private readonly missionFileProducer: NovaCoreMissionFileProducerContract;
   private readonly activeRuns = new Map<string, AbortController>();
 
   constructor(options: NovaCoreExecutionEngineOptions) {
     this.repositoryRoot = resolve(options.repositoryRoot);
     this.dataRoot = resolve(options.dataRoot);
     this.runtimeDirectory = resolve(
-      options.runtimeDirectory ?? join(this.repositoryRoot, "tools", "nova-core-runtime"),
+      options.runtimeDirectory ?? join(process.cwd(), "tools", "nova-core-runtime"),
     );
+    if (
+      options.protectRepositoryFromRuntimeArtifacts &&
+      isCanonicalPathWithin(this.repositoryRoot, this.dataRoot)
+    ) {
+      throw new NovaCoreExecutionError(
+        "NOVA_CORE_RUNTIME_ARTIFACT_ROOT_INSIDE_TARGET",
+        `Les artefacts NOVA doivent rester hors du dépôt cible : ${this.dataRoot}.`,
+      );
+    }
     this.powershellCommand =
       options.powershellCommand ??
       process.env.NOVA_POWERSHELL ??
@@ -204,9 +215,20 @@ export class NovaCoreExecutionEngine {
       }
       return canonical;
     });
+    this.protectedPaths = normalizeScopeEntries(options.protectedPaths ?? []);
+    this.validationTarget = options.validationTarget ?? "NOVA_CORE";
+    this.contextAssemblyEnabled = options.contextAssemblyEnabled ?? true;
     this.recoveryInspector = options.recoveryInspector;
     this.outputObserver = options.outputObserver;
     this.codexInspector = options.codexInspector ?? inspectCodexIdentity;
+    this.missionFileProducer = options.missionFileProducer ?? new NovaCoreMissionFileProducer({
+      repositoryRoot: this.repositoryRoot,
+      dataRoot: this.dataRoot,
+      commandRunner: this.commandRunner,
+      readOnlyAllowedPaths: this.readOnlyAllowedPaths,
+      protectedPaths: this.protectedPaths,
+      validationTarget: this.validationTarget,
+    });
   }
 
   setOutputObserver(observer: NovaCoreExecutionOutputObserver): void {
@@ -218,6 +240,10 @@ export class NovaCoreExecutionEngine {
     if (!controller || controller.signal.aborted) return false;
     controller.abort("CANCELLED");
     return true;
+  }
+
+  inspectRepository(): Promise<import("./git-preflight.js").GitPreflight> {
+    return inspectGitPreflight(this.repositoryRoot, this.commandRunner);
   }
 
   async inspectRecovery(runId: string): Promise<NovaCoreRecoveryInspection> {
@@ -291,159 +317,33 @@ export class NovaCoreExecutionEngine {
   ): Promise<Omit<MissionReport, "submittedAt">> {
     const identity = createRunIdentity({ projectId: context.projectId, missionId: context.missionId, runId: mission.runId ?? undefined });
     mission.runId = identity.runId;
-    const projectName = identitySlug(context.projectId);
-    const missionName = identitySlug(context.missionId);
-    const missionDirectory = join(this.dataRoot, "missions", projectName, missionName);
-    const currentRunDirectory = runDirectory(this.dataRoot, identity.runId);
-    const reportDirectory = currentRunDirectory;
-    const promptFile = join(missionDirectory, "prompt.md");
-    const missionFile = join(missionDirectory, "mission.json");
     const runId = identity.runId;
     const correlationId = `CORR-${mission.projectId}-${mission.missionId}`;
     const timeoutMs = validateTimeout(request.timeoutMs ?? this.defaultTimeoutMs);
     const initialGit = await this.gitPreflight(runId, correlationId);
     const codexIdentity = await this.codexInspector(this.repositoryRoot);
-    const expectedBranch = request.expectedBranch ?? initialGit.branch;
-    if (expectedBranch !== initialGit.branch) {
-      throw new NovaCoreExecutionError(
-        "NOVA_CORE_GIT_BRANCH_MISMATCH",
-        `La branche active ${initialGit.branch} ne correspond pas à la branche attendue ${expectedBranch}.`,
-      );
-    }
-    const automaticProfile = selectProfile(mission);
-    if (automaticProfile === "READ_ONLY" && request.profile && request.profile !== "READ_ONLY") {
-      throw new NovaCoreExecutionError(
-        "NOVA_CORE_READ_ONLY_PROFILE_REQUIRED",
-        "Une mission AUDIT, INSPECTION, REVIEW ou ANALYSIS impose le profil READ_ONLY.",
-      );
-    }
-    const profile = request.profile ?? automaticProfile;
-    if (profile === "READ_ONLY" && initialGit.worktreeStatus.trim()) {
-      throw new NovaCoreExecutionError(
-        "NOVA_CORE_READ_ONLY_DIRTY_WORKTREE",
-        "Une mission READ_ONLY exige un worktree initial propre.",
-        initialGit.worktreeStatus,
-      );
-    }
-    const validations = selectValidations();
-    const missionPrompt = buildPrompt(context, mission);
-    if (request.prompt && !request.prompt.includes(missionPrompt)) {
-      throw new NovaCoreExecutionError(
-        "NOVA_CORE_PROMPT_CONTRACT_MISSING",
-        "Un prompt personnalisé doit conserver intégralement le contrat de mission généré par NOVA.",
-      );
-    }
-    const effectivePrompt = request.prompt ?? missionPrompt;
-    const executionRequest = { ...request, profile, changesExpected: profile === "READ_ONLY" ? false : (request.changesExpected ?? true), humanReviewRequired: request.humanReviewRequired ?? true };
-
-    await mkdir(missionDirectory, { recursive: true });
-    await mkdir(reportDirectory, { recursive: true });
-    await mkdir(currentRunDirectory, { recursive: true });
-    if (profile === "READ_ONLY") {
-      const trackedIndex = await this.commandRunner(
-        "git",
-        ["ls-files", "--stage", "-z"],
-        this.repositoryRoot,
-      );
-      if (trackedIndex.exitCode !== 0) {
-        throw new NovaCoreExecutionError(
-          "NOVA_CORE_READ_ONLY_BASELINE_UNAVAILABLE",
-          "Le snapshot initial des fichiers suivis READ_ONLY n'a pas pu etre collecte.",
-          compactProcessDetails(trackedIndex),
-        );
-      }
-      await writeFile(
-        join(currentRunDirectory, "read-only-baseline.json"),
-        `${JSON.stringify({
-          schemaVersion: "1.0.0",
-          capturedAt: new Date().toISOString(),
-          repositoryRoot: this.repositoryRoot,
-          branch: initialGit.branch,
-          head: initialGit.head,
-          worktreeStatus: initialGit.worktreeStatus,
-          trackedIndex: trackedIndex.stdout,
-          allowedPaths: [...this.readOnlyAllowedPaths],
-        }, null, 2)}\n`,
-        "utf8",
-      );
-    }
-    await writeFile(promptFile, effectivePrompt, "utf8");
-    await writeFile(join(currentRunDirectory, "prompt.md"), effectivePrompt, "utf8");
-    const manifest = {
-        schemaVersion: "1.0.0",
-        missionId: mission.missionId,
-        program: mission.projectId,
-        lot: "NOVA-CORE-MVP",
-        title: mission.objective,
-        missionType: mission.missionType,
-        profile,
-        repository: this.repositoryRoot,
-        expectedBranch,
-        gitPreflight: initialGit,
-        promptFile,
-        workingDirectory: this.repositoryRoot,
-        reportDirectory,
-        runDirectory: currentRunDirectory,
-        allowedPaths: normalizeScopeEntries(mission.scope.allowed),
-        forbiddenPaths: unique([
-          ...normalizeScopeEntries(mission.scope.forbidden),
-          ".git/**",
-          ".nova-data/**",
-          "node_modules/**",
-          ".env",
-          ".env.*",
-          "*.pem",
-          "*.key",
-          "*.pfx",
-          "*.p12",
-          "*credentials*",
-          "*secret*",
-        ]),
-        deliverables: mission.deliverables,
-        stopCriteria: mission.stopCriteria,
-        authorizedReferences: mission.authorizedReferences,
-        validations,
-        validationPolicy: {
-          version: 1,
-          source: "actual-git-delta",
-          matrix: "server/nova-core/validation-matrix.ts",
-        },
-        changesExpected: executionRequest.changesExpected,
-        humanReviewRequired: executionRequest.humanReviewRequired,
-        enabled: true,
-        runId,
-        correlationId,
-      };
-    const manifestArtifactText = `${JSON.stringify(manifest, null, 2)}\n`;
-    const executionRequestText = `${JSON.stringify(executionRequest, null, 2)}\n`;
-    const binding = buildRunBinding({
-      projectId: context.projectId,
-      missionId: context.missionId,
-      runId,
-      prompt: effectivePrompt,
+    const {
+      currentRunDirectory,
+      missionFile,
+      profile,
       executionRequest,
-      manifest,
-      executionRequestBytes: executionRequestText,
-      manifestBytes: manifestArtifactText,
-      branch: expectedBranch,
-      head: initialGit.head,
-      codexVersion: codexIdentity.version,
-      codexPath: codexIdentity.path,
-      codexBinaryHash: codexIdentity.binaryHash,
-      codexConfigPolicy: codexIdentity.configPolicy,
+      binding,
+    } = await this.missionFileProducer.produce({
+      context,
+      mission,
+      request,
+      initialGit,
+      codexIdentity,
+      runId,
+      correlationId,
     });
-    const boundManifest = { ...manifest, binding };
-    const manifestText = `${JSON.stringify(boundManifest, null, 2)}\n`;
-    await writeFile(missionFile, manifestText, "utf8");
-    await writeFile(join(currentRunDirectory, "manifest.json"), manifestArtifactText, "utf8");
-    await writeFile(join(currentRunDirectory, "execution-request.json"), executionRequestText, "utf8");
-    await writeFile(join(currentRunDirectory, "run-binding.json"), `${JSON.stringify(binding, null, 2)}\n`, "utf8");
 
     const invocationArgs = [
       "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
       join(this.runtimeDirectory, "Invoke-NovaCoreMission.ps1"),
-      "-MissionFile", missionFile, "-ContextAssemblyEnabled",
+      "-MissionFile", missionFile,
     ];
+    if (this.contextAssemblyEnabled) invocationArgs.push("-ContextAssemblyEnabled");
     const finalGit = await this.gitPreflight(runId, correlationId);
     try {
       assertStableGitPreflight(initialGit, finalGit);
@@ -522,7 +422,10 @@ export class NovaCoreExecutionEngine {
       await readFile(reportJson, "utf8"),
     ) as NovaCoreOfficialReport;
     const computedReportFingerprint = fingerprintReport(officialReport);
-    if (!officialReport.ReportFingerprint || officialReport.ReportFingerprint !== computedReportFingerprint) {
+    if (
+      !officialReport.ReportFingerprint ||
+      officialReport.ReportFingerprint.toLowerCase() !== computedReportFingerprint
+    ) {
       throw new NovaCoreExecutionError(
         "NOVA_CORE_REPORT_FINGERPRINT_MISMATCH",
         "Le ReportFingerprint PowerShell ne correspond pas au rapport officiel canonique.",
@@ -553,7 +456,10 @@ export class NovaCoreExecutionEngine {
       } catch (error) {
         throw this.translateGitPreflightError(error, runId, correlationId);
       }
-      const observedUnauthorized = porcelainPaths(postExecutionGit.worktreeStatus).filter(
+      const observedUnauthorized = changedPorcelainPaths(
+        initialGit.worktreeStatus,
+        postExecutionGit.worktreeStatus,
+      ).filter(
         (file) => !this.isReadOnlyWriteAllowed(file),
       );
       if (observedUnauthorized.length > 0) {
@@ -577,6 +483,7 @@ export class NovaCoreExecutionEngine {
       runId,
       correlationId,
       binding,
+      this.validationTarget,
     );
     missionReport.promptPath = join(currentRunDirectory, "prompt.md");
     missionReport.manifestPath = join(currentRunDirectory, "manifest.json");
@@ -636,62 +543,6 @@ export class NovaCoreExecutionEngine {
   }
 }
 
-export function buildPrompt(context: RuntimeContext, mission: RuntimeMission): string {
-  return [
-    "# Mission d’exécution NOVA Core",
-    "",
-    `Projet : ${context.projectId}`,
-    `Mission : ${context.missionId}`,
-    `Objectif : ${context.objective}`,
-    "",
-    "## Périmètre autorisé",
-    ...context.scope.allowed.map((path) => `- ${path}`),
-    "",
-    "## Périmètre interdit",
-    ...context.scope.forbidden.map((path) => `- ${path}`),
-    "",
-    "## Livrables attendus",
-    ...context.deliverables.map((deliverable) => `- ${deliverable}`),
-    "",
-    "## Conditions d’arrêt",
-    ...context.stopCriteria.map((criterion) => `- ${criterion}`),
-    "",
-    "## Références autorisées",
-    ...(context.authorizedReferences.length > 0
-      ? context.authorizedReferences.map((reference) => `- ${reference}`)
-      : ["- Aucune référence supplémentaire"]),
-    "",
-    "## Règles obligatoires",
-    "- Modifier uniquement les chemins autorisés.",
-    "- Ne supprimer, déplacer ou renommer aucun fichier hors périmètre.",
-    "- Préserver les changements préexistants.",
-    "- Exécuter les tests adaptés au périmètre.",
-    "- Ne créer aucun commit et ne pousser aucune branche.",
-    "- Produire un résultat factuel ; ne pas déclarer un succès sans preuve.",
-    "",
-  ].join("\n");
-}
-
-export function selectProfile(mission: RuntimeMission): NovaCoreExecutionProfile {
-  const classification = `${mission.missionType} ${mission.objective}`.toUpperCase();
-  if (/(AUDIT|INSPECTION|REVIEW|ANALYSIS)/.test(classification)) {
-    return "READ_ONLY";
-  }
-  if (/(ARCHITECTURE|SECURITY|SÉCURITÉ|DATABASE|DATA|MIGRATION)/.test(classification)) {
-    return "ARCHITECTURE";
-  }
-  if (/(UX|UI|CSS|DOCUMENTATION)/.test(classification)) {
-    return "FAST";
-  }
-  return "BUILD";
-}
-
-function selectValidations(): NovaCoreValidation[] {
-  return [
-    { name: "git-diff-check", type: "gitDiffCheck", required: true },
-  ];
-}
-
 async function mapOfficialReportToMissionReport(
   mission: RuntimeMission,
   report: NovaCoreOfficialReport,
@@ -703,6 +554,7 @@ async function mapOfficialReportToMissionReport(
   runId: string,
   correlationId: string,
   binding: RunBinding,
+  validationTarget: NovaCoreValidationTarget,
 ): Promise<Omit<MissionReport, "submittedAt">> {
   const git = report.Git ?? {};
   const renamed = (git.Renamed ?? []).flatMap((item) => [item.From, item.To]).filter(isString);
@@ -716,7 +568,7 @@ async function mapOfficialReportToMissionReport(
   const failedRequired = validations.filter(
     (validation) => validation.Required !== false && validation.Passed !== true,
   );
-  const missingDynamic = missingDynamicValidations(filesChanged, validations);
+  const missingDynamic = missingDynamicValidations(filesChanged, validations, validationTarget);
   const pathScopeValid = validations
     .filter((validation) => validation.Type === "pathScope")
     .every((validation) => validation.Passed === true);
@@ -933,9 +785,14 @@ export async function runCommand(
       });
       return;
     }
-    const child = spawn(command, [...args], {
+    const invocation = commandInvocation(command, args);
+    const child = spawn(invocation.command, invocation.args, {
       cwd: workingDirectory,
+      env: isGitCommand(command)
+        ? { ...process.env, GIT_OPTIONAL_LOCKS: "0" }
+        : process.env,
       windowsHide: true,
+      windowsVerbatimArguments: invocation.windowsVerbatimArguments,
       detached: process.platform !== "win32",
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -1003,6 +860,44 @@ export async function runCommand(
   });
 }
 
+function commandInvocation(
+  command: string,
+  args: readonly string[],
+): { command: string; args: string[]; windowsVerbatimArguments?: boolean } {
+  if (process.platform !== "win32" || !/\.(?:cmd|bat)$/i.test(command)) {
+    return { command, args: [...args] };
+  }
+  const commandLine = [
+    quoteWindowsCommandPath(command),
+    ...args.map(validateWindowsCommandArgument),
+  ].join(" ");
+  return {
+    command: process.env.ComSpec?.trim() || "cmd.exe",
+    args: ["/d", "/s", "/c", commandLine],
+    windowsVerbatimArguments: true,
+  };
+}
+
+function quoteWindowsCommandPath(value: string): string {
+  if (/[\r\n\0"%!^&|<>]/.test(value)) {
+    throw new NovaCoreExecutionError(
+      "NOVA_CORE_WINDOWS_COMMAND_ARGUMENT_INVALID",
+      "Un argument de commande Windows contient un caractère interdit.",
+    );
+  }
+  return /\s/.test(value) ? `"${value}"` : value;
+}
+
+function validateWindowsCommandArgument(value: string): string {
+  if (!/^[A-Za-z0-9_.,:=@+\\/.-]+$/.test(value)) {
+    throw new NovaCoreExecutionError(
+      "NOVA_CORE_WINDOWS_COMMAND_ARGUMENT_INVALID",
+      "Un argument de commande Windows contient un caractère interdit.",
+    );
+  }
+  return value;
+}
+
 function redactProcessOutput(value: string): string {
   return value
     .replace(/Bearer\s+[A-Za-z0-9._~+/=-]+/gi, "Bearer [REDACTED]")
@@ -1038,17 +933,6 @@ function createCommandDiagnostic(input: {
 
 function officialCodexExitCode(result: NovaCoreCommandResult): number {
   return result.exitCode;
-}
-
-function compactProcessDetails(result: NovaCoreCommandResult): string {
-  return [result.stderr.trim(), result.stdout.trim()]
-    .filter(Boolean)
-    .join("\n")
-    .slice(0, 4_000);
-}
-
-function unique(values: readonly string[]): string[] {
-  return [...new Set(values.filter(Boolean))];
 }
 
 function isString(value: string | undefined): value is string {
@@ -1129,17 +1013,29 @@ function isMissingFileError(error: unknown): boolean {
   return error instanceof Error && "code" in error && error.code === "ENOENT";
 }
 
-function porcelainPaths(status: string): string[] {
-  const paths: string[] = [];
+function changedPorcelainPaths(initial: string, current: string): string[] {
+  const initialEntries = porcelainEntries(initial);
+  const currentEntries = porcelainEntries(current);
+  const changedLines = unique([...initialEntries.keys(), ...currentEntries.keys()])
+    .filter((line) => !initialEntries.has(line) || !currentEntries.has(line));
+  return unique(changedLines.flatMap((line) => currentEntries.get(line)?.paths ?? initialEntries.get(line)?.paths ?? []));
+}
+
+function porcelainEntries(status: string): Map<string, { paths: string[] }> {
+  const entries = new Map<string, { paths: string[] }>();
   for (const line of status.split(/\r?\n/)) {
     if (line.length < 4) continue;
     const value = line.slice(3).trim();
     const candidates = value.includes(" -> ") ? value.split(" -> ") : [value];
-    for (const candidate of candidates) {
-      if (candidate) paths.push(candidate.replace(/^"|"$/g, ""));
-    }
+    entries.set(line, {
+      paths: candidates.filter(Boolean).map((candidate) => candidate.replace(/^"|"$/g, "")),
+    });
   }
-  return unique(paths);
+  return entries;
+}
+
+function isGitCommand(command: string): boolean {
+  return /(?:^|[\\/])git(?:\.exe)?$/i.test(command);
 }
 
 function validateTimeout(value: number): number {

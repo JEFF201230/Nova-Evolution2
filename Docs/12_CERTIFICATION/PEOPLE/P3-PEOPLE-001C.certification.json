@@ -1,0 +1,30 @@
+{
+    "MissionId":  "P3-PEOPLE-001C-CERTIFICATION",
+    "DomainId":  "PEOPLE",
+    "LotId":  "P3-PEOPLE-001C",
+    "Status":  "CERTIFIED",
+    "CertifiedAt":  "2026-07-30T21:51:55.8462856+00:00",
+    "Evidence":  [
+                     "FILES_VERIFIED: people-authority.guard.ts; people-authority.commands.ts; people-authority.events.ts; people-authority.ts; people-authority.test.ts",
+                     "AUTHORITATIVE_PRODUCER_VERIFIED: PeopleAuthority is the single People write boundary",
+                     "COMMAND_ENTRY_POINTS_VERIFIED: 10/10 canonical entry points",
+                     "DOMAIN_EVENTS_VERIFIED: 13/13 canonical immutable event types",
+                     "AGGREGATE_WRITE_PROTECTION_VERIFIED: private constructors; Foundation access boundary required; no external direct aggregate construction references",
+                     "ARCHITECTURE_VERIFIED: Authority depends on Foundation; Foundation does not depend on Authority; Foundation index remains pure",
+                     "PROHIBITED_ARTIFACTS_ABSENT: persistence; query; read model; projection; API; RuntimeAgent dependency; TechnicalAgent dependency",
+                     "PROVENANCE_AND_CAUSALITY_VERIFIED: authoritative source enforcement, idempotence, ordered immutable facts"
+                 ],
+    "Tests":  [
+                  "People strict typecheck: PASS",
+                  "People targeted compilation: PASS; 13 JavaScript files emitted in isolated temporary directory",
+                  "People tests: PASS; 10/10",
+                  "NOVA Core typecheck: PASS",
+                  "Runtime tests: PASS; 24/24",
+                  "Core tests: PASS; 506/506",
+                  "CEREBRAU certification tests: PASS; 24/24",
+                  "git diff --check: PASS"
+              ],
+    "Regressions":  "NONE",
+    "PreviousLot":  "P3-PEOPLE-001B",
+    "NextAuthorizedLot":  "P3-PEOPLE-001D"
+}

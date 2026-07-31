@@ -5,7 +5,6 @@ import { WorkOverviewPage } from '../../features/work/WorkOverviewPage';
 import { WorkPeoplePage } from '../../features/work/WorkPeoplePage';
 import { WorkPlanPage } from '../../features/work/WorkPlanPage';
 import { WorkSourcesPage } from '../../features/work/WorkSourcesPage';
-import { getWorkActivityFixture } from '../../features/work/workActivityFixture';
 import { getWorkDecisionsFixture } from '../../features/work/workDecisionsFixture';
 import { getWorkDeliverablesFixture } from '../../features/work/workDeliverablesFixture';
 import { getWorkOverviewFixture } from '../../features/work/workOverviewFixture';
@@ -32,13 +31,10 @@ export function WorkSurface() {
   }
 
   if (activeTab === 'activity') {
-    const activity = workId ? getWorkActivityFixture(workId) : undefined;
-
     return (
       <WorkActivityPage
-        activity={activity}
-        state={work && activity ? 'ready' : 'empty'}
         work={work}
+        workId={workId}
       />
     );
   }

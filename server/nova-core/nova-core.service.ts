@@ -29,6 +29,10 @@ import {
 } from "./mission-certification.js";
 import { NovaCoreError, type EvidenceSubmission } from "./nova-core.types.js";
 import { canonicalJson, fingerprintReport, sha256 } from "./run-binding.js";
+import type {
+  HomeActiveWorkResponse,
+} from "../../contracts/home-active-work.contract.js";
+import { HomeActiveWorkQuery } from "./home-active-work.query.js";
 
 const DEFAULT_AGENTS: RuntimeAgent[] = [
   {
@@ -42,6 +46,12 @@ export interface NovaCoreServiceOptions {
   journalAttestationKey?: string;
 }
 
+export interface NovaCoreProjectExecutionTarget {
+  projectId: string;
+  repositoryRoot: string;
+  engine: NovaCoreExecutionEngine;
+}
+
 export class NovaCoreService {
   private mutationQueue: Promise<void> = Promise.resolve();
   private snapshotSaveQueue: Promise<void> = Promise.resolve();
@@ -51,12 +61,13 @@ export class NovaCoreService {
   private constructor(
     private readonly runtime: OrchestratorRuntimeService,
     private readonly store: JsonRuntimeSnapshotStore,
-    private readonly executionEngine?: NovaCoreExecutionEngine,
+    private readonly defaultExecutionEngine: NovaCoreExecutionEngine | undefined,
+    private readonly projectExecutionTargets: ReadonlyMap<string, NovaCoreProjectExecutionTarget>,
   ) {}
 
   static async open(
     filePath: string,
-    executionEngine?: NovaCoreExecutionEngine,
+    executionConfiguration?: NovaCoreExecutionEngine | readonly NovaCoreProjectExecutionTarget[],
     options: NovaCoreServiceOptions = {},
   ): Promise<NovaCoreService> {
     const store = new JsonRuntimeSnapshotStore(filePath, {
@@ -64,22 +75,37 @@ export class NovaCoreService {
     });
     const snapshot = await store.load();
     const runtime = new OrchestratorRuntimeService(DEFAULT_AGENTS, snapshot ?? undefined);
-    const service = new NovaCoreService(runtime, store, executionEngine);
+    const configuredTargets = isProjectExecutionTargetList(executionConfiguration)
+      ? validateProjectExecutionTargets(executionConfiguration)
+      : new Map<string, NovaCoreProjectExecutionTarget>();
+    const defaultExecutionEngine = isProjectExecutionTargetList(executionConfiguration)
+      ? undefined
+      : executionConfiguration;
+    const service = new NovaCoreService(runtime, store, defaultExecutionEngine, configuredTargets);
     runtime.subscribeObservability(() => { service.requestSnapshotSave(); });
-    executionEngine?.setOutputObserver((output) => {
-      runtime.publishExecutionOutput(output.projectId, output.missionId, {
-        code: "NOVA_CORE_PROCESS_OUTPUT",
-        phase: "CODEX_EXECUTION",
-        message: `${output.stream}: ${output.chunk}`,
-        ...(output.stream === "stdout" ? { stdout: output.chunk } : { stderr: output.chunk }),
-        runId: output.runId,
-        correlationId: output.correlationId,
+    for (const engine of uniqueExecutionEngines(defaultExecutionEngine, configuredTargets)) {
+      engine.setOutputObserver((output) => {
+        runtime.publishExecutionOutput(output.projectId, output.missionId, {
+          code: "NOVA_CORE_PROCESS_OUTPUT",
+          phase: "CODEX_EXECUTION",
+          message: `${output.stream}: ${output.chunk}`,
+          ...(output.stream === "stdout" ? { stdout: output.chunk } : { stderr: output.chunk }),
+          runId: output.runId,
+          correlationId: output.correlationId,
+        });
       });
-    });
+    }
     return service;
   }
 
   async createMission(definition: MissionDefinition): Promise<{ created: boolean; mission: RuntimeMission }> {
+    if (this.projectExecutionTargets.size > 0 && !this.projectExecutionTargets.has(definition.projectId)) {
+      throw new NovaCoreError(
+        400,
+        "PROJECT_TARGET_NOT_CONFIGURED",
+        `Le projet cible ${definition.projectId} n'est pas configuré dans NOVA Core.`,
+      );
+    }
     return this.mutate(() => {
       const existing = this.runtime.getMission(definition.projectId, definition.missionId);
       if (existing) {
@@ -164,13 +190,7 @@ export class NovaCoreService {
     missionId: string,
     request: NovaCoreExecutionRequest = {},
   ): Promise<MissionReport> {
-    if (!this.executionEngine) {
-      throw new NovaCoreError(
-        503,
-        "EXECUTION_ENGINE_UNAVAILABLE",
-        "Le moteur d’exécution NOVA Core n’est pas configuré.",
-      );
-    }
+    const executionEngine = this.requireExecutionEngine(projectId);
 
     return this.mutate(async () => {
       let mission = this.requireMission(projectId, missionId);
@@ -194,25 +214,19 @@ export class NovaCoreService {
       const result = await this.runtime.executeMission(
         projectId,
         missionId,
-        (context, activeMission) => this.executionEngine!.execute(context, activeMission, request),
+        (context, activeMission) => executionEngine.execute(context, activeMission, request),
       );
       return result.report;
     });
   }
 
   cancelExecution(projectId: string, missionId: string): { runId: string; cancellationRequested: true } {
-    if (!this.executionEngine) {
-      throw new NovaCoreError(
-        503,
-        "EXECUTION_ENGINE_UNAVAILABLE",
-        "Le moteur d'exécution NOVA Core n'est pas configuré.",
-      );
-    }
+    const executionEngine = this.requireExecutionEngine(projectId);
     const mission = this.requireMission(projectId, missionId);
     if (mission.state !== "RUNNING" || !mission.runId) {
       throw new NovaCoreError(409, "MISSION_NOT_RUNNING", "La mission n'a aucune exécution active à annuler.");
     }
-    if (!this.executionEngine.cancel(mission.runId)) {
+    if (!executionEngine.cancel(mission.runId)) {
       throw new NovaCoreError(409, "EXECUTION_NOT_ACTIVE", "Le processus de la mission n'est plus actif.");
     }
     return { runId: mission.runId, cancellationRequested: true };
@@ -353,8 +367,9 @@ export class NovaCoreService {
     runId: string,
     action: RuntimeRecoveryAction,
   ): Promise<RuntimeRecoveryResult> {
-    const execution = this.executionEngine
-      ? await this.executionEngine.inspectRecovery(runId)
+    const executionEngine = this.executionEngineFor(projectId);
+    const execution = executionEngine
+      ? await executionEngine.inspectRecovery(runId)
       : {
           processAlive: "UNKNOWN" as const,
           processTreeAlive: "UNKNOWN" as const,
@@ -371,6 +386,28 @@ export class NovaCoreService {
 
   listMissions(projectId?: string): RuntimeMission[] {
     return structuredClone(this.runtime.listMissions(projectId));
+  }
+
+  listHomeActiveWork(): HomeActiveWorkResponse {
+    return new HomeActiveWorkQuery(this.runtime).list();
+  }
+
+  listProjectTargets(): Array<{ projectId: string; repositoryRoot: string }> {
+    return [...this.projectExecutionTargets.values()]
+      .map(({ projectId, repositoryRoot }) => ({ projectId, repositoryRoot }))
+      .sort((left, right) => left.projectId.localeCompare(right.projectId));
+  }
+
+  async inspectProjectTarget(projectId: string) {
+    const target = this.projectExecutionTargets.get(projectId);
+    if (!target) {
+      throw new NovaCoreError(
+        404,
+        "PROJECT_TARGET_NOT_CONFIGURED",
+        `Le projet cible ${projectId} n'est pas configuré dans NOVA Core.`,
+      );
+    }
+    return target.engine.inspectRepository();
   }
 
   getMission(projectId: string, missionId: string): RuntimeMission | null {
@@ -412,6 +449,26 @@ export class NovaCoreService {
       throw new NovaCoreError(404, "MISSION_NOT_FOUND", "La mission demandée n’existe pas.");
     }
     return mission;
+  }
+
+  private executionEngineFor(projectId: string): NovaCoreExecutionEngine | undefined {
+    return this.projectExecutionTargets.get(projectId)?.engine ?? this.defaultExecutionEngine;
+  }
+
+  private requireExecutionEngine(projectId: string): NovaCoreExecutionEngine {
+    const engine = this.executionEngineFor(projectId);
+    if (!engine) {
+      throw new NovaCoreError(
+        this.projectExecutionTargets.size > 0 ? 404 : 503,
+        this.projectExecutionTargets.size > 0
+          ? "PROJECT_TARGET_NOT_CONFIGURED"
+          : "EXECUTION_ENGINE_UNAVAILABLE",
+        this.projectExecutionTargets.size > 0
+          ? `Le projet cible ${projectId} n'est pas configuré dans NOVA Core.`
+          : "Le moteur d'exécution NOVA Core n'est pas configuré.",
+      );
+    }
+    return engine;
   }
 
   private async mutate<T>(operation: () => T | Promise<T>): Promise<T> {
@@ -457,6 +514,44 @@ export class NovaCoreService {
     }
     void this.saveSnapshot();
   }
+}
+
+function validateProjectExecutionTargets(
+  targets: readonly NovaCoreProjectExecutionTarget[],
+): Map<string, NovaCoreProjectExecutionTarget> {
+  const configured = new Map<string, NovaCoreProjectExecutionTarget>();
+  for (const target of targets) {
+    const projectId = target.projectId.trim();
+    if (!projectId || configured.has(projectId)) {
+      throw new NovaCoreError(
+        500,
+        "PROJECT_TARGET_CONFIGURATION_INVALID",
+        `La configuration du projet cible ${projectId || "<vide>"} est invalide ou dupliquée.`,
+      );
+    }
+    configured.set(projectId, {
+      projectId,
+      repositoryRoot: resolve(target.repositoryRoot),
+      engine: target.engine,
+    });
+  }
+  return configured;
+}
+
+function isProjectExecutionTargetList(
+  value: NovaCoreExecutionEngine | readonly NovaCoreProjectExecutionTarget[] | undefined,
+): value is readonly NovaCoreProjectExecutionTarget[] {
+  return Array.isArray(value);
+}
+
+function uniqueExecutionEngines(
+  defaultEngine: NovaCoreExecutionEngine | undefined,
+  targets: ReadonlyMap<string, NovaCoreProjectExecutionTarget>,
+): NovaCoreExecutionEngine[] {
+  return [...new Set([
+    ...(defaultEngine ? [defaultEngine] : []),
+    ...[...targets.values()].map((target) => target.engine),
+  ])];
 }
 
 function hasNewExecutionTerminal(before: ReturnType<OrchestratorRuntimeService["exportSnapshot"]>, after: ReturnType<OrchestratorRuntimeService["exportSnapshot"]>): boolean {

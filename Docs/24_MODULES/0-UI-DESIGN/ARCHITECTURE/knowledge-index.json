@@ -1,0 +1,1006 @@
+{
+  "schemaVersion": "1.0.0",
+  "indexId": "NOVA-CORE-MISSION-PREPARATION-KNOWLEDGE-INDEX-MVP",
+  "generatedFor": {
+    "program": "NOVA CORE KNOWLEDGE EVOLUTION",
+    "capability": "MISSION PREPARATION ENGINE",
+    "epic": "NOVA KNOWLEDGE RUNTIME",
+    "feature": "FEATURE-001",
+    "lot": "LOT-01",
+    "wave": "WAVE-001"
+  },
+  "status": "MVP_READ_ONLY",
+  "sourceRoots": {
+    "NOVA_ORCHESTRATOR": "Docs/24_MODULES/NOVA-CONVERGENCE/nova-orchestrator.zip!nova-orchestrator",
+    "NOVA_UX_ARCHITECTURE": "Docs/24_MODULES/0-UI-DESIGN/ARCHITECTURE",
+    "NOVA_UX_DOMAINS": "Docs/24_MODULES/0-UI-DESIGN/DOMAINS",
+    "NOVA_UX_SOURCE": "Docs/24_MODULES/0-UI-DESIGN/SOURCE",
+    "NOVA_DESIGN_V7": "Docs/24_MODULES/0-UI-DESIGN/NOVA-DESIGN-V7",
+    "CEREBRAU": "Docs/24_MODULES/NOVA-CONVERGENCE/09_CEREBRAU OPERATING SYSTEM.zip"
+  },
+  "DOCUMENTS": [
+    {
+      "id": "DOC-NOVA-KERNEL-MISSION-INTAKE",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/kernel/kernel-mission-order-intake.ts"
+    },
+    {
+      "id": "DOC-NOVA-KERNEL-MISSION-COMPOSITION",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-KERNEL-MISSION-INTAKE",
+        "DOC-NOVA-KERNEL-RUNTIME-CONTEXT"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/kernel/kernel-mission-composition.ts"
+    },
+    {
+      "id": "DOC-NOVA-KERNEL-RUNTIME-CONTEXT",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/kernel/kernel-runtime-context.ts"
+    },
+    {
+      "id": "DOC-NOVA-MISSION-RUNTIME-CONTEXT",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-KERNEL-RUNTIME-CONTEXT"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/mission-runtime/mission-runtime-context.ts"
+    },
+    {
+      "id": "DOC-NOVA-MISSION-RUNTIME-COMPOSITION",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-MISSION-RUNTIME-CONTEXT"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/mission-runtime/mission-runtime-composition.ts"
+    },
+    {
+      "id": "DOC-NOVA-ORCHESTRATOR-RUNTIME-TYPES",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "CODE",
+      "dependencies": [],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "server/runtime/orchestrator/orchestrator-runtime.types.ts"
+    },
+    {
+      "id": "DOC-NOVA-ROUTE-DEFINITION",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "CODE",
+      "dependencies": [],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "apps/nova-web/src/routes/RouteDefinition.ts"
+    },
+    {
+      "id": "DOC-NOVA-ROUTE-REGISTRY",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-ROUTE-DEFINITION"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "apps/nova-web/src/routes/RouteRegistry.ts"
+    },
+    {
+      "id": "DOC-NOVA-NAVIGATION-CONTROLLER",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-ROUTE-REGISTRY"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "apps/nova-web/src/routes/NavigationController.ts"
+    },
+    {
+      "id": "DOC-NOVA-ROUTE-STATE",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "CODE",
+      "dependencies": [
+        "DOC-NOVA-ROUTE-REGISTRY"
+      ],
+      "sourceRoot": "NOVA_ORCHESTRATOR",
+      "path": "apps/nova-web/src/app/routeState.ts"
+    },
+    {
+      "id": "DOC-CEREBRAU-KNOWLEDGE-INDEX-SCHEMA",
+      "domain": "KNOWLEDGE",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "REFERENCE",
+      "dependencies": [],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/KNOWLEDGE_INDEX_SCHEMA.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-KNOWLEDGE-INDEX-ENGINE",
+      "domain": "KNOWLEDGE",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "ARCHITECTURE",
+      "dependencies": [
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-SCHEMA"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/KNOWLEDGE_INDEX_ENGINE.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-KNOWLEDGE-GOVERNANCE",
+      "domain": "KNOWLEDGE",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "GOVERNANCE",
+      "dependencies": [
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-SCHEMA",
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-ENGINE"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/05_RULES/KNOWLEDGE_GOVERNANCE.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-CONTEXT-ENGINE",
+      "domain": "MISSION_CONTEXT",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "ARCHITECTURE",
+      "dependencies": [
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-ENGINE",
+        "DOC-CEREBRAU-KNOWLEDGE-GOVERNANCE"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/CEREBRAU_CONTEXT_ENGINE_MVP_V1.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-KNOWLEDGE-OPERATIONS",
+      "domain": "KNOWLEDGE",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "WORKFLOW",
+      "dependencies": [
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-SCHEMA",
+        "DOC-CEREBRAU-KNOWLEDGE-INDEX-ENGINE",
+        "DOC-CEREBRAU-KNOWLEDGE-GOVERNANCE"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/04_WORKFLOWS/KNOWLEDGE_OPERATIONS_MANUAL.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-WAVE-ORCHESTRATION",
+      "domain": "PROGRAM_GOVERNANCE",
+      "authority": "MISSION_CURRENT",
+      "type": "GOVERNANCE",
+      "dependencies": [],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/00_GOVERNANCE/PROGRAM_WAVE_ORCHESTRATION.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-PDS-001",
+      "domain": "EXECUTION_DIRECTION",
+      "authority": "MISSION_CURRENT",
+      "type": "PDS",
+      "dependencies": [
+        "DOC-CEREBRAU-WAVE-ORCHESTRATION"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "09_CEREBRAU OPERATING SYSTEM/02_AI_EXECUTION_DIRECTOR/PDS-001_CEREBRAU_AI_EXECUTION_DIRECTOR.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-MISSION-BUILDER",
+      "domain": "MISSION_PREPARATION",
+      "authority": "MISSION_CURRENT",
+      "type": "REFERENCE",
+      "dependencies": [
+        "DOC-CEREBRAU-PDS-001",
+        "DOC-CEREBRAU-KNOWLEDGE-GOVERNANCE"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "PROGRAM/RUNTIME/CEREBRAU_MISSION_BUILDER_REPORT_001.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-AUTHORITY-RECONCILIATION",
+      "domain": "AUTHORITY",
+      "authority": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "type": "AUDIT",
+      "dependencies": [
+        "DOC-CEREBRAU-KNOWLEDGE-GOVERNANCE"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "PROGRAM/CEREBRAU_AUTHORITY_RECONCILIATION_REPORT.md"
+    },
+    {
+      "id": "DOC-CEREBRAU-RUNTIME-DEPENDENCY-GRAPH",
+      "domain": "MISSION_RUNTIME",
+      "authority": "MISSION_CURRENT",
+      "type": "ARCHITECTURE",
+      "dependencies": [
+        "DOC-CEREBRAU-WAVE-ORCHESTRATION",
+        "DOC-CEREBRAU-AUTHORITY-RECONCILIATION"
+      ],
+      "sourceRoot": "CEREBRAU",
+      "path": "PROGRAM/GOVERNANCE/CEREBRAU_RUNTIME_DEPENDENCY_GRAPH_001.md"
+    },
+    {
+      "id": "DOC-UX-USER-NAVIGATION-ARCHITECTURE",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "ARCHITECTURE",
+      "dependencies": [],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_USER_NAVIGATION_ARCHITECTURE.md"
+    },
+    {
+      "id": "DOC-UX-NAVIGATION-MAP",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "GRAPH",
+      "dependencies": [
+        "DOC-UX-USER-NAVIGATION-ARCHITECTURE"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_NAVIGATION_MAP.md"
+    },
+    {
+      "id": "DOC-UX-NAVIGATION-MATRIX",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "MATRIX",
+      "dependencies": [
+        "DOC-UX-USER-NAVIGATION-ARCHITECTURE"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_NAVIGATION_MATRIX.md"
+    },
+    {
+      "id": "DOC-UX-SCREEN-DEPENDENCY-GRAPH",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "GRAPH",
+      "dependencies": [
+        "DOC-UX-NAVIGATION-MATRIX"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_SCREEN_DEPENDENCY_GRAPH.md"
+    },
+    {
+      "id": "DOC-UX-INFORMATION-TRACEABILITY",
+      "domain": "UX_GOVERNANCE",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "MATRIX",
+      "dependencies": [],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_INFORMATION_TRACEABILITY.md"
+    },
+    {
+      "id": "DOC-UX-SHARED-COMPONENTS",
+      "domain": "UX_COMPONENTS",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "INVENTORY",
+      "dependencies": [],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_SHARED_COMPONENTS.md"
+    },
+    {
+      "id": "DOC-UX-REUSE-MATRIX",
+      "domain": "UX_COMPONENTS",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "MATRIX",
+      "dependencies": [
+        "DOC-UX-SHARED-COMPONENTS"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "NOVA_REUSE_MATRIX.md"
+    },
+    {
+      "id": "DOC-UX-SCREEN-INVENTORY",
+      "domain": "UX_SCREENS",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "INVENTORY",
+      "dependencies": [],
+      "sourceRoot": "NOVA_UX_SOURCE",
+      "path": "01_SCREEN_INVENTORY.md.txt"
+    },
+    {
+      "id": "DOC-UX-USER-FLOW",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "WORKFLOW",
+      "dependencies": [
+        "DOC-UX-SCREEN-INVENTORY"
+      ],
+      "sourceRoot": "NOVA_UX_SOURCE",
+      "path": "# 02 — USER FLOW.txt"
+    },
+    {
+      "id": "DOC-UX-SOURCE-DEPENDENCY-GRAPH",
+      "domain": "UX_NAVIGATION",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "GRAPH",
+      "dependencies": [
+        "DOC-UX-SCREEN-INVENTORY",
+        "DOC-UX-USER-FLOW"
+      ],
+      "sourceRoot": "NOVA_UX_SOURCE",
+      "path": "# 17 — DEPENDENCY GRAPH.txt"
+    },
+    {
+      "id": "DOC-UX-IMPLEMENTATION-MATRIX",
+      "domain": "UX_COMPONENTS",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "MATRIX",
+      "dependencies": [
+        "DOC-UX-SCREEN-INVENTORY",
+        "DOC-UX-SOURCE-DEPENDENCY-GRAPH"
+      ],
+      "sourceRoot": "NOVA_UX_SOURCE",
+      "path": "# 20 — IMPLEMENTATION MATRIX.txt"
+    },
+    {
+      "id": "DOC-UX-IMPLEMENTATION-GUIDE",
+      "domain": "UX_COMPONENTS",
+      "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "type": "REFERENCE",
+      "dependencies": [
+        "DOC-UX-IMPLEMENTATION-MATRIX"
+      ],
+      "sourceRoot": "NOVA_UX_SOURCE",
+      "path": "# 18 — IMPLEMENTATION GUIDE.txt"
+    },
+    {
+      "id": "ARTIFACT-KNOWLEDGE-INDEX",
+      "domain": "MISSION_PREPARATION",
+      "authority": "MISSION_CURRENT",
+      "type": "INDEX",
+      "dependencies": [],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "knowledge-index.json"
+    },
+    {
+      "id": "ARTIFACT-REUSE-REPORT",
+      "domain": "MISSION_PREPARATION",
+      "authority": "MISSION_CURRENT",
+      "type": "REPORT",
+      "dependencies": [
+        "ARTIFACT-KNOWLEDGE-INDEX"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "REUSE_REPORT.md"
+    },
+    {
+      "id": "ARTIFACT-IMPLEMENTATION-PLAN",
+      "domain": "MISSION_PREPARATION",
+      "authority": "MISSION_CURRENT",
+      "type": "PLAN",
+      "dependencies": [
+        "ARTIFACT-KNOWLEDGE-INDEX",
+        "ARTIFACT-REUSE-REPORT"
+      ],
+      "sourceRoot": "NOVA_UX_ARCHITECTURE",
+      "path": "IMPLEMENTATION_PLAN.md"
+    }
+  ],
+  "readPolicy": {
+    "bootstrapExceptionClosed": true,
+    "selectionOrder": [
+      "knowledge-index.json",
+      "inventory",
+      "matrix",
+      "graph",
+      "active detailed document"
+    ],
+    "rules": [
+      "Select documents by indexed topic before opening any source.",
+      "Open at most one document for the same fact unless the index marks a conflict.",
+      "Do not open domain details when the domain inventory and cross-domain matrices answer the query.",
+      "Treat NOVA-DESIGN-V7 as a functional fallback only.",
+      "Never traverse a source root globally after bootstrap.",
+      "Stop and mark information unavailable when no indexed source covers it."
+    ]
+  },
+  "PROGRAMS": [
+    {
+      "id": "NOVA-CORE-KNOWLEDGE-EVOLUTION",
+      "name": "NOVA CORE KNOWLEDGE EVOLUTION",
+      "capability": "MISSION PREPARATION ENGINE",
+      "epic": "NOVA KNOWLEDGE RUNTIME",
+      "feature": "FEATURE-001",
+      "status": "ACTIVE",
+      "authority": "PROGRAM DIRECTOR",
+      "sources": [
+        "MISSION_CURRENT"
+      ]
+    }
+  ],
+  "MODULES": [
+    {
+      "id": "NOVA-MISSION-RUNTIME",
+      "source": "NOVA_ORCHESTRATOR",
+      "role": "Mission intake, context, composition and orchestration contracts",
+      "paths": [
+        "server/runtime/kernel/kernel-mission-order-intake.ts",
+        "server/runtime/kernel/kernel-mission-composition.ts",
+        "server/runtime/kernel/kernel-runtime-context.ts",
+        "server/runtime/mission-runtime/mission-runtime-context.ts",
+        "server/runtime/mission-runtime/mission-runtime-composition.ts",
+        "server/runtime/orchestrator/orchestrator-runtime.types.ts"
+      ]
+    },
+    {
+      "id": "CEREBRAU-KNOWLEDGE-SYSTEM",
+      "source": "CEREBRAU",
+      "role": "Knowledge model, index, query, governance and context providers",
+      "paths": [
+        "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/KNOWLEDGE_INDEX_SCHEMA.md",
+        "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/KNOWLEDGE_INDEX_ENGINE.md",
+        "09_CEREBRAU OPERATING SYSTEM/06_REFERENCE/CEREBRAU_CONTEXT_ENGINE_MVP_V1.md",
+        "09_CEREBRAU OPERATING SYSTEM/05_RULES/KNOWLEDGE_GOVERNANCE.md"
+      ]
+    },
+    {
+      "id": "CEREBRAU-MISSION-GOVERNANCE",
+      "source": "CEREBRAU",
+      "role": "Mission builder, authority reconciliation, dependency and wave governance",
+      "paths": [
+        "PROGRAM/RUNTIME/CEREBRAU_MISSION_BUILDER_REPORT_001.md",
+        "PROGRAM/CEREBRAU_AUTHORITY_RECONCILIATION_REPORT.md",
+        "PROGRAM/GOVERNANCE/CEREBRAU_RUNTIME_DEPENDENCY_GRAPH_001.md",
+        "09_CEREBRAU OPERATING SYSTEM/00_GOVERNANCE/PROGRAM_WAVE_ORCHESTRATION.md"
+      ]
+    },
+    {
+      "id": "NOVA-UX-KNOWLEDGE",
+      "source": "NOVA_UX_ARCHITECTURE",
+      "role": "Canonical domains, routes, dependencies and reusable UI components",
+      "paths": [
+        "NOVA_NAVIGATION_MAP.md",
+        "NOVA_NAVIGATION_MATRIX.md",
+        "NOVA_SCREEN_DEPENDENCY_GRAPH.md",
+        "NOVA_INFORMATION_TRACEABILITY.md",
+        "NOVA_REUSE_MATRIX.md",
+        "NOVA_SHARED_COMPONENTS.md"
+      ]
+    }
+  ],
+  "DOMAINS": [
+    {
+      "id": "HOME",
+      "root": "NOVA_UX_DOMAINS/HOME",
+      "routes": [
+        "home"
+      ]
+    },
+    {
+      "id": "CLARIFY",
+      "root": "NOVA_UX_DOMAINS/CLARIFY",
+      "routes": [
+        "clarify"
+      ]
+    },
+    {
+      "id": "CANVAS",
+      "root": "NOVA_UX_DOMAINS/CANVAS",
+      "routes": [
+        "canvas"
+      ]
+    },
+    {
+      "id": "PLAN",
+      "root": "NOVA_UX_DOMAINS/PLAN",
+      "routes": [
+        "plan",
+        "work.plan"
+      ]
+    },
+    {
+      "id": "CONFIRM",
+      "root": "NOVA_UX_DOMAINS/CONFIRM",
+      "routes": [
+        "confirm"
+      ]
+    },
+    {
+      "id": "WORK",
+      "root": "NOVA_UX_DOMAINS/WORK",
+      "routes": [
+        "work",
+        "work.detail",
+        "work.overview",
+        "work.plan",
+        "work.activity",
+        "work.people",
+        "work.sources",
+        "work.decisions",
+        "work.deliverables"
+      ]
+    },
+    {
+      "id": "DECISION_PACKAGE",
+      "root": "NOVA_UX_DOMAINS/DECISION_PACKAGE",
+      "routes": [
+        "decision.detail",
+        "decision.package"
+      ]
+    },
+    {
+      "id": "DECISION_PAUSE",
+      "root": "NOVA_UX_DOMAINS/DECISION_PAUSE",
+      "routes": [
+        "decision.pause"
+      ]
+    },
+    {
+      "id": "DECISION_RECEIPT",
+      "root": "NOVA_UX_DOMAINS/DECISION_RECEIPT",
+      "routes": [
+        "decision.receipt"
+      ]
+    },
+    {
+      "id": "GLOBAL_DECISIONS",
+      "root": "NOVA_UX_DOMAINS/GLOBAL_DECISIONS",
+      "routes": [
+        "decisions"
+      ]
+    },
+    {
+      "id": "GLOBAL_DELIVERABLES",
+      "root": "NOVA_UX_DOMAINS/GLOBAL_DELIVERABLES",
+      "routes": [
+        "deliverables"
+      ]
+    }
+  ],
+  "SERVICES": [
+    {
+      "id": "KernelMissionOrderIntake",
+      "module": "NOVA-MISSION-RUNTIME",
+      "reuse": "EXTEND_VIA_ADAPTER",
+      "purpose": "Validate and normalize mission intake without changing the certified Kernel."
+    },
+    {
+      "id": "MissionRuntimeContext",
+      "module": "NOVA-MISSION-RUNTIME",
+      "reuse": "EXTEND_VIA_ADAPTER",
+      "purpose": "Preserve deterministic mission context references."
+    },
+    {
+      "id": "MissionRuntimeComposition",
+      "module": "NOVA-MISSION-RUNTIME",
+      "reuse": "DIRECT",
+      "purpose": "Expose readiness evidence for mission runtime composition."
+    },
+    {
+      "id": "OrchestratorRuntimeContracts",
+      "module": "NOVA-MISSION-RUNTIME",
+      "reuse": "DIRECT",
+      "purpose": "Reuse MissionDefinition, RuntimeContext and execution handler contracts."
+    },
+    {
+      "id": "CerebrauKnowledgeIndex",
+      "module": "CEREBRAU-KNOWLEDGE-SYSTEM",
+      "reuse": "ADAPT_ONLY",
+      "purpose": "Locate knowledge through model, primary index and query rules."
+    },
+    {
+      "id": "CerebrauContextEngine",
+      "module": "CEREBRAU-KNOWLEDGE-SYSTEM",
+      "reuse": "ADAPT_ONLY",
+      "purpose": "Aggregate provider results without reading sources directly."
+    },
+    {
+      "id": "CerebrauContextProviders",
+      "module": "CEREBRAU-KNOWLEDGE-SYSTEM",
+      "reuse": "ADAPT_ONLY",
+      "purpose": "Reuse PROGRAM, LOT, Knowledge, Decision and Component provider responsibilities."
+    },
+    {
+      "id": "CerebrauMissionBuilder",
+      "module": "CEREBRAU-MISSION-GOVERNANCE",
+      "reuse": "CONTRACT_ONLY",
+      "purpose": "Reuse canonical mission manifest and prompt guarantees."
+    },
+    {
+      "id": "CerebrauAuthorityGovernance",
+      "module": "CEREBRAU-MISSION-GOVERNANCE",
+      "reuse": "CONTRACT_ONLY",
+      "purpose": "Resolve explicit authority and preserve unresolved conflicts."
+    },
+    {
+      "id": "NovaRouteRegistry",
+      "module": "NOVA-UX-KNOWLEDGE",
+      "reuse": "DIRECT",
+      "purpose": "Provide canonical route IDs, paths and surface mappings."
+    },
+    {
+      "id": "NovaNavigationController",
+      "module": "NOVA-UX-KNOWLEDGE",
+      "reuse": "DIRECT",
+      "purpose": "Preserve route resolution and navigation semantics."
+    },
+    {
+      "id": "NovaUxMatrices",
+      "module": "NOVA-UX-KNOWLEDGE",
+      "reuse": "ADAPT_ONLY",
+      "purpose": "Resolve domains, dependencies and shared components without opening domain details."
+    }
+  ],
+  "COMPONENTS": {
+    "NOVA": [
+      "KernelMissionOrderIntake",
+      "KernelMissionComposition",
+      "KernelRuntimeContext",
+      "MissionRuntimeContext",
+      "MissionRuntimeComposition",
+      "MissionDefinition",
+      "RuntimeContext",
+      "RuntimeExecutionHandler",
+      "RouteDefinition",
+      "RouteRegistry",
+      "NavigationController"
+    ],
+    "CEREBRAU": [
+      "Knowledge Model",
+      "Knowledge Index",
+      "Knowledge Engine",
+      "Knowledge Query",
+      "Knowledge Governance",
+      "ContextProvider<TData>",
+      "ContextProviderResult<TData>",
+      "CerebrauProjectState",
+      "Program Provider",
+      "Lot Provider",
+      "Knowledge Provider",
+      "Decision Provider",
+      "Component Provider",
+      "Mission Builder",
+      "Authority Reconciliation",
+      "Runtime Dependency Graph",
+      "Wave Orchestration"
+    ],
+    "UX": [
+      "AppShell",
+      "NavRail",
+      "Button",
+      "Card",
+      "Badge",
+      "Status",
+      "Progress",
+      "Spinner",
+      "Skeleton",
+      "Drawer",
+      "DrawerSection",
+      "DrawerRow",
+      "ConfChip",
+      "WhyInline",
+      "SearchOverlay"
+    ]
+  },
+  "ROUTES": [
+    {
+      "id": "home",
+      "path": "/home",
+      "domain": "HOME"
+    },
+    {
+      "id": "work",
+      "path": "/work",
+      "domain": "WORK"
+    },
+    {
+      "id": "decisions",
+      "path": "/decisions",
+      "domain": "GLOBAL_DECISIONS"
+    },
+    {
+      "id": "deliverables",
+      "path": "/deliverables",
+      "domain": "GLOBAL_DELIVERABLES"
+    },
+    {
+      "id": "clarify",
+      "path": "/clarify",
+      "domain": "CLARIFY"
+    },
+    {
+      "id": "canvas",
+      "path": "/canvas",
+      "domain": "CANVAS"
+    },
+    {
+      "id": "plan",
+      "path": "/plan",
+      "domain": "PLAN"
+    },
+    {
+      "id": "confirm",
+      "path": "/confirm",
+      "domain": "CONFIRM"
+    },
+    {
+      "id": "work.detail",
+      "path": "/work/:workId",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.overview",
+      "path": "/work/:workId/overview",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.plan",
+      "path": "/work/:workId/plan",
+      "domain": "PLAN"
+    },
+    {
+      "id": "work.activity",
+      "path": "/work/:workId/activity",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.people",
+      "path": "/work/:workId/people",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.sources",
+      "path": "/work/:workId/sources",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.decisions",
+      "path": "/work/:workId/decisions",
+      "domain": "WORK"
+    },
+    {
+      "id": "work.deliverables",
+      "path": "/work/:workId/deliverables",
+      "domain": "WORK"
+    },
+    {
+      "id": "decision.detail",
+      "path": "/decisions/:decisionId",
+      "domain": "DECISION_PACKAGE"
+    },
+    {
+      "id": "decision.package",
+      "path": "/decisions/:decisionId/package",
+      "domain": "DECISION_PACKAGE"
+    },
+    {
+      "id": "decision.pause",
+      "path": "/decisions/:decisionId/pause",
+      "domain": "DECISION_PAUSE"
+    },
+    {
+      "id": "decision.receipt",
+      "path": "/decisions/:decisionId/receipt",
+      "domain": "DECISION_RECEIPT"
+    }
+  ],
+  "UX": {
+    "authority": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+    "indexDocuments": [
+      {
+        "topic": "routes-and-transitions",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_NAVIGATION_MATRIX.md"
+      },
+      {
+        "topic": "navigation-overview",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_NAVIGATION_MAP.md"
+      },
+      {
+        "topic": "screen-dependencies",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_SCREEN_DEPENDENCY_GRAPH.md"
+      },
+      {
+        "topic": "traceability",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_INFORMATION_TRACEABILITY.md"
+      },
+      {
+        "topic": "reuse-decisions",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_REUSE_MATRIX.md"
+      },
+      {
+        "topic": "shared-components",
+        "source": "NOVA_UX_ARCHITECTURE/NOVA_SHARED_COMPONENTS.md"
+      },
+      {
+        "topic": "screen-inventory",
+        "source": "NOVA_UX_SOURCE/01_SCREEN_INVENTORY.md.txt"
+      },
+      {
+        "topic": "user-flow",
+        "source": "NOVA_UX_SOURCE/# 02 — USER FLOW.txt"
+      },
+      {
+        "topic": "source-dependency-graph",
+        "source": "NOVA_UX_SOURCE/# 17 — DEPENDENCY GRAPH.txt"
+      },
+      {
+        "topic": "implementation-matrix",
+        "source": "NOVA_UX_SOURCE/# 20 — IMPLEMENTATION MATRIX.txt"
+      },
+      {
+        "topic": "implementation-guide",
+        "source": "NOVA_UX_SOURCE/# 18 — IMPLEMENTATION GUIDE.txt"
+      }
+    ],
+    "functionalFallback": {
+      "source": "NOVA_DESIGN_V7",
+      "openOnlyWhen": "No indexed architecture or source matrix answers a functional UX question."
+    },
+    "knownConflicts": [
+      "NavRail width differs between documentary sources.",
+      "Fullscreen decision navigation differs between matrices and captures.",
+      "Documented URL routes and legacy setView navigation coexist."
+    ]
+  },
+  "AUTHORITIES": [
+    {
+      "priority": 1,
+      "id": "MISSION_CURRENT",
+      "owner": "PROGRAM DIRECTOR",
+      "scope": "NOVA CORE KNOWLEDGE EVOLUTION / FEATURE-001",
+      "rule": "The current mission and its source boundaries prevail."
+    },
+    {
+      "priority": 2,
+      "id": "CEREBRAU_KNOWLEDGE_GOVERNANCE",
+      "owner": "Product Owner",
+      "scope": "Knowledge authority and conflict resolution",
+      "source": "CEREBRAU!09_CEREBRAU OPERATING SYSTEM/05_RULES/KNOWLEDGE_GOVERNANCE.md"
+    },
+    {
+      "priority": 3,
+      "id": "NOVA_USER_NAVIGATION_ARCHITECTURE",
+      "owner": "NOVA UX governance",
+      "scope": "Navigation, routes, transitions and screen hierarchy",
+      "source": "NOVA_UX_ARCHITECTURE/NOVA_USER_NAVIGATION_ARCHITECTURE.md"
+    }
+  ],
+  "PDS": [
+    {
+      "id": "PDS-001",
+      "name": "CEREBRAU AI EXECUTION DIRECTOR",
+      "source": "CEREBRAU!09_CEREBRAU OPERATING SYSTEM/02_AI_EXECUTION_DIRECTOR/PDS-001_CEREBRAU_AI_EXECUTION_DIRECTOR.md",
+      "useFor": [
+        "execution direction",
+        "mission preparation governance"
+      ]
+    }
+  ],
+  "WAVES": [
+    {
+      "id": "WAVE-001",
+      "lot": "LOT-01",
+      "name": "Knowledge Foundation",
+      "mode": "READ_ONLY",
+      "deliverables": [
+        "knowledge-index.json",
+        "IMPLEMENTATION_PLAN.md",
+        "REUSE_REPORT.md"
+      ],
+      "status": "READY_FOR_VALIDATION"
+    },
+    {
+      "id": "WAVE-02",
+      "lot": "LOT-01",
+      "name": "Reuse Inventory",
+      "mode": "READ_ONLY",
+      "status": "SUPERSEDED_BY_WAVE-001"
+    },
+    {
+      "id": "WAVE-03",
+      "lot": "LOT-02",
+      "name": "CerebrauKnowledgeAdapter",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-04",
+      "lot": "LOT-02",
+      "name": "NovaUxKnowledgeAdapter",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-05",
+      "lot": "LOT-03",
+      "name": "Authority Resolver",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-06",
+      "lot": "LOT-03",
+      "name": "PROGRAM Knowledge Resolver",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-07",
+      "lot": "LOT-03",
+      "name": "UX Knowledge Resolver",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-08",
+      "lot": "LOT-04",
+      "name": "Mission Context Builder",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-09",
+      "lot": "LOT-04",
+      "name": "Mission Brief Builder",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-10",
+      "lot": "LOT-05",
+      "name": "Mission preparation integration",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-11",
+      "lot": "LOT-05",
+      "name": "Codex integration",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-12",
+      "lot": "LOT-06",
+      "name": "KNOWLEDGE_MAP.json",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-13",
+      "lot": "LOT-06",
+      "name": "Tests",
+      "status": "NOT_STARTED"
+    },
+    {
+      "id": "WAVE-14",
+      "lot": "LOT-06",
+      "name": "Certification",
+      "status": "NOT_STARTED"
+    }
+  ],
+  "queryMap": {
+    "mission-intake": [
+      "MODULES:NOVA-MISSION-RUNTIME",
+      "SERVICES:KernelMissionOrderIntake"
+    ],
+    "authority": [
+      "AUTHORITIES",
+      "SERVICES:CerebrauAuthorityGovernance"
+    ],
+    "program-context": [
+      "PROGRAMS",
+      "SERVICES:CerebrauContextProviders"
+    ],
+    "ux-routes": [
+      "ROUTES",
+      "UX:indexDocuments:routes-and-transitions"
+    ],
+    "ux-components": [
+      "COMPONENTS:UX",
+      "UX:indexDocuments:reuse-decisions",
+      "UX:indexDocuments:shared-components"
+    ],
+    "mission-brief": [
+      "SERVICES:CerebrauMissionBuilder",
+      "COMPONENTS:CEREBRAU"
+    ]
+  }
+}

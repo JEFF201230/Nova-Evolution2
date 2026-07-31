@@ -4,7 +4,9 @@ export interface DynamicValidation {
   required: true;
 }
 
-const RULES: ReadonlyArray<{ matches: (path: string) => boolean; validations: readonly DynamicValidation[] }> = [
+type ValidationTarget = "NOVA_CORE" | "VEEDDA";
+
+const NOVA_CORE_RULES: ReadonlyArray<{ matches: (path: string) => boolean; validations: readonly DynamicValidation[] }> = [
   {
     matches: (path) => path.startsWith("apps/nova-web/"),
     validations: [
@@ -29,11 +31,42 @@ const RULES: ReadonlyArray<{ matches: (path: string) => boolean; validations: re
   },
 ];
 
-export function validationsForChangedFiles(files: readonly string[]): DynamicValidation[] {
+const VEEDDA_RULES: ReadonlyArray<{ matches: (path: string) => boolean; validations: readonly DynamicValidation[] }> = [
+  {
+    matches: (path) => path.startsWith("client/"),
+    validations: [
+      { name: "veedda-root-tests", command: "veeddaRootTests", required: true },
+      { name: "veedda-client-check", command: "veeddaClientCheck", required: true },
+      { name: "veedda-client-build", command: "veeddaClientBuild", required: true },
+    ],
+  },
+  {
+    matches: (path) => path.startsWith("server/"),
+    validations: [
+      { name: "veedda-root-tests", command: "veeddaRootTests", required: true },
+      { name: "veedda-server-build", command: "veeddaServerBuild", required: true },
+    ],
+  },
+  {
+    matches: (path) => path === "package.json" || path === "package-lock.json",
+    validations: [
+      { name: "veedda-root-tests", command: "veeddaRootTests", required: true },
+      { name: "veedda-client-check", command: "veeddaClientCheck", required: true },
+      { name: "veedda-client-build", command: "veeddaClientBuild", required: true },
+      { name: "veedda-server-build", command: "veeddaServerBuild", required: true },
+    ],
+  },
+];
+
+export function validationsForChangedFiles(
+  files: readonly string[],
+  target: ValidationTarget = "NOVA_CORE",
+): DynamicValidation[] {
   const selected = new Map<string, DynamicValidation>();
+  const rules = target === "VEEDDA" ? VEEDDA_RULES : NOVA_CORE_RULES;
   for (const rawPath of files) {
     const path = rawPath.replaceAll("\\", "/").replace(/^\.\//, "");
-    for (const rule of RULES) {
+    for (const rule of rules) {
       if (!rule.matches(path)) continue;
       for (const validation of rule.validations) selected.set(validation.name, validation);
     }
@@ -44,11 +77,12 @@ export function validationsForChangedFiles(files: readonly string[]): DynamicVal
 export function missingDynamicValidations(
   files: readonly string[],
   results: readonly { Name?: string; Passed?: boolean; Required?: boolean }[],
+  target: ValidationTarget = "NOVA_CORE",
 ): DynamicValidation[] {
   const passed = new Set(
     results
       .filter((result) => result.Passed === true && result.Required !== false && result.Name)
       .map((result) => result.Name as string),
   );
-  return validationsForChangedFiles(files).filter((validation) => !passed.has(validation.name));
+  return validationsForChangedFiles(files, target).filter((validation) => !passed.has(validation.name));
 }

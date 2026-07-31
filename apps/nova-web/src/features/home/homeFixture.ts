@@ -37,29 +37,6 @@ export const homeFixture = {
       'Without this decision by 15 July, the Q3 product launch is cancelled.',
     actionLabel: 'Open decision',
   },
-  activeWork: [
-    {
-      workId: 'work-001',
-      title: 'Prepare Q3 budget review presentation for the board',
-      description: "Review Sarah Chen's 3 comments in the revenue section",
-      confidenceLabel: '76% confidence',
-      dueLabel: '18 Jul',
-    },
-    {
-      workId: 'work-002',
-      title: 'Analyze reasons for customer churn increase in June',
-      description: 'Review NOVA synthesis draft',
-      confidenceLabel: '41% confidence',
-      dueLabel: '22 Jul',
-    },
-    {
-      workId: 'work-003',
-      title: 'Onboard new supply chain partner for EU operations',
-      description: 'Assign an owner to the overdue legal review',
-      confidenceLabel: '22% confidence',
-      dueLabel: '31 Jul',
-    },
-  ],
   background: {
     summary: 'Working in background · You save approximately 6 hours of review this week · 1 conflict detected',
     items: [

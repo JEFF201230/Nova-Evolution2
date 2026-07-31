@@ -12,6 +12,7 @@ import {
   type CertificationAuthority,
   type CertificationAuthorizationPolicy,
 } from "./mission-certification.js";
+import { RUNTIME_ACTIVE_WORK_PATH } from "../../contracts/home-active-work.contract.js";
 
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -55,6 +56,41 @@ async function route(
 
   if (request.method === "GET" && url.pathname === "/health") {
     sendJson(response, 200, { status: "ok", service: "nova-core", memory: "durable-json" });
+    return;
+  }
+
+  if (
+    request.method === "GET" &&
+    parts[0] === "api" &&
+    parts[1] === "v1" &&
+    parts[2] === "projects" &&
+    parts.length === 3
+  ) {
+    sendJson(response, 200, { projects: core.listProjectTargets() });
+    return;
+  }
+
+  if (
+    request.method === "GET" &&
+    parts[0] === "api" &&
+    parts[1] === "v1" &&
+    parts[2] === "projects" &&
+    parts[3] &&
+    parts[4] === "preflight" &&
+    parts.length === 5
+  ) {
+    sendJson(response, 200, {
+      project: core.listProjectTargets().find((target) => target.projectId === parts[3]),
+      git: await core.inspectProjectTarget(parts[3]),
+    });
+    return;
+  }
+
+  if (
+    request.method === "GET"
+    && url.pathname === RUNTIME_ACTIVE_WORK_PATH
+  ) {
+    sendJson(response, 200, core.listHomeActiveWork());
     return;
   }
 
