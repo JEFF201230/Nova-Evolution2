@@ -13,6 +13,9 @@ import {
   NovaCoreMissionFileProducer,
 } from "./nova-core.mission-file-producer.js";
 import {
+  PEOPLE_LOT_MACHINE_CONTRACT,
+} from "./people-lot-machine-contract.js";
+import {
   buildRunBinding,
   identitySlug,
   runDirectory,
@@ -119,7 +122,8 @@ test("le producteur préserve exactement le manifeste, les hashes, le binding, l
     schemaVersion: "1.0.0",
     missionId: mission.missionId,
     program: mission.projectId,
-    lot: "NOVA-CORE-MVP",
+    lot: "P3-PEOPLE-001D",
+    domainLotContract: PEOPLE_LOT_MACHINE_CONTRACT,
     title: mission.objective,
     missionType: mission.missionType,
     profile: "BUILD",

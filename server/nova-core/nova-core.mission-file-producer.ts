@@ -21,6 +21,9 @@ import type {
   NovaCoreExecutionRequest,
   NovaCoreValidationTarget,
 } from "./nova-core.execution.js";
+import {
+  PEOPLE_LOT_RUNTIME_EXECUTION_CONTRACT_ADAPTER,
+} from "./people-lot-runtime-execution-contract.adapter.js";
 
 interface NovaCoreValidation {
   name: string;
@@ -138,6 +141,8 @@ export class NovaCoreMissionFileProducer implements NovaCoreMissionFileProducerC
       changesExpected: profile === "READ_ONLY" ? false : (request.changesExpected ?? true),
       humanReviewRequired: request.humanReviewRequired ?? true,
     };
+    const domainLotContract =
+      PEOPLE_LOT_RUNTIME_EXECUTION_CONTRACT_ADAPTER.forMissionManifest();
 
     await mkdir(missionDirectory, { recursive: true });
     await mkdir(reportDirectory, { recursive: true });
@@ -176,7 +181,8 @@ export class NovaCoreMissionFileProducer implements NovaCoreMissionFileProducerC
       schemaVersion: "1.0.0",
       missionId: mission.missionId,
       program: mission.projectId,
-      lot: "NOVA-CORE-MVP",
+      lot: domainLotContract.lotId,
+      domainLotContract,
       title: mission.objective,
       missionType: mission.missionType,
       profile,

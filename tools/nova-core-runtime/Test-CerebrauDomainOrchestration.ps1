@@ -876,7 +876,7 @@ try {
         Assert-Equal 'P3-PEOPLE-001C' $result.LastCertifiedLot
         Assert-Equal 'P3-PEOPLE-001D' $result.CurrentLot
         Assert-Equal 'PENDING_EVIDENCE' $result.CurrentStatus
-        Assert-Equal 'IMPLEMENTATION' $result.ExecutionMode
+        Assert-Equal 'BACKFILL' $result.ExecutionMode
     }
 
     Invoke-TestCase 'people-pilot-modifies-no-business-file' {
