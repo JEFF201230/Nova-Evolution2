@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { HomeActiveWorkItem } from '../../../../../contracts/home-active-work.contract';
 import { EmptyState } from '../../components/surfaces/EmptyState';
 import { Skeleton } from '../../components/shared/Skeleton';
 import { useNavigation } from '../../hooks/useNavigation';
 import { SituationDetailsDrawer } from '../situation-details';
+import { LoginDialog } from '../authentication/LoginDialog';
 import { homeFixture } from './homeFixture';
 import { HomeHeader } from './HomeHeader';
 import { ObjectiveComposer } from './ObjectiveComposer';
@@ -38,6 +39,32 @@ export function HomePage({
 }: HomePageProps) {
   const { navigate } = useNavigation();
   const [situationDetailsOpen, setSituationDetailsOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+
+useEffect(() => {
+  const controller = new AbortController();
+
+  void fetch('/session', {
+    method: 'GET',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+    signal: controller.signal,
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        return;
+      }
+
+      const session = await response.json() as { authenticated?: boolean };
+      setAuthenticated(session.authenticated === true);
+    })
+    .catch(() => undefined);
+
+  return () => controller.abort();
+}, []);
   const activeWorkRuntime = useHomeActiveWork(
     state === 'default' && activeWork === undefined,
     activeWorkLoader,
@@ -152,10 +179,25 @@ export function HomePage({
         />
 
         <BackgroundWorkSection onOpenDetails={onOpenDetails} />
+        {!authenticated ? (
+          <button
+            type="button"
+            onClick={() => setLoginOpen(true)}
+          >
+            Connexion
+          </button>
+        ) : null}
       </div>
+
       <SituationDetailsDrawer
         open={situationDetailsOpen}
         onClose={() => setSituationDetailsOpen(false)}
+      />
+
+      <LoginDialog
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onAuthenticated={() => window.location.reload()}
       />
     </div>
   );

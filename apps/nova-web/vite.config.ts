@@ -7,9 +7,14 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:4200',
-      },
-    },
+  '/api': {
+    target: 'https://localhost:4200',
+    secure: false,
+  },
+  '/session': {
+    target: 'https://localhost:4200',
+    secure: false,
+  },
+},
   },
 });

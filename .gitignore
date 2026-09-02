@@ -1,3 +1,5 @@
 node_modules/
 .nova-data/
 .env.local
+# Local NOVA development certificates and session artifacts
+.certs/

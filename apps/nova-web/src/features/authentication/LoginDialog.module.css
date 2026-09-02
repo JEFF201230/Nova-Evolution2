@@ -1,0 +1,103 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.32);
+  backdrop-filter: blur(3px);
+}
+
+.dialog {
+  width: min(100%, 400px);
+  box-sizing: border-box;
+  padding: 28px;
+  border: 1px solid var(--n-color-border);
+  border-radius: var(--n-radius-16);
+  background: var(--n-color-surface);
+  box-shadow:
+    0 24px 64px rgba(15, 23, 42, 0.18),
+    0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-19);
+  font-weight: var(--n-font-weight-bold);
+  line-height: var(--n-line-height-140);
+  letter-spacing: -0.02em;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--n-color-text-secondary);
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus-visible {
+  background: var(--n-color-action-bg);
+  color: var(--n-color-action);
+  outline: none;
+}
+
+.form {
+  display: grid;
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-13);
+  font-weight: var(--n-font-weight-medium);
+}
+
+.input {
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--n-color-border-medium);
+  border-radius: var(--n-radius-10);
+  background: var(--n-color-surface);
+  color: var(--n-color-text);
+  font: inherit;
+  font-size: var(--n-font-size-14);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--n-color-action);
+  box-shadow: 0 0 0 3px var(--n-color-action-bg);
+}
+
+.error {
+  margin: -4px 0 0;
+  color: var(--n-color-critical);
+  font-size: var(--n-font-size-12);
+  line-height: var(--n-line-height-145);
+}
