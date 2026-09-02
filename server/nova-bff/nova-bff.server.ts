@@ -10,6 +10,7 @@ import {
   type NovaBffDependencies,
 } from "./nova-bff.app.js";
 import { HttpHomeActiveWorkGateway } from "./home-active-work.gateway.js";
+import { HttpWorkActivityGateway } from "./work-activity.gateway.js";
 
 export async function createNovaBffServer(
   config: BffConfig,
@@ -19,6 +20,8 @@ export async function createNovaBffServer(
     ...dependencies,
     homeActiveWorkGateway: dependencies.homeActiveWorkGateway
       ?? new HttpHomeActiveWorkGateway(config.runtimeOrigin),
+    workActivityGateway: dependencies.workActivityGateway
+      ?? new HttpWorkActivityGateway(config.runtimeOrigin),
   });
   if (!config.tls) {
     return createHttpServer(application.handler);

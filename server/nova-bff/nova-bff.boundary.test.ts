@@ -19,7 +19,7 @@ test("BFF production modules do not import React, NOVA Core, Runtime or certifie
   }
 });
 
-test("BFF routing declares the authorized technical, Runtime and HOME read paths", async () => {
+test("BFF routing declares the authorized technical and capability-specific read paths", async () => {
   const source = await readFile(
     new URL("nova-bff.app.ts", BFF_ROOT),
     "utf8",
@@ -41,10 +41,19 @@ test("BFF routing declares the authorized technical, Runtime and HOME read paths
   const homePath = homeContract.match(
     /HOME_ACTIVE_WORK_PATH\s*=\s*"([^"]+)"/,
   )?.[1];
+  const workContract = await readFile(
+    new URL("../../contracts/work-activity.contract.ts", BFF_ROOT),
+    "utf8",
+  );
+  const workPathPrefix = workContract.match(
+    /WORK_ACTIVITY_PATH_PREFIX\s*=\s*"([^"]+)"/,
+  )?.[1];
   assert.ok(runtimePath);
   assert.ok(homePath);
+  assert.ok(workPathPrefix);
   declaredPaths.push(runtimePath);
   declaredPaths.push(homePath);
+  declaredPaths.push(`${workPathPrefix}/:workId/activity`);
   assert.deepEqual(declaredPaths, [
     "/health",
     "/readiness",
@@ -54,6 +63,7 @@ test("BFF routing declares the authorized technical, Runtime and HOME read paths
     "/session/logout",
     "/api/runtime/execute",
     "/api/home/active-work",
+    "/api/work/:workId/activity",
   ]);
   assert.doesNotMatch(
     source,
@@ -85,7 +95,10 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
   }
 
   assert.deepEqual(invocations, ["runtime-gateway.adapter.ts"]);
-  assert.deepEqual(transports, ["home-active-work.gateway.ts"]);
+  assert.deepEqual(transports, [
+    "home-active-work.gateway.ts",
+    "work-activity.gateway.ts",
+  ]);
   const adapter = await readFile(
     new URL("runtime-gateway.adapter.ts", BFF_ROOT),
     "utf8",

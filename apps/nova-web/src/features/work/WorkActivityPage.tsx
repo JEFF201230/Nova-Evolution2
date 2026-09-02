@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import type {
-  RuntimeEvent,
-  RuntimeMission,
-} from '../../../../../server/runtime/orchestrator/orchestrator-runtime.types';
+import {
+  parseWorkActivityResponse,
+  workActivityPath,
+  type WorkActivityRuntimeEvent,
+} from '../../../../../contracts/work-activity.contract';
 import { Badge } from '../../components/shared/Badge';
 import { Skeleton } from '../../components/shared/Skeleton';
 import { Spinner } from '../../components/shared/Spinner';
@@ -34,20 +35,9 @@ interface WorkActivityRuntimeState {
 }
 
 interface WorkActivityLoadOptions {
-  coreOrigin?: string;
   fetcher?: typeof fetch;
   signal?: AbortSignal;
 }
-
-interface MissionListResponse {
-  missions: RuntimeMission[];
-}
-
-interface MissionEventsResponse {
-  events: RuntimeEvent[];
-}
-
-export const NOVA_CORE_ORIGIN = 'http://127.0.0.1:4100';
 
 const activityFilters: readonly { id: WorkActivityFilter; label: string }[] = [
   { id: 'all', label: 'All' },
@@ -69,7 +59,7 @@ function producerInitials(producer: string): string {
   return initials || 'RT';
 }
 
-function runtimeEventToActivityEvent(event: RuntimeEvent): WorkActivityEventFixture {
+function runtimeEventToActivityEvent(event: WorkActivityRuntimeEvent): WorkActivityEventFixture {
   const critical = event.targetState === 'FAILED' || event.targetState === 'TIMEOUT';
   const transition = `${event.sourceState ?? 'NONE'} → ${event.targetState ?? 'NONE'}`;
 
@@ -91,71 +81,35 @@ function runtimeEventToActivityEvent(event: RuntimeEvent): WorkActivityEventFixt
   };
 }
 
-function isMissionListResponse(value: unknown): value is MissionListResponse {
-  return typeof value === 'object'
-    && value !== null
-    && Array.isArray((value as { missions?: unknown }).missions);
-}
-
-function isMissionEventsResponse(value: unknown): value is MissionEventsResponse {
-  return typeof value === 'object'
-    && value !== null
-    && Array.isArray((value as { events?: unknown }).events);
-}
-
-async function getJson(
-  fetcher: typeof fetch,
-  url: URL,
-  signal?: AbortSignal,
-): Promise<unknown> {
-  const response = await fetcher(url, {
-    method: 'GET',
-    headers: { accept: 'application/json' },
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error(`NOVA Core read failed with HTTP ${response.status}.`);
-  }
-
-  return response.json() as Promise<unknown>;
-}
-
 export async function loadWorkActivity(
   workId: string,
   {
-    coreOrigin = NOVA_CORE_ORIGIN,
     fetcher = fetch,
     signal,
   }: WorkActivityLoadOptions = {},
 ): Promise<WorkActivityFixture | undefined> {
-  const missionListUrl = new URL('/api/v1/missions', coreOrigin);
-  const missionList = await getJson(fetcher, missionListUrl, signal);
-  if (!isMissionListResponse(missionList)) {
-    throw new Error('NOVA Core mission list response is invalid.');
+  const response = await fetcher(workActivityPath(workId), {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Work Activity BFF read failed with HTTP ${response.status}.`);
   }
 
-  const mission = missionList.missions.find((candidate) => candidate.missionId === workId);
-  if (!mission) {
-    return undefined;
+  const activity = parseWorkActivityResponse(await response.json());
+  if (activity.workIdentity.workId !== workId) {
+    throw new Error('Work Activity BFF identity does not match the requested Work.');
   }
-
-  const eventsUrl = new URL(
-    `/api/v1/missions/${encodeURIComponent(mission.projectId)}/${encodeURIComponent(mission.missionId)}/events`,
-    coreOrigin,
-  );
-  const missionEvents = await getJson(fetcher, eventsUrl, signal);
-  if (!isMissionEventsResponse(missionEvents)) {
-    throw new Error('NOVA Core mission events response is invalid.');
-  }
-
-  if (missionEvents.events.length === 0) {
+  if (activity.events.length === 0) {
     return undefined;
   }
 
   return {
-    workId: mission.missionId,
-    events: missionEvents.events.map(runtimeEventToActivityEvent),
+    workId: activity.workIdentity.workId,
+    events: activity.events.map(runtimeEventToActivityEvent),
   };
 }
 
@@ -286,7 +240,7 @@ export function WorkActivityPage({
     );
   }
 
-  if (state === 'empty' || !work || !activity) {
+  if (state === 'empty' || !activity) {
     return (
       <WorkActivityFrame work={work}>
         <EmptyState

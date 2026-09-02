@@ -25,6 +25,11 @@ import {
 } from "./runtime-execute.route.js";
 import type { RuntimeGatewayPort } from "./runtime-gateway.port.js";
 import {
+  handleWorkActivity,
+  workIdFromActivityPath,
+} from "./work-activity.route.js";
+import type { WorkActivityGatewayPort } from "./work-activity.gateway.port.js";
+import {
   InMemorySessionStore,
   SessionManager,
   publicSessionView,
@@ -46,6 +51,7 @@ export interface NovaBffDependencies {
   readonly identityProvider?: IdentityProvider;
   readonly runtimeGateway?: RuntimeGatewayPort;
   readonly homeActiveWorkGateway?: HomeActiveWorkGatewayPort;
+  readonly workActivityGateway?: WorkActivityGatewayPort;
   readonly clock?: () => number;
 }
 
@@ -93,6 +99,7 @@ export function createNovaBffApplication(
     createBffRouter(
       dependencies.runtimeGateway,
       dependencies.homeActiveWorkGateway,
+      dependencies.workActivityGateway,
     ),
   ]);
 
@@ -130,11 +137,13 @@ export function createNovaBffApplication(
 function createBffRouter(
   runtimeGateway: RuntimeGatewayPort | undefined,
   homeActiveWorkGateway: HomeActiveWorkGatewayPort | undefined,
+  workActivityGateway: WorkActivityGatewayPort | undefined,
 ) {
   return async (
     context: BffRequestContext,
     _next: () => Promise<void>,
   ): Promise<void> => {
+    const workId = workIdFromActivityPath(context.pathname);
     const publicPaths = new Set([
       "/health",
       "/readiness",
@@ -146,6 +155,13 @@ function createBffRouter(
       HOME_ACTIVE_WORK_PATH,
     ]);
     if (publicPaths.has(context.pathname) && !isAllowedMethod(context)) {
+      throw new BffError(
+        405,
+        "METHOD_NOT_ALLOWED",
+        "This endpoint does not accept the requested method.",
+      );
+    }
+    if (workId && context.request.method !== "GET") {
       throw new BffError(
         405,
         "METHOD_NOT_ALLOWED",
@@ -209,6 +225,11 @@ function createBffRouter(
       && context.pathname === HOME_ACTIVE_WORK_PATH
     ) {
       await handleHomeActiveWork(context, homeActiveWorkGateway);
+      return;
+    }
+
+    if (context.request.method === "GET" && workId) {
+      await handleWorkActivity(context, workActivityGateway, workId);
       return;
     }
 
