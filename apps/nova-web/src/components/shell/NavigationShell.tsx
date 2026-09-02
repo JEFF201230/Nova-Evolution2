@@ -4,7 +4,6 @@ import { ContentViewport } from './ContentViewport';
 import { NavigationItem } from './NavigationItem';
 import { NavigationSection } from './NavigationSection';
 import { HomePage } from '../../features/home/HomePage';
-import { homeFixture } from '../../features/home/homeFixture';
 import { RouteSurface } from '../routes/RouteSurface';
 import { ShellLogo } from './ShellLogo';
 import { SideNavigation } from './SideNavigation';
@@ -25,20 +24,6 @@ type NavigationIconName =
   | 'notifications'
   | 'help'
   | 'preferences';
-
-function getPrimaryNavigationTarget(routeId: (typeof primaryRouteIds)[number]) {
-  const workId = homeFixture.priorityInsight.workId;
-
-  switch (routeId) {
-    case 'work':
-      return {
-        routeName: 'work.detail' as const,
-        pathParams: { workId },
-      };
-    default:
-      return { routeName: routeId };
-  }
-}
 
 function NavigationIcon({ name }: { name: NavigationIconName }) {
   let paths;
@@ -138,16 +123,11 @@ export function NavigationShell() {
         <SideNavigation header={<ShellLogo />}>
           <NavigationSection>
             {primaryRouteIds.map((routeId) => {
-              const target = getPrimaryNavigationTarget(routeId);
-              const options = 'pathParams' in target
-                ? { pathParams: target.pathParams }
-                : undefined;
-
               return (
                 <NavigationItem
                   key={routeId}
                   active={activeNavigationRoute === routeId}
-                  href={hrefFor(target.routeName, options)}
+                  href={hrefFor(routeId)}
                   icon={<NavigationIcon name={routeId} />}
                   onClick={(event) => {
                     if (
@@ -160,7 +140,7 @@ export function NavigationShell() {
                       return;
                     }
                     event.preventDefault();
-                    navigate(target.routeName, options);
+                    navigate(routeId);
                   }}
                 >
                   {routeRegistry[routeId].heading}
@@ -199,9 +179,6 @@ export function NavigationShell() {
         <ContentArea>
           {isHome ? (
             <HomePage
-              onOpenDecision={() => navigate('decisions')}
-              onOpenDetails={() => navigate('work')}
-              onOpenWork={() => navigate('work')}
               onStartWorkSetup={(objective) => {
                 setObjective(objective);
                 navigate('clarify');

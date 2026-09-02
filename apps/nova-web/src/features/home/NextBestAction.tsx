@@ -1,41 +1,19 @@
-import { useState } from 'react';
 import { Badge } from '../../components/shared/Badge';
-import { Button } from '../../components/shared/Button';
-import { homeFixture } from './homeFixture';
 import styles from './HomePage.module.css';
 
-export interface NextBestActionProps {
-  onPrimaryAction: () => void;
-  onDetails?: () => void;
-}
-
-export function NextBestAction({ onPrimaryAction, onDetails }: NextBestActionProps) {
-  const [whyOpen, setWhyOpen] = useState(false);
-
+export function NextBestAction() {
   return (
     <div className={styles.heroHeader}>
       <div className={styles.heroMeta}>
         <Badge size="sm" tone="nova">
-          {homeFixture.priorityInsight.label}
+          NOVA
         </Badge>
         <Badge size="sm" tone="action">
-          {homeFixture.priorityInsight.status}
+          Unavailable
         </Badge>
       </div>
-      <p className={styles.heroSummary}>{homeFixture.priorityInsight.summary}</p>
-      <h2 className={styles.heroGain}>{homeFixture.priorityInsight.gain}</h2>
-      <div className={styles.heroActions}>
-        <Button onClick={onPrimaryAction}>{homeFixture.priorityInsight.actionLabel}</Button>
-        <Button variant="quiet" onClick={() => setWhyOpen((value) => !value)}>
-          {homeFixture.priorityInsight.whyLabel}
-        </Button>
-        {onDetails ? (
-          <Button variant="quiet" onClick={onDetails}>
-            {homeFixture.priorityInsight.detailsLabel}
-          </Button>
-        ) : null}
-      </div>
-      {whyOpen ? <p className={styles.heroDetails}>{homeFixture.priorityInsight.why}</p> : null}
+      <p className={styles.heroSummary}>Situation insights are not available from Runtime.</p>
+      <h2 className={styles.heroGain}>No priority or next action is shown.</h2>
     </div>
   );
 }

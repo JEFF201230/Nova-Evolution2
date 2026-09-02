@@ -86,7 +86,7 @@ describe('Work Setup flow', () => {
   });
 
   it.each([
-    ['/home', 'Good afternoon, Sarah.'],
+    ['/home', 'Home'],
     ['/work', 'No work selected'],
     ['/decisions', 'Decisions'],
     ['/deliverables', 'Deliverables'],

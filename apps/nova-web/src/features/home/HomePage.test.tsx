@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import type { HomeActiveWorkItem } from '../../../../../contracts/home-active-work.contract';
 import { NavigationProvider } from '../../routes/NavigationProvider';
 import { buildRoutePath, resolveRouteLocation } from '../../routes/routeResolver';
-import { homeFixture } from './homeFixture';
 import { HomePage, type HomePageProps } from './HomePage';
 
 const activeWorks: readonly HomeActiveWorkItem[] = [{
@@ -47,9 +46,6 @@ const activeWorks: readonly HomeActiveWorkItem[] = [{
 
 const defaultProps: HomePageProps = {
   activeWork: activeWorks,
-  onOpenDecision: vi.fn(),
-  onOpenDetails: vi.fn(),
-  onOpenWork: vi.fn(),
   onStartWorkSetup: vi.fn(),
 };
 
@@ -64,73 +60,31 @@ function renderHome(props: Partial<HomePageProps> = {}) {
 }
 
 describe('HomePage', () => {
-  it('renders the default home experience', () => {
+  it('renders only canonical Active Work business data and truthful unavailable states', () => {
     renderHome();
 
-    expect(screen.getByRole('heading', { name: 'Good afternoon, Sarah.' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', {
-        name: 'Spend 15 minutes resolving the comments today and validation probability rises from 76% to 92%.',
-      }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Open presentation' })).toBeInTheDocument();
-    expect(screen.getByText('What would you like to achieve?')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByText('1 active work item from Runtime.')).toBeInTheDocument();
+    expect(screen.getByText('Situation insights are not available from Runtime.')).toBeInTheDocument();
+    expect(screen.getByText('Decision information is not available on Home.')).toBeInTheDocument();
+    expect(screen.getByText('Background work information is unavailable.')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'ACTIVE WORK' })).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Working in background · You save approximately 6 hours of review this week · 1 conflict detected',
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByText('CRM source reconciliation')).not.toBeInTheDocument();
-    expect(screen.queryByText('Open comment review')).not.toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Connect HOME Active Work to WCF-001' }),
     ).toBeInTheDocument();
+    expect(screen.getByText('Work HOME-001 · Mission MISSION-HOME-001 · ACTIVE')).toBeInTheDocument();
     expect(screen.getByText('50% progress')).toBeInTheDocument();
     expect(screen.getByText('2026-07-30T12:00:00.000Z')).toBeInTheDocument();
+
+    expect(screen.queryByText(/Sarah/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/€420k/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/76%/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Open presentation' })).not.toBeInTheDocument();
   });
 
-  it('routes Open Presentation and Pending Decision through their fixture identifiers', async () => {
+  it('opens every Active Work card with its canonical workIdentity.workId', async () => {
     const user = userEvent.setup();
-    const onOpenWork = vi.fn();
-    const onOpenDecision = vi.fn();
-    const onOpenDetails = vi.fn();
-
-    renderHome({ onOpenDecision, onOpenDetails, onOpenWork });
-
-    await user.click(screen.getByRole('button', { name: 'Open presentation' }));
-    expect(window.location.pathname).toBe(
-      buildRoutePath('work.detail', { workId: homeFixture.priorityInsight.workId }),
-    );
-    expect(resolveRouteLocation(window.location.pathname).pathParams.workId).toBe(
-      homeFixture.priorityInsight.workId,
-    );
-
-    await user.click(
-      screen.getByText('Approve Q3 budget increase of €420k for cloud infrastructure'),
-    );
-    expect(window.location.pathname).toBe(
-      buildRoutePath('decision.detail', {
-        decisionId: homeFixture.pendingDecision.decisionId,
-      }),
-    );
-    expect(resolveRouteLocation(window.location.pathname).pathParams.decisionId).toBe(
-      homeFixture.pendingDecision.decisionId,
-    );
-
-    expect(onOpenWork).not.toHaveBeenCalled();
-    expect(onOpenDecision).not.toHaveBeenCalled();
-    expect(onOpenDetails).not.toHaveBeenCalled();
-
-    await user.click(screen.getByRole('button', { name: 'Background details' }));
-    expect(onOpenDetails).toHaveBeenCalledTimes(1);
-  });
-
-  it('opens every Active Work card with its own workId', async () => {
-    const user = userEvent.setup();
-    const onOpenWork = vi.fn();
-
-    renderHome({ onOpenWork });
+    renderHome();
 
     for (const work of activeWorks) {
       await user.click(screen.getByRole('button', { name: work.goal }));
@@ -141,11 +95,9 @@ describe('HomePage', () => {
         work.workIdentity.workId,
       );
     }
-
-    expect(onOpenWork).not.toHaveBeenCalled();
   });
 
-  it('loads Active Work from the canonical read service without the production fixture', async () => {
+  it('loads Active Work from the canonical read service without a fixture fallback', async () => {
     const activeWorkLoader = vi.fn(async () => activeWorks);
 
     renderHome({
@@ -159,111 +111,71 @@ describe('HomePage', () => {
       }),
     ).toBeInTheDocument();
     expect(activeWorkLoader).toHaveBeenCalledTimes(1);
-    expect(
-      screen.queryByText('Prepare Q3 budget review presentation for the board'),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText('1 active work item from Runtime.')).toBeInTheDocument();
+    expect(screen.queryByText('Prepare Q3 budget review presentation for the board')).not.toBeInTheDocument();
   });
 
-  it('opens Situation details only from its Details CTA and closes through every supported method', async () => {
-    const user = userEvent.setup();
-    const onOpenWork = vi.fn();
-    const onOpenDetails = vi.fn();
+  it('keeps canonical Active Work loading, empty, and error states explicit', async () => {
+    const neverResolves = vi.fn(() => new Promise<readonly HomeActiveWorkItem[]>(() => undefined));
+    const loadingView = renderHome({ activeWork: undefined, activeWorkLoader: neverResolves });
 
-    renderHome({ onOpenDetails, onOpenWork });
+    expect(screen.getAllByText('Loading active work from Runtime.')).toHaveLength(2);
+    expect(screen.getByRole('status')).toHaveTextContent('Loading active work from Runtime.');
+    loadingView.unmount();
 
-    const detailsButton = screen.getByRole('button', { name: 'Details' });
+    const emptyView = renderHome({ activeWork: undefined, activeWorkLoader: vi.fn(async () => []) });
+    expect(await screen.findAllByText('No active work returned by Runtime.')).toHaveLength(2);
+    emptyView.unmount();
 
-    await user.click(screen.getByRole('button', { name: 'Why?' }));
-    expect(screen.queryByRole('dialog', { name: 'Situation details' })).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Open presentation' }));
-    expect(window.location.pathname).toBe(
-      buildRoutePath('work.detail', { workId: homeFixture.priorityInsight.workId }),
+    renderHome({
+      activeWork: undefined,
+      activeWorkLoader: vi.fn(async () => { throw new Error('unavailable'); }),
+    });
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Active work could not be loaded from Runtime.',
     );
-    expect(onOpenWork).not.toHaveBeenCalled();
-    expect(screen.queryByRole('dialog', { name: 'Situation details' })).not.toBeInTheDocument();
-
-    await user.click(detailsButton);
-    expect(screen.getByRole('dialog', { name: 'Situation details' })).toBeInTheDocument();
-    expect(onOpenDetails).not.toHaveBeenCalled();
-
-    await user.click(screen.getByTestId('drawer-overlay'));
-    expect(screen.queryByRole('dialog', { name: 'Situation details' })).not.toBeInTheDocument();
-    expect(detailsButton).toHaveFocus();
-
-    await user.click(detailsButton);
-    await user.click(screen.getByRole('button', { name: 'Close drawer' }));
-    expect(screen.queryByRole('dialog', { name: 'Situation details' })).not.toBeInTheDocument();
-    expect(detailsButton).toHaveFocus();
-
-    await user.click(detailsButton);
-    await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog', { name: 'Situation details' })).not.toBeInTheDocument();
-    expect(detailsButton).toHaveFocus();
+    expect(screen.getByText('Active work is temporarily unavailable.')).toBeInTheDocument();
   });
 
-  it('renders the loading state', () => {
-    renderHome({ state: 'loading' });
+  it('renders truthful page-level loading, empty, error, and blocked states', () => {
+    const { rerender } = renderHome({ state: 'loading' });
+    expect(screen.getByText('Loading the Home interface.')).toBeInTheDocument();
 
-    expect(screen.getByText('Loading Home')).toBeInTheDocument();
-    expect(screen.getByText('NOVA is preparing the situational overview.')).toBeInTheDocument();
-  });
-
-  it('renders the empty state', () => {
-    renderHome({ state: 'empty' });
-
+    rerender(
+      <NavigationProvider>
+        <HomePage {...defaultProps} state="empty" />
+      </NavigationProvider>,
+    );
     expect(screen.getByRole('heading', { name: 'No active work yet' })).toBeInTheDocument();
-  });
 
-  it('renders the error and blocked states', () => {
-    const { rerender } = renderHome({ state: 'error' });
-
-    expect(
-      screen.getByRole('heading', { name: 'Home temporarily unavailable' }),
-    ).toBeInTheDocument();
+    rerender(
+      <NavigationProvider>
+        <HomePage {...defaultProps} state="error" />
+      </NavigationProvider>,
+    );
+    expect(screen.getByRole('heading', { name: 'Home temporarily unavailable' })).toBeInTheDocument();
 
     rerender(
       <NavigationProvider>
         <HomePage {...defaultProps} state="blocked" />
       </NavigationProvider>,
     );
-
-    expect(screen.getByRole('heading', { name: 'Home blocked' })).toBeInTheDocument();
+    expect(screen.getByText('Home cannot continue in its current state.')).toBeInTheDocument();
   });
 
-  it('starts Work Setup only with a non-empty objective', async () => {
+  it('labels Objective Composer as frontend Work Setup and starts only with a non-empty objective', async () => {
     const user = userEvent.setup();
     const onStartWorkSetup = vi.fn();
-
     renderHome({ onStartWorkSetup });
 
+    expect(screen.getByText(/frontend Work Setup flow/)).toBeInTheDocument();
+    expect(screen.getByText(/does not create or execute a Runtime mission/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: /What would you like to achieve/i }));
     const continueButton = screen.getByRole('button', { name: 'Continue' });
     expect(continueButton).toBeDisabled();
 
-    await user.type(
-      screen.getByLabelText('What would you like to achieve?'),
-      'Prepare the launch review',
-    );
+    await user.type(screen.getByLabelText('What would you like to achieve?'), 'Prepare the launch review');
     await user.click(continueButton);
-
     expect(onStartWorkSetup).toHaveBeenCalledWith('Prepare the launch review');
-  });
-
-  it('fills the objective from a suggestion before continuation', async () => {
-    const user = userEvent.setup();
-    const onStartWorkSetup = vi.fn();
-
-    renderHome({ onStartWorkSetup });
-
-    await user.click(
-      screen.getByRole('button', { name: 'Prepare a board presentation on Q3 results' }),
-    );
-    expect(screen.getByLabelText('What would you like to achieve?')).toHaveValue(
-      'Prepare a board presentation on Q3 results',
-    );
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-
-    expect(onStartWorkSetup).toHaveBeenCalledWith('Prepare a board presentation on Q3 results');
   });
 });

@@ -55,12 +55,22 @@ describe('HOME Active Work service', () => {
     const works = await loadHomeActiveWork({ fetcher });
 
     expect(works).toEqual(response.works);
+    expect(HOME_ACTIVE_WORK_PATH).toBe('/api/home/active-work');
+    expect(HOME_ACTIVE_WORK_PATH).not.toContain(':4100');
     expect(fetcher).toHaveBeenCalledWith(
       HOME_ACTIVE_WORK_PATH,
       expect.objectContaining({
         method: 'GET',
         credentials: 'include',
       }),
+    );
+  });
+
+  it('fails explicitly when the authenticated BFF read fails', async () => {
+    const fetcher = vi.fn(async () => new Response(null, { status: 401 }));
+
+    await expect(loadHomeActiveWork({ fetcher })).rejects.toThrow(
+      'HOME Active Work read failed with HTTP 401.',
     );
   });
 

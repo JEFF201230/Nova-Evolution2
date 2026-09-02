@@ -1,35 +1,27 @@
 import { Badge } from '../../components/shared/Badge';
-import { homeFixture } from './homeFixture';
 import styles from './HomePage.module.css';
 
-export interface PendingDecisionCardProps {
-  onOpenDecision: (decisionId: string) => void;
-}
-
-export function PendingDecisionCard({ onOpenDecision }: PendingDecisionCardProps) {
+export function PendingDecisionCard() {
   return (
-    <button
+    <section
+      aria-labelledby="home-decision-status"
       className={styles.decision}
-      type="button"
-      onClick={() => onOpenDecision(homeFixture.pendingDecision.decisionId)}
     >
       <div className={styles.decisionLayout}>
         <div className={styles.decisionContent}>
           <div className={styles.decisionMeta}>
-            <Badge size="sm" tone="error">
-              {homeFixture.pendingDecision.dueLabel}
-            </Badge>
-            <Badge size="sm" tone="success">
-              {homeFixture.pendingDecision.confidenceLabel}
+            <Badge size="sm" tone="action">
+              Unavailable
             </Badge>
           </div>
-          <h3 className={styles.decisionTitle}>{homeFixture.pendingDecision.statement}</h3>
-          <p className={styles.decisionConsequence}>{homeFixture.pendingDecision.consequence}</p>
+          <h3 id="home-decision-status" className={styles.decisionTitle}>
+            Decision information is not available on Home.
+          </h3>
+          <p className={styles.decisionConsequence}>
+            No canonical Decision Runtime source is connected.
+          </p>
         </div>
-        <span aria-hidden="true" className={styles.decisionArrow}>
-          →
-        </span>
       </div>
-    </button>
+    </section>
   );
 }

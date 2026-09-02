@@ -3,7 +3,6 @@ import type { HomeActiveWorkItem } from '../../../../../contracts/home-active-wo
 import { EmptyState } from '../../components/surfaces/EmptyState';
 import { Skeleton } from '../../components/shared/Skeleton';
 import { useNavigation } from '../../hooks/useNavigation';
-import { SituationDetailsDrawer } from '../situation-details';
 import { LoginDialog } from '../authentication/LoginDialog';
 import { homeFixture } from './homeFixture';
 import { HomeHeader } from './HomeHeader';
@@ -22,9 +21,6 @@ export interface HomePageProps {
   activeWork?: readonly HomeActiveWorkItem[];
   activeWorkLoader?: HomeActiveWorkLoader;
   state?: HomePageState;
-  onOpenWork: () => void;
-  onOpenDecision: () => void;
-  onOpenDetails?: () => void;
   onStartWorkSetup: (objective: string) => void;
 }
 
@@ -32,13 +28,9 @@ export function HomePage({
   activeWork,
   activeWorkLoader,
   state = 'default',
-  onOpenWork,
-  onOpenDecision,
-  onOpenDetails,
   onStartWorkSetup,
 }: HomePageProps) {
   const { navigate } = useNavigation();
-  const [situationDetailsOpen, setSituationDetailsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
 
@@ -78,10 +70,6 @@ useEffect(() => {
     navigate('work.detail', { pathParams: { workId } });
   }
 
-  function openDecision(decisionId: string) {
-    navigate('decision.detail', { pathParams: { decisionId } });
-  }
-
   if (state === 'loading') {
     return (
       <div className={styles.homeView}>
@@ -105,15 +93,11 @@ useEffect(() => {
     return (
       <div className={styles.homeView}>
         <div className={styles.page}>
-          <HomeHeader />
+          <HomeHeader activeWorkCount={0} activeWorkState="ready" />
           <EmptyState
             className={styles.stateCard}
             heading={homeFixture.empty.title}
             description={homeFixture.empty.description}
-            actionLabel="Open work"
-            onAction={onOpenWork}
-            secondaryActionLabel="Open decisions"
-            onSecondaryAction={onOpenDecision}
           />
         </div>
       </div>
@@ -124,15 +108,11 @@ useEffect(() => {
     return (
       <div className={styles.homeView}>
         <div className={styles.page}>
-          <HomeHeader />
+          <HomeHeader activeWorkCount={0} activeWorkState="error" />
           <EmptyState
             className={styles.stateCard}
             heading={homeFixture.error.title}
             description={homeFixture.error.description}
-            actionLabel="Retry"
-            onAction={onOpenWork}
-            secondaryActionLabel="Open work"
-            onSecondaryAction={onOpenWork}
           />
         </div>
       </div>
@@ -143,15 +123,11 @@ useEffect(() => {
     return (
       <div className={styles.homeView}>
         <div className={styles.page}>
-          <HomeHeader />
+          <HomeHeader activeWorkCount={0} activeWorkState="error" />
           <EmptyState
             className={styles.stateCard}
             heading={homeFixture.blocked.title}
             description={homeFixture.blocked.description}
-            actionLabel="Open decision"
-            onAction={onOpenDecision}
-            secondaryActionLabel="Open work"
-            onSecondaryAction={onOpenWork}
           />
         </div>
       </div>
@@ -161,16 +137,13 @@ useEffect(() => {
   return (
     <div className={styles.homeView}>
       <div className={styles.page}>
-        <HomeHeader />
+        <HomeHeader activeWorkCount={activeWorks.length} activeWorkState={activeWorkState} />
 
         <ObjectiveComposer onContinue={onStartWorkSetup} />
 
-        <PriorityInsight
-          onOpenWork={openWork}
-          onOpenDetails={() => setSituationDetailsOpen(true)}
-        />
+        <PriorityInsight />
 
-        <PendingDecisionCard onOpenDecision={openDecision} />
+        <PendingDecisionCard />
 
         <ActiveWorkSection
           works={activeWorks}
@@ -178,7 +151,7 @@ useEffect(() => {
           onOpenWork={openWork}
         />
 
-        <BackgroundWorkSection onOpenDetails={onOpenDetails} />
+        <BackgroundWorkSection />
         {!authenticated ? (
           <button
             type="button"
@@ -188,11 +161,6 @@ useEffect(() => {
           </button>
         ) : null}
       </div>
-
-      <SituationDetailsDrawer
-        open={situationDetailsOpen}
-        onClose={() => setSituationDetailsOpen(false)}
-      />
 
       <LoginDialog
         open={loginOpen}

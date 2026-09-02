@@ -1,19 +1,14 @@
-import { homeFixture } from './homeFixture';
-import { NovaSuggestionCard } from './NovaSuggestionCard';
 import styles from './HomePage.module.css';
 
-export interface BackgroundWorkSectionProps {
-  onOpenDetails?: () => void;
-}
-
-export function BackgroundWorkSection({ onOpenDetails }: BackgroundWorkSectionProps) {
+export function BackgroundWorkSection() {
   return (
     <div className={styles.backgroundSection}>
-      <NovaSuggestionCard
-        summary={homeFixture.background.summary}
-        detailsLabel={homeFixture.background.detailsLabel}
-        onDetails={onOpenDetails}
-      />
+      <div className={styles.background}>
+        <p className={styles.backgroundSummary}>Background work information is unavailable.</p>
+        <p className={styles.backgroundDetails}>
+          Home is not connected to a canonical background-work source.
+        </p>
+      </div>
     </div>
   );
 }

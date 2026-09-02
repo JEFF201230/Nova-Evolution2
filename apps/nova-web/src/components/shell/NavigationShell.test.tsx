@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { NavigationProvider } from '../../routes/NavigationProvider';
 import { NavigationShell } from './NavigationShell';
 import { WorkSetupProvider } from '../../features/work-setup';
-import { homeFixture } from '../../features/home/homeFixture';
 import { buildRoutePath } from '../../routes/routeResolver';
 
 function renderNavigationShell(pathname = '/home') {
@@ -36,14 +35,9 @@ describe('NavigationShell', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     renderNavigationShell('/home?tab=overview');
 
-    expect(screen.getByRole('heading', { name: 'Good afternoon, Sarah.' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', {
-        name: 'Spend 15 minutes resolving the comments today and validation probability rises from 76% to 92%.',
-      }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Home' })).toBeInTheDocument();
+    expect(screen.getByText('Situation insights are not available from Runtime.')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByRole('button', { name: 'Open presentation' })).toBeInTheDocument();
     expect(screen.getAllByLabelText('NOVA')).toHaveLength(1);
     expect(screen.getByText('Standard')).toBeInTheDocument();
     expect(screen.queryByText('Primary')).not.toBeInTheDocument();
@@ -70,9 +64,7 @@ describe('NavigationShell', () => {
     ).toBeInTheDocument();
 
     const navigation = getPrimaryNavigation();
-    const referenceWorkPath = buildRoutePath('work.detail', {
-      workId: homeFixture.priorityInsight.workId,
-    });
+    const referenceWorkPath = buildRoutePath('work');
 
     expect(navigation.getByRole('link', { name: 'Work' })).toHaveAttribute(
       'href',
@@ -82,13 +74,7 @@ describe('NavigationShell', () => {
 
     expect(window.location.pathname).toBe(referenceWorkPath);
     expect(navigation.getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'page');
-    expect(screen.queryByRole('heading', { name: 'No work selected' })).not.toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', {
-        name: 'Prepare Q3 budget review presentation for the board',
-        level: 1,
-      }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'No work selected' })).toBeInTheDocument();
 
     await user.click(navigation.getByRole('link', { name: 'Decisions' }));
     expect(window.location.pathname).toBe('/decisions');
@@ -169,7 +155,7 @@ describe('NavigationShell', () => {
   });
 
   it('keeps Work active on every dynamic Work route and preserves workId in contextual tabs', async () => {
-    const workId = homeFixture.priorityInsight.workId;
+    const workId = 'work-001';
     const workPaths = [
       buildRoutePath('work.detail', { workId }),
       buildRoutePath('work.overview', { workId }),
@@ -215,7 +201,7 @@ describe('NavigationShell', () => {
   });
 
   it('keeps global Decisions active on its child routes and Deliverables active on its domain', async () => {
-    const decisionId = homeFixture.pendingDecision.decisionId;
+    const decisionId = 'decision-001';
     const routes = [
       ['/decisions', 'Decisions'],
       [buildRoutePath('decision.detail', { decisionId }), 'Decisions'],
