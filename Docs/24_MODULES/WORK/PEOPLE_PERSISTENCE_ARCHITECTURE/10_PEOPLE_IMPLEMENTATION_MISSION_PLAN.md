@@ -1,47 +1,82 @@
-# PEOPLE Implementation Mission Plan — P3-PEOPLE-001D
+# PEOPLE — Plan minimal d’implémentation P3-PEOPLE-001D
 
-## Préconditions
+## Principe de découpage
 
-- P3-PEOPLE-001B et P3-PEOPLE-001C restent GO ;
-- `PeopleAuthority`, agrégats, événements et contrats existants sont inchangés ;
-- liste exacte des fichiers autorisés établie avant chaque mission ;
-- Framework, contrats certifiés, Mission Pipeline et certification JSON interdits.
+L’état, l’histoire, le reçu, la révision et les contraintes forment une seule unité atomique. Ils ne sont donc pas répartis en lots prétendument indépendants. Le plan comporte deux micro-missions de réalisation séquentielles et une mission de certification.
 
-## Micro-missions
+L’implémentation existante est réutilisée après audit ligne à ligne ; aucun fichier n’est conservé uniquement parce qu’il existe.
 
-### D1 — SQLite schema and migrations
+## D-01 — Convergence du noyau transactionnel PEOPLE
 
-Créer la base dédiée, tables, foreign keys, indexes, version de schéma et migration initiale. GO : migration répétable, checksums, contraintes et rollback testés.
+| Champ | Contenu |
+|---|---|
+| Identifiant | P3-PEOPLE-001D-M01 |
+| Objectif unique | rendre le commit BusinessPerson/WorkPeople conforme, atomique, reconstructible et durable |
+| Dépendances | P3-PEOPLE-001C GO ; présent dossier d’architecture ; liste de fichiers fermée |
+| Fichiers potentiels | people-persistence-ports.ts, people-persistence-schema.ts, people-persistence-sqlite-adapter.ts, people-persistence-aggregate-store.ts, people-persistence-history.ts, leurs tests ; index.ts seulement si export indispensable ; un mapper/rehydrator ou type d’erreur PEOPLE seulement si absent |
+| Invariants | ownership, deux agrégats, CAS, Owner unique par Work, Assignments/rôles/périodes, append-only, causalité multi-événements, idempotence, aucune suppression |
+| Tests obligatoires | création, modification, load complet, multi-événements, rollback injecté, deux connexions, stale revision, replay exact/divergent, contraintes SQL directes, rehydration/restart |
+| Critères GO | ports typés ; modèle v1 canonique ; un seul commit état+events+receipt ; toutes contraintes prouvées ; aucun DELETE métier ; aucune dépendance interdite ; tests ciblés et typecheck PASS |
+| Parallélisation | non pour le code : schéma, ports, mapping et commit se modifient mutuellement ; préparation de fixtures de tests possible sans merge séparé |
 
-### D2 — Repository ports and SQLite adapter
+Approche REUSE → COMPLETE :
 
-Créer les ports, transactions et mapping vers les agrégats existants. GO : aucun type SQLite dans le domaine, load/save déterministes, ABSENT/UNAVAILABLE distingués.
+- réutiliser node:sqlite, agrégats, événements et tests utiles ;
+- remplacer/corriger les contraintes et contrats insuffisants ;
+- ne créer un nouveau module que si une responsabilité absente ne peut être nommée clairement dans les fichiers existants.
 
-### D3 — Atomic aggregate persistence
+## D-02 — Migrations, intégrité et recovery
 
-Persister Business Person et Work People avec révision optimiste, commit atomique, Owner unique et périodes. GO : rollback et conflits sans effet partiel.
+| Champ | Contenu |
+|---|---|
+| Identifiant | P3-PEOPLE-001D-M02 |
+| Objectif unique | rendre l’évolution et la reprise de la source PEOPLE déterministes |
+| Dépendances | M01 GO et schéma canonique stabilisé |
+| Fichiers potentiels | people-persistence-schema.ts ou un unique people-persistence-migrations.ts si la chaîne ne tient plus clairement dans le schéma ; people-persistence-history.ts/recovery ; tests migration/recovery |
+| Invariants | version/checksum, aucune perte d’identité/histoire, une seule source active, fail closed, backup/restore |
+| Tests obligatoires | migration vide, idempotente, checksum divergent, interruption injectée, version inconnue, quick/integrity/foreign-key checks, backup/restore, corruption head/event/receipt, redémarrage |
+| Critères GO | chaîne versionnée ; pré/postflight ; recovery documenté et testé ; aucune migration destructive non récupérable ; replay = état restauré |
+| Parallélisation | non avec M01 ; scénarios de corruption peuvent être préparés en parallèle après gel du schéma |
 
-### D4 — Event history, replay and recovery
+Avant M02, déterminer factuellement s’il existe une base PEOPLE avec données hors dépôt. Si oui, son chemin et sa sauvegarde entrent dans le périmètre d’une migration autorisée ; si non, aucune importation legacy n’est créée.
 
-Ajouter histoire append-only, rehydratation, snapshots reconstructibles et récupération. GO : replay égal état courant, séquences cohérentes, crash/migration recovery PASS.
+## D-03 — Certification P3-PEOPLE-001D
 
-### D5 — Causality and idempotence
+| Champ | Contenu |
+|---|---|
+| Identifiant | P3-PEOPLE-001D-M03 |
+| Objectif unique | produire les preuves de conformité et la décision du lot |
+| Dépendances | M01 et M02 GO |
+| Fichiers potentiels | tests PEOPLE strictement nécessaires et rapport/certification explicitement autorisés par une mission distincte ; aucun code fonctionnel nouveau |
+| Invariants | totalité du contrat et des frontières |
+| Tests obligatoires | matrice 08 complète ; People, Work, Runtime, Core, typechecks, contrôles CEREBRAU applicables, git diff --check |
+| Critères GO | toutes validations obligatoires PASS ; rapport sans contradiction ; P3-PEOPLE-001D seulement alors certifiable |
+| Parallélisation | exécution des suites indépendantes possible après gel complet du code ; synthèse et verdict uniques |
 
-Ajouter clés de causalité, hash de requête et résultat initial. GO : retry exact idempotent, payload divergent rejeté, aucun doublon.
+Un échec Framework/CEREBRAU ne peut pas être masqué par une modification hors périmètre. Il bloque la certification jusqu’à une mission autorisée distincte.
 
-### D6 — Persistence certification evidence
+## Fichiers et zones interdits
 
-Exécuter tests PEOPLE, Work, Runtime, Core, typecheck, `git diff --check`, produire preuves et rapport de lot. GO : toutes les exigences P3-D couvertes; seulement ensuite soumettre la certification.
+Sauf nouvelle mission explicitement autorisée, ne pas modifier :
 
-## Dépendances
+- server/runtime, server/nova-core et server/nova-bff ;
+- tools et CEREBRAU ;
+- apps, client, frontend ;
+- contrats, blueprints et certifications existants ;
+- Work, Mission Engine, API, BFF, OFFER ou intégrations aval.
 
-`D1 → D2 → D3 → D4 → D5 → D6`. Aucun parallélisme fonctionnel sans risque; les tests de chaque étape peuvent être parallélisés après stabilisation de l’étape.
+## Gates communs
 
-## Fichiers interdits
+Chaque micro-mission :
 
-`server/nova-core/*`, `server/runtime/*`, `server/nova-bff/*`, `apps/*`, `Docs/12_CERTIFICATION/*`, blueprints et contrats existants, sauf lecture ou rapport explicitement autorisé.
+- capture le git status initial ;
+- fixe les fichiers autorisés avant écriture ;
+- prouve les invariants avant de revendiquer GO ;
+- exécute git diff --check ;
+- liste les commandes et leur résultat réel ;
+- préserve les changements préexistants ;
+- retourne un seul verdict et bloque la suivante en cas d’échec.
 
-## Gate commun
+## Pas de missions supplémentaires par défaut
 
-Chaque mission doit fournir un rapport unique, typecheck PASS, tests ciblés PASS, tests de non-régression applicables PASS, absence de dépendance inverse, `git diff --check` PASS et décision GO/NO GO. Un NO GO bloque immédiatement la suivante.
-
+Un ORM, un outbox consommateur, une API, une projection, un dashboard, PostgreSQL ou une intégration Work ne fait pas partie de P3-PEOPLE-001D. Leur éventuelle création exige une preuve de besoin et une mission ultérieure.

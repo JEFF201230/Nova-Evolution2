@@ -1,16 +1,35 @@
 {
-    "MissionId":  "P3-PEOPLE-001C-CERTIFICATION",
-    "DomainId":  "PEOPLE",
-    "LotId":  "P3-PEOPLE-001D",
-    "Status":  "PENDING_EVIDENCE",
-    "CertifiedAt":  null,
-    "Evidence":  [
-
-                 ],
-    "Tests":  [
-
-              ],
-    "Regressions":  "NOT_EVALUATED",
-    "PreviousLot":  "P3-PEOPLE-001C",
-    "NextAuthorizedLot":  "P3-PEOPLE-001E"
+  "MissionId": "P3-PEOPLE-001D-CERTIFICATION",
+  "DomainId": "PEOPLE",
+  "LotId": "P3-PEOPLE-001D",
+  "Status": "CERTIFIED",
+  "CertifiedAt": "2026-08-07T21:54:56.980Z",
+  "Evidence": [
+    "Docs/24_MODULES/WORK/PEOPLE_PERSISTENCE_ARCHITECTURE/MISSIONS/P3-PEOPLE-001D-M01_REPORT.md",
+    "Docs/24_MODULES/WORK/PEOPLE_PERSISTENCE_ARCHITECTURE/MISSIONS/P3-PEOPLE-001D-M02_REPORT.md",
+    "Docs/24_MODULES/WORK/PEOPLE_PERSISTENCE_ARCHITECTURE/MISSIONS/P3-PEOPLE-001D-M03_CERTIFICATION_REPORT.md",
+    "server/domain/people/people-persistence-aggregate-store.test.ts",
+    "server/domain/people/people-persistence-history.test.ts",
+    "server/domain/people/people-persistence-idempotence.test.ts",
+    "server/domain/people/people-persistence-migrations.test.ts",
+    "server/domain/people/people-persistence-schema.test.ts",
+    "server/domain/people/people-persistence-sqlite-adapter.test.ts"
+  ],
+  "Tests": [
+    "node --import tsx --test server/domain/people/*.test.ts: PASS 25/25",
+    "PEOPLE strict TypeScript typecheck: PASS",
+    "node --import tsx --test server/runtime/work/*.test.ts: PASS 43/43",
+    "npm.cmd run test:runtime: PASS 24/24",
+    "npm.cmd run test:core: PASS 541/541",
+    "npm.cmd run typecheck:nova-core: PASS",
+    "npm.cmd run test:nova-runtime:syntax: PASS",
+    "npm.cmd run test:nova-runtime:e2e: PASS 15/15",
+    "Test-CerebrauCertification.ps1: PASS 24/24",
+    "Test-CerebrauDomainOrchestration.ps1: PASS 51/51",
+    "CEREBRAU Read-LotCertification on repository state: CERTIFIED",
+    "git diff --check: PASS"
+  ],
+  "Regressions": "NONE",
+  "PreviousLot": "P3-PEOPLE-001C",
+  "NextAuthorizedLot": "P3-PEOPLE-001E"
 }

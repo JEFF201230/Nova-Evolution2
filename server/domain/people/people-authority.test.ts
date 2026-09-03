@@ -257,6 +257,125 @@ test("suspension, resumption and removal remain producer-only transitions", () =
   );
 });
 
+test("resume restores only roles effective immediately before suspension", () => {
+  const person = recognize(
+    "person-selective-resume",
+    "recognize-selective-resume",
+  ).aggregate;
+  const assignmentId = WorkAssignmentId.of("assignment-selective-resume");
+  const assignedAt = provenance(
+    "assign-selective-resume",
+    "2026-07-30T11:40:00.000Z",
+  );
+  const assigned = authority.assignPersonToWork(null, {
+    kind: "ASSIGN_PERSON_TO_WORK",
+    person,
+    workReference,
+    assignmentId,
+    roles: [
+      BusinessRole.of("CONTRIBUTOR"),
+      BusinessRole.of("REVIEWER"),
+    ],
+    period: AssignmentPeriod.startingAt(assignedAt.effectiveAt),
+    provenance: assignedAt,
+  });
+  const revoked = authority.revokeBusinessRole(assigned.aggregate, {
+    kind: "REVOKE_BUSINESS_ROLE",
+    assignmentId,
+    role: BusinessRole.of("REVIEWER"),
+    provenance: provenance(
+      "revoke-selective-reviewer",
+      "2026-07-30T11:45:00.000Z",
+    ),
+  });
+  const suspended = authority.suspendWorkAssignment(revoked.aggregate, {
+    kind: "SUSPEND_WORK_ASSIGNMENT",
+    assignmentId,
+    provenance: provenance(
+      "suspend-selective-resume",
+      "2026-07-30T11:50:00.000Z",
+    ),
+  });
+  const resumedAt = provenance(
+    "resume-selective-resume",
+    "2026-07-30T12:00:00.000Z",
+  );
+  const resumed = authority.resumeWorkAssignment(suspended.aggregate, {
+    kind: "RESUME_WORK_ASSIGNMENT",
+    assignmentId,
+    provenance: resumedAt,
+  });
+
+  const assignment = resumed.aggregate.assignments[0];
+  assert.ok(assignment);
+  assert.equal(
+    assignment.hasRoleAt(BusinessRole.of("REVIEWER"), resumedAt.effectiveAt),
+    false,
+  );
+  assert.equal(
+    assignment.hasRoleAt(
+      BusinessRole.of("CONTRIBUTOR"),
+      resumedAt.effectiveAt,
+    ),
+    true,
+  );
+  assert.equal(
+    resumed.events.some((event) => event.name === "ROLE_GRANTED"),
+    false,
+  );
+  assert.deepEqual(
+    [
+      ...assigned.events,
+      ...revoked.events,
+      ...suspended.events,
+      ...resumed.events,
+    ].map((event) => event.name),
+    [
+      "PEOPLE_ASSIGNED",
+      "PARTICIPANT_ADDED",
+      "ROLE_REVOKED",
+      "ASSIGNMENT_SUSPENDED",
+      "PARTICIPANT_REMOVED",
+      "ASSIGNMENT_RESUMED",
+      "PARTICIPANT_ADDED",
+    ],
+  );
+});
+
+test("accepted event effectiveAt is isolated from runtime Date mutation", () => {
+  const callerOwnedDate = new Date("2026-07-30T12:10:00.000Z");
+  const accepted = authority.createBusinessPerson(null, {
+    kind: "CREATE_BUSINESS_PERSON",
+    personId: BusinessPersonId.of("person-immutable-event-date"),
+    provenance: PeopleProvenance.of(
+      authority.authority,
+      "recognize-immutable-event-date",
+      callerOwnedDate,
+    ),
+  });
+  const acceptedEvent = accepted.events[0];
+  assert.ok(acceptedEvent);
+  assert.equal(acceptedEvent.name, "BUSINESS_IDENTITY_RECOGNIZED");
+
+  const acceptedTimestamp = acceptedEvent.effectiveAt.getTime();
+  const exposedDate = acceptedEvent.effectiveAt;
+  exposedDate.setUTCFullYear(2030);
+  callerOwnedDate.setUTCFullYear(2040);
+
+  assert.equal(acceptedEvent.effectiveAt.getTime(), acceptedTimestamp);
+  assert.equal(
+    acceptedEvent.provenance.effectiveAt.getTime(),
+    acceptedTimestamp,
+  );
+  const serialized = JSON.parse(JSON.stringify(acceptedEvent)) as {
+    effectiveAt: string;
+  };
+  assert.equal(
+    serialized.effectiveAt,
+    new Date(acceptedTimestamp).toISOString(),
+  );
+});
+
 test("foreign authority provenance is rejected and emits no fact", () => {
   assert.throws(
     () =>

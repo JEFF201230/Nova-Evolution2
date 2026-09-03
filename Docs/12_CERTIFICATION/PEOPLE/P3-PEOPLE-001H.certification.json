@@ -1,0 +1,35 @@
+{
+  "MissionId": "P3-PEOPLE-001H-CERTIFICATION",
+  "DomainId": "PEOPLE",
+  "LotId": "P3-PEOPLE-001H",
+  "Status": "CERTIFIED",
+  "CertifiedAt": "2026-08-08T12:32:09.6557673Z",
+  "Evidence": [
+    "Docs/24_MODULES/WORK/PEOPLE_IMPLEMENTATION_CONTRACT.md",
+    "Docs/24_MODULES/WORK/PEOPLE_DOMAIN_BLUEPRINT.md",
+    "Docs/24_MODULES/WORK/WORK_PHASE2_CERTIFICATION.md",
+    "Docs/24_MODULES/WORK/PEOPLE_CERTIFICATION/MISSIONS/P3-PEOPLE-001H_CERTIFICATION_REPORT.md",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001B.certification.json",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001C.certification.json",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001D.certification.json",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001E.certification.json",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001F.certification.json",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001G.certification.json"
+  ],
+  "Tests": [
+    "node --import tsx --test server/domain/people/*.test.ts: PASS 39/39",
+    "PEOPLE strict TypeScript typecheck: PASS",
+    "node --import tsx --test server/runtime/work/*.test.ts: PASS 51/51",
+    "npm.cmd run test:runtime: PASS 24/24",
+    "npm.cmd run test:core: PASS 541/541",
+    "npm.cmd run typecheck:nova-core: PASS",
+    "npm.cmd run test:nova-runtime:syntax: PASS",
+    "npm.cmd run test:nova-runtime:e2e: PASS 15/15",
+    "Test-CerebrauCertification.ps1: PASS 24/24",
+    "Test-CerebrauDomainOrchestration.ps1: PASS 51/51",
+    "git diff --check: PASS"
+  ],
+  "Regressions": "NONE",
+  "PreviousLot": "P3-PEOPLE-001G",
+  "NextAuthorizedLot": null
+}

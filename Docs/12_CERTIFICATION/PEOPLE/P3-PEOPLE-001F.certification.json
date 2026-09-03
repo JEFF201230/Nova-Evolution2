@@ -1,0 +1,23 @@
+{
+  "MissionId": "P3-PEOPLE-001F-CERTIFICATION",
+  "DomainId": "PEOPLE",
+  "LotId": "P3-PEOPLE-001F",
+  "Status": "CERTIFIED",
+  "CertifiedAt": "2026-08-07T23:01:27.7479581Z",
+  "Evidence": [
+    "Docs/24_MODULES/WORK/PEOPLE_QUERIES/MISSIONS/P3-PEOPLE-001F-M01_REPORT.md",
+    "Docs/24_MODULES/WORK/PEOPLE_QUERIES/MISSIONS/P3-PEOPLE-001F-M02_CERTIFICATION_REPORT.md",
+    "server/domain/people/people-query-service.ts",
+    "server/domain/people/people-query-service.test.ts",
+    "server/domain/people/people-persistence-ports.ts",
+    "server/domain/people/people-persistence-aggregate-store.ts"
+  ],
+  "Tests": [
+    "node --import tsx --test server/domain/people/*.test.ts: PASS 37/37",
+    "PEOPLE strict TypeScript typecheck (30 files): PASS",
+    "git diff --check: PASS"
+  ],
+  "Regressions": "NONE",
+  "PreviousLot": "P3-PEOPLE-001E",
+  "NextAuthorizedLot": "P3-PEOPLE-001G"
+}

@@ -78,3 +78,18 @@ export {
   type WorkTechnicalAgentFailureCode,
   type WorkTechnicalAgentProvenance,
 } from "./work-technical-agent.types.js";
+export {
+  WorkPeopleQuery,
+  type WorkPeopleReadSource,
+} from "./work-people.query.js";
+export {
+  WORK_PEOPLE_SOURCE_DOMAIN,
+  type WorkPeopleAbsent,
+  type WorkPeopleParticipant,
+  type WorkPeopleQualification,
+  type WorkPeopleReadResult,
+  type WorkPeopleReference,
+  type WorkPeopleUnavailable,
+  type WorkPeopleWithParticipants,
+  type WorkPeopleWithoutActiveParticipants,
+} from "./work-people.types.js";

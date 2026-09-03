@@ -514,11 +514,14 @@ export class PeopleAuthority {
     }
     const at = command.provenance.effectiveAt;
     const wasOwner = assignment.hasRoleAt(OWNER, at);
+    const suspendedRoles = assignment.roleAssignments.map((role) =>
+      role.isEffectiveAt(at) ? closeRole(role, command.provenance) : role
+    );
     const nextAssignment = rebuildAssignment(
       assignment,
       assignment.period,
       AssignmentStatus.of("SUSPENDED"),
-      assignment.roleAssignments,
+      suspendedRoles,
       command.provenance,
     );
     const aggregate = replaceAssignment(
@@ -590,11 +593,23 @@ export class PeopleAuthority {
       );
     }
     const at = command.provenance.effectiveAt;
+    const suspensionProvenance =
+      assignment.provenanceTrail[assignment.provenanceTrail.length - 1];
+    const resumedRoles = assignment.roleAssignments.map((role) =>
+      suspensionProvenance !== undefined
+        && wasClosedBySuspension(role, suspensionProvenance)
+        ? upsertRolePeriod(
+          role,
+          boundedPeriod(assignment, at),
+          command.provenance,
+        )
+        : role
+    );
     const nextAssignment = rebuildAssignment(
       assignment,
       assignment.period,
       AssignmentStatus.of("ACTIVE"),
-      assignment.roleAssignments,
+      resumedRoles,
       command.provenance,
     );
     const aggregate = replaceAssignment(
@@ -1012,6 +1027,36 @@ function closeRole(
   );
 }
 
+function upsertRolePeriod(
+  role: RoleAssignment,
+  period: AssignmentPeriod,
+  provenance: PeopleProvenance,
+): RoleAssignment {
+  return RoleAssignment.create(
+    AUTHORITY_ACCESS,
+    role.assignmentId,
+    role.role,
+    [...role.periods, period],
+    [...role.provenanceTrail, provenance],
+  );
+}
+
+function wasClosedBySuspension(
+  role: RoleAssignment,
+  suspensionProvenance: PeopleProvenance,
+): boolean {
+  const lastRoleProvenance =
+    role.provenanceTrail[role.provenanceTrail.length - 1];
+  return (
+    role.periods.some(
+      (period) =>
+        period.effectiveUntil?.getTime()
+          === suspensionProvenance.effectiveAt.getTime(),
+    )
+    && lastRoleProvenance?.equals(suspensionProvenance) === true
+  );
+}
+
 function boundedPeriod(
   assignment: WorkAssignment,
   effectiveFrom: Date,
@@ -1057,11 +1102,20 @@ function event<T extends Omit<PeopleDomainEvent, "causality" | "provenance">>(
   provenance: PeopleProvenance,
   value: T,
 ): PeopleDomainEvent {
-  return Object.freeze({
+  const accepted = {
     ...value,
     causality: provenance.businessCause,
     provenance,
-  }) as unknown as PeopleDomainEvent;
+  } as T & Pick<PeopleDomainEvent, "causality" | "provenance">;
+  if ("effectiveAt" in accepted && accepted.effectiveAt instanceof Date) {
+    const effectiveAtEpochMs = accepted.effectiveAt.getTime();
+    Object.defineProperty(accepted, "effectiveAt", {
+      enumerable: true,
+      configurable: false,
+      get: () => new Date(effectiveAtEpochMs),
+    });
+  }
+  return Object.freeze(accepted) as unknown as PeopleDomainEvent;
 }
 
 function result<Aggregate>(

@@ -1,0 +1,32 @@
+{
+  "MissionId": "P3-PEOPLE-001G-CERTIFICATION",
+  "DomainId": "PEOPLE",
+  "LotId": "P3-PEOPLE-001G",
+  "Status": "CERTIFIED",
+  "CertifiedAt": "2026-08-07T23:33:27.0762419Z",
+  "Evidence": [
+    "Docs/24_MODULES/WORK/PEOPLE_IMPLEMENTATION_CONTRACT.md",
+    "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001F.certification.json",
+    "Docs/24_MODULES/WORK/PEOPLE_WORK_INTEGRATION/MISSIONS/P3-PEOPLE-001G-M01_REPORT.md",
+    "Docs/24_MODULES/WORK/PEOPLE_WORK_INTEGRATION/MISSIONS/P3-PEOPLE-001G-M02_CERTIFICATION_REPORT.md",
+    "server/runtime/work/work-people.query.ts",
+    "server/runtime/work/work-people.types.ts",
+    "server/runtime/work/work-people.test.ts",
+    "server/runtime/work/work-core.ts",
+    "server/domain/people/people-query-service.ts",
+    "server/runtime/work/work-technical-agent.query.ts"
+  ],
+  "Tests": [
+    "node --import tsx --test server/runtime/work/work-people.test.ts: PASS 8/8",
+    "node --import tsx --test server/runtime/work/*.test.ts: PASS 51/51",
+    "node --import tsx --test server/domain/people/*.test.ts: PASS 37/37",
+    ".\\node_modules\\.bin\\tsc.cmd -p tsconfig.nova-core.json --noEmit: PASS",
+    "npm.cmd run test:runtime: PASS 24/24",
+    "npm.cmd run test:core: PASS 541/541",
+    "git diff --check: PASS",
+    "git diff --check -- server/runtime/work/work-core.ts: PASS"
+  ],
+  "Regressions": "NONE",
+  "PreviousLot": "P3-PEOPLE-001F",
+  "NextAuthorizedLot": "P3-PEOPLE-001H"
+}
