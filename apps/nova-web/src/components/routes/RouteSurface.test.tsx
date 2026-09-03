@@ -25,7 +25,7 @@ describe('RouteSurface', () => {
     expect(screen.getByRole('heading', { name: 'Decisions' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Deliverables' })).toBeInTheDocument();
     expect(screen.getByText('1 decision requires your authority · due in 4 days')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Create deliverable' })).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Loading deliverable evidence' })).toBeInTheDocument();
     expect(screen.queryByText('Decisions surface')).not.toBeInTheDocument();
     expect(screen.queryByText('Deliverables surface')).not.toBeInTheDocument();
   });
@@ -76,27 +76,4 @@ describe('RouteSurface', () => {
     expect(window.location.pathname).toBe('/decisions/decision-001/package');
   });
 
-  it('filters global Deliverables while documented actions remain no-op', async () => {
-    const user = userEvent.setup();
-    window.history.replaceState({}, '', '/deliverables');
-
-    render(
-      <NavigationProvider>
-        <RouteSurface routeId="deliverables" />
-      </NavigationProvider>,
-    );
-
-    const filters = screen.getByRole('group', { name: 'Deliverable filters' });
-    await user.click(within(filters).getByRole('button', { name: 'Drafts 1' }));
-    expect(screen.getByText('Infrastructure Investment Summary')).toBeInTheDocument();
-    expect(screen.queryByText(/Board Presentation/)).not.toBeInTheDocument();
-
-    const createButton = screen.getByRole('button', { name: 'Create deliverable' });
-    await user.click(createButton);
-    expect(window.location.pathname).toBe('/deliverables');
-
-    const viewButton = screen.getByRole('button', { name: /View Infrastructure Investment Summary/ });
-    await user.click(viewButton);
-    expect(window.location.pathname).toBe('/deliverables');
-  });
 });

@@ -29,6 +29,8 @@ import {
   workIdFromActivityPath,
 } from "./work-activity.route.js";
 import type { WorkActivityGatewayPort } from "./work-activity.gateway.port.js";
+import { GLOBAL_DELIVERABLES_PATH, handleGlobalDeliverables } from "./global-deliverables.route.js";
+import type { GlobalDeliverablesGatewayPort } from "./global-deliverables.gateway.port.js";
 import {
   InMemorySessionStore,
   SessionManager,
@@ -52,6 +54,7 @@ export interface NovaBffDependencies {
   readonly runtimeGateway?: RuntimeGatewayPort;
   readonly homeActiveWorkGateway?: HomeActiveWorkGatewayPort;
   readonly workActivityGateway?: WorkActivityGatewayPort;
+  readonly globalDeliverablesGateway?: GlobalDeliverablesGatewayPort;
   readonly clock?: () => number;
 }
 
@@ -100,6 +103,7 @@ export function createNovaBffApplication(
       dependencies.runtimeGateway,
       dependencies.homeActiveWorkGateway,
       dependencies.workActivityGateway,
+      dependencies.globalDeliverablesGateway,
     ),
   ]);
 
@@ -138,6 +142,7 @@ function createBffRouter(
   runtimeGateway: RuntimeGatewayPort | undefined,
   homeActiveWorkGateway: HomeActiveWorkGatewayPort | undefined,
   workActivityGateway: WorkActivityGatewayPort | undefined,
+  globalDeliverablesGateway: GlobalDeliverablesGatewayPort | undefined,
 ) {
   return async (
     context: BffRequestContext,
@@ -153,6 +158,7 @@ function createBffRouter(
       "/session/logout",
       RUNTIME_EXECUTE_PATH,
       HOME_ACTIVE_WORK_PATH,
+      GLOBAL_DELIVERABLES_PATH,
     ]);
     if (publicPaths.has(context.pathname) && !isAllowedMethod(context)) {
       throw new BffError(
@@ -225,6 +231,11 @@ function createBffRouter(
       && context.pathname === HOME_ACTIVE_WORK_PATH
     ) {
       await handleHomeActiveWork(context, homeActiveWorkGateway);
+      return;
+    }
+
+    if (context.request.method === "GET" && context.pathname === GLOBAL_DELIVERABLES_PATH) {
+      await handleGlobalDeliverables(context, globalDeliverablesGateway);
       return;
     }
 

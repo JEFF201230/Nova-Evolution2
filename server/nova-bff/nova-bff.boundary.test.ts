@@ -48,12 +48,21 @@ test("BFF routing declares the authorized technical and capability-specific read
   const workPathPrefix = workContract.match(
     /WORK_ACTIVITY_PATH_PREFIX\s*=\s*"([^"]+)"/,
   )?.[1];
+  const globalDeliverablesContract = await readFile(
+    new URL("../../contracts/global-deliverables.contract.ts", BFF_ROOT),
+    "utf8",
+  );
+  const globalDeliverablesPath = globalDeliverablesContract.match(
+    /GLOBAL_DELIVERABLES_PATH\s*=\s*"([^"]+)"/,
+  )?.[1];
   assert.ok(runtimePath);
   assert.ok(homePath);
   assert.ok(workPathPrefix);
+  assert.ok(globalDeliverablesPath);
   declaredPaths.push(runtimePath);
   declaredPaths.push(homePath);
   declaredPaths.push(`${workPathPrefix}/:workId/activity`);
+  declaredPaths.push(globalDeliverablesPath);
   assert.deepEqual(declaredPaths, [
     "/health",
     "/readiness",
@@ -64,6 +73,7 @@ test("BFF routing declares the authorized technical and capability-specific read
     "/api/runtime/execute",
     "/api/home/active-work",
     "/api/work/:workId/activity",
+    "/api/global/deliverables",
   ]);
   assert.doesNotMatch(
     source,
@@ -96,6 +106,7 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
 
   assert.deepEqual(invocations, ["runtime-gateway.adapter.ts"]);
   assert.deepEqual(transports, [
+    "global-deliverables.gateway.ts",
     "home-active-work.gateway.ts",
     "work-activity.gateway.ts",
   ]);

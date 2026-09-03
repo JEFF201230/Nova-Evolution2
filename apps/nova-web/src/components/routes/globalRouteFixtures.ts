@@ -1,5 +1,4 @@
 import { workDecisionsFixtures } from '../../features/work/workDecisionsFixture';
-import { workDeliverablesFixtures } from '../../features/work/workDeliverablesFixture';
 
 export type GlobalDecisionStatus = 'pending' | 'waiting' | 'decided';
 
@@ -39,22 +38,3 @@ export const globalDecisionsFixture: readonly GlobalDecisionFixture[] = [
     outcome: 'Approved with conditions',
   },
 ];
-
-export type GlobalDeliverableStatus = 'draft' | 'review' | 'published';
-
-export interface GlobalDeliverableFixture {
-  deliverableId: string;
-  title: string;
-  confidence: number;
-  metadata: string;
-  status: GlobalDeliverableStatus;
-}
-
-export const globalDeliverablesFixture: readonly GlobalDeliverableFixture[] =
-  workDeliverablesFixtures['work-001'].deliverables.map((deliverable, index) => ({
-    deliverableId: deliverable.deliverableId,
-    title: deliverable.title,
-    confidence: deliverable.confidence,
-    metadata: `${deliverable.readinessLabel} · ${deliverable.publicationScore}% publication score`,
-    status: index === 0 ? 'review' : 'draft',
-  }));

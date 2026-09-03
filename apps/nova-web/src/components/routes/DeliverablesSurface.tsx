@@ -1,95 +1,49 @@
-import { useMemo, useState } from 'react';
-import { Button } from '../shared/Button';
-import {
-  ConfidenceChip,
-  DownloadIcon,
-  EyeIcon,
-  FileIcon,
-  FilterTabs,
-  type FilterOption,
-} from './GlobalRouteComponents';
-import {
-  globalDeliverablesFixture,
-  type GlobalDeliverableStatus,
-} from './globalRouteFixtures';
+import type { GlobalDeliverablesLoader } from '../../features/global-deliverables/globalDeliverables.service';
+import { useGlobalDeliverables } from '../../features/global-deliverables/useGlobalDeliverables';
+import { FileIcon } from './GlobalRouteComponents';
 import styles from './GlobalRoutes.module.css';
 
-type DeliverableFilter = 'all' | GlobalDeliverableStatus;
-
-const deliverableFilters: readonly FilterOption<DeliverableFilter>[] = [
-  { id: 'all', label: 'All', count: globalDeliverablesFixture.length },
-  {
-    id: 'draft',
-    label: 'Drafts',
-    count: globalDeliverablesFixture.filter((deliverable) => deliverable.status === 'draft').length,
-  },
-  {
-    id: 'review',
-    label: 'In review',
-    count: globalDeliverablesFixture.filter((deliverable) => deliverable.status === 'review').length,
-  },
-  {
-    id: 'published',
-    label: 'Published',
-    count: globalDeliverablesFixture.filter((deliverable) => deliverable.status === 'published').length,
-  },
-];
-
-export function DeliverablesSurface() {
-  const [filter, setFilter] = useState<DeliverableFilter>('all');
-  const deliverables = useMemo(
-    () =>
-      globalDeliverablesFixture.filter(
-        (deliverable) => filter === 'all' || deliverable.status === filter,
-      ),
-    [filter],
-  );
+export function DeliverablesSurface({ loader }: { loader?: GlobalDeliverablesLoader }) {
+  const { deliverables, state } = useGlobalDeliverables(loader);
 
   return (
     <main className={styles.page}>
-      <header className={styles.headerWithAction}>
+      <header className={styles.header}>
         <div>
           <h1 className={styles.title}>Deliverables</h1>
+          <p className={styles.subtitle}>Read-only Runtime evidence from mission reports.</p>
         </div>
-        <Button aria-label="Create deliverable" size="sm">Create</Button>
       </header>
 
-      <FilterTabs
-        label="Deliverable filters"
-        onChange={setFilter}
-        options={deliverableFilters}
-        value={filter}
-      />
-
       <section aria-label="Deliverables" className={styles.deliverableList}>
-        {deliverables.length === 0 ? (
-          <div className={styles.emptyState}>No deliverables in this view.</div>
+        {state === 'loading' ? (
+          <div aria-label="Loading deliverable evidence" className={styles.emptyState} role="status">
+            Loading deliverable evidence…
+          </div>
+        ) : state === 'error' ? (
+          <div className={styles.emptyState} role="alert">
+            Runtime deliverable evidence is unavailable.
+          </div>
+        ) : deliverables.length === 0 ? (
+          <div className={styles.emptyState}>No deliverable evidence is available.</div>
         ) : (
-          deliverables.map((deliverable) => (
-            <article className={styles.deliverableRow} key={deliverable.deliverableId}>
+          deliverables.map((deliverable, index) => (
+            <article
+              className={styles.deliverableRow}
+              key={`${deliverable.projectId}/${deliverable.missionId}/${deliverable.reportId}/${index}`}
+            >
               <FileIcon />
               <div>
-                <h2 className={styles.deliverableTitle}>{deliverable.title}</h2>
-                <p className={styles.deliverableMetadata}>{deliverable.metadata}</p>
-              </div>
-              <ConfidenceChip confidence={deliverable.confidence} />
-              <div className={styles.rowActions}>
-                <button
-                  aria-label={`View ${deliverable.title}`}
-                  className={styles.iconButton}
-                  type="button"
-                >
-                  <EyeIcon />
-                </button>
-                {deliverable.status === 'published' ? (
-                  <button
-                    aria-label={`Download ${deliverable.title}`}
-                    className={styles.iconButton}
-                    type="button"
-                  >
-                    <DownloadIcon />
-                  </button>
-                ) : null}
+                <h2 className={styles.deliverableTitle}>{deliverable.path}</h2>
+                <p className={styles.deliverableMetadata}>
+                  Project {deliverable.projectId} · Mission {deliverable.missionId} · Report {deliverable.reportId}
+                </p>
+                <dl className={styles.evidenceDetails}>
+                  <div><dt>Size</dt><dd>{deliverable.size} bytes</dd></div>
+                  <div><dt>SHA-256</dt><dd>{deliverable.sha256}</dd></div>
+                  <div><dt>Modified</dt><dd>{deliverable.modifiedAt}</dd></div>
+                  <div><dt>Run</dt><dd>{deliverable.runId}</dd></div>
+                </dl>
               </div>
             </article>
           ))
