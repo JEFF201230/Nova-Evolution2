@@ -321,21 +321,71 @@ function Get-LotGate {
 }
 
 function Get-ContractTestRequirements {
-    param([Parameter(Mandatory)][AllowEmptyString()][string[]]$Lines)
-    $testLines = Get-MarkdownSubsection `
+    param(
+        [string[]]$Lines,
+
+        [Parameter(Mandatory)]
+        [string]$LotId
+    )
+
+    $perLotSection = @(Get-MarkdownSubsection `
+        -Lines $Lines `
+        -HeadingPattern '^###\s+15\.1\s+TEST CONTRACT PAR SOUS-LOT\s*$')
+
+    if ($perLotSection.Count -gt 0) {
+        foreach ($line in $perLotSection) {
+            if ($line -notmatch '^\s*\|') {
+                continue
+            }
+
+            $cells = @(
+                $line.Trim().Trim('|').Split('|') |
+                    ForEach-Object { $_.Trim() }
+            )
+
+            if ($cells.Count -lt 2 -or $cells[0] -ne $LotId) {
+                continue
+            }
+
+            $tests = @(
+                $cells[1].Split(';') |
+                    ForEach-Object { $_.Trim() } |
+                    Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+            )
+
+            if ($tests.Count -eq 0) {
+                throw "LOT_CONTRACT_INCOMPLETE:TESTS:$LotId"
+            }
+
+            return [string[]]$tests
+        }
+
+        throw "LOT_CONTRACT_INCOMPLETE:TESTS:$LotId"
+    }
+
+    $section = Get-MarkdownSubsection `
         -Lines $Lines `
         -HeadingPattern '^##\s+15\.\s+TEST CONTRACT\s*$'
-    $requirements = [Collections.Generic.List[string]]::new()
-    foreach ($line in $testLines) {
-        $cells = @(Split-MarkdownRow $line)
-        if ($cells.Count -eq 2 -and
-            $cells[0] -match '^(Tests|Typecheck)\b') {
-            $requirements.Add("$($cells[0]): $($cells[1])")
+
+    $requirements = @()
+
+    foreach ($line in $section) {
+        if ($line -notmatch '^\s*\|') {
+            continue
+        }
+
+        $cells = @(
+            $line.Trim().Trim('|').Split('|') |
+                ForEach-Object { $_.Trim() }
+        )
+
+        if ($cells.Count -ge 1 -and $cells[0] -match '^(Tests|Typecheck)\b') {
+            $requirements += $cells[0]
         }
     }
-    return [string[]]$requirements.ToArray()
-}
 
+    return [string[]]$requirements
+}
 function Get-ExpectedContractSymbols {
     param(
         [Parameter(Mandatory)]$SequenceEntry,
@@ -410,7 +460,7 @@ function Read-LotImplementationContract {
     $invariants = Get-MarkdownNumberedValues (
         Get-MarkdownSubsection $lines '^###\s+14\.7\s+'
     )
-    $tests = Get-ContractTestRequirements $lines
+    $tests = Get-ContractTestRequirements -Lines $lines -LotId $LotId
     $symbols = Get-ExpectedContractSymbols $entry $gate
     $missing = [Collections.Generic.List[string]]::new()
     foreach ($check in @(
@@ -1072,11 +1122,16 @@ function Test-MissionOutcomeReportIntegrity {
         )) {
         return $false
     }
+    $postReviewTransition = (
+        [string]$OfficialReport.AuthorityDecision -ceq 'PENDING_REVIEW' -and
+        [string]$OfficialReport.FinalMissionState -ceq 'READY_FOR_REVIEW' -and
+        [string]$AuthorityDecision -ceq 'ACCEPTED' -and
+        [string]$FinalMissionState -in @('ACCEPTED','COMPLETED')
+    )
     if ([string]$OfficialReport.Status -cne [string]$OfficialStatus -or
-        [string]$OfficialReport.AuthorityDecision -cne
-            [string]$AuthorityDecision -or
-        [string]$OfficialReport.FinalMissionState -cne
-            [string]$FinalMissionState) {
+        (([string]$OfficialReport.AuthorityDecision -cne [string]$AuthorityDecision -or
+          [string]$OfficialReport.FinalMissionState -cne [string]$FinalMissionState) -and
+         -not $postReviewTransition)) {
         return $false
     }
     $reportExitCode = 0

@@ -372,7 +372,15 @@ function Resolve-TestMissionOutcome {
 }
 
 try {
-    Invoke-TestCase 'policy-success-accepted-completed-certifies' {
+    Invoke-TestCase 'policy-post-review-accepted-preserves-pre-review-report-integrity' {
+    $outcome = New-TestMissionOutcome -OfficialStatus READY_FOR_REVIEW -AuthorityDecision PENDING_REVIEW -FinalMissionState READY_FOR_REVIEW
+    $outcome.AuthorityDecision = 'ACCEPTED'
+    $outcome.FinalMissionState = 'COMPLETED'
+    $decision = Resolve-TestMissionOutcome $outcome
+    Assert-Equal 'CERTIFIED' $decision.Decision
+    Assert-True $decision.InvokeCompleteDomainLot
+}
+Invoke-TestCase 'policy-success-accepted-completed-certifies' {
         $decision = Resolve-TestMissionOutcome (New-TestMissionOutcome)
         Assert-Equal 'CERTIFIED' $decision.Decision
         Assert-True $decision.InvokeCompleteDomainLot
@@ -861,9 +869,9 @@ try {
                 -AuthorityDecision REJECTED `
                 -FinalMissionState REJECTED
         }
-        Assert-Equal 'REJECTED' $outcome.Status
-        Assert-Equal 1 $outcome.CompleteDomainLotInvocations
-        Assert-Equal $null $outcome.NextLotOpened
+    Assert-Equal 'REJECTED' $outcome.Status
+    Assert-Equal 1 $outcome.CompleteDomainLotInvocations
+    Assert-Equal $null $outcome.NextLotOpened
         $registry = Get-Content -LiteralPath (
             Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
         ) -Raw | ConvertFrom-Json
@@ -873,10 +881,10 @@ try {
     Invoke-TestCase 'people-pilot-resolves-current-lot' {
         $repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
         $result = Invoke-DomainLot $repository PEOPLE -DryRun
-        Assert-Equal 'P3-PEOPLE-001C' $result.LastCertifiedLot
-        Assert-Equal 'P3-PEOPLE-001D' $result.CurrentLot
-        Assert-Equal 'PENDING_EVIDENCE' $result.CurrentStatus
-        Assert-Equal 'BACKFILL' $result.ExecutionMode
+        Assert-Equal 'P3-PEOPLE-001H' $result.LastCertifiedLot
+        Assert-Equal $null $result.CurrentLot
+        Assert-Equal 'CERTIFIED' $result.CurrentStatus
+        Assert-Equal 'DOMAIN_CERTIFICATION' $result.ExecutionMode
     }
 
     Invoke-TestCase 'people-pilot-modifies-no-business-file' {

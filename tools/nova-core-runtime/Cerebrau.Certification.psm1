@@ -565,6 +565,129 @@ function Resolve-CertificationContext {
     }
 }
 
+function Repair-CerebrauCertificationChain {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$InvalidCertifiedLotId,
+        [Parameter(Mandatory)][string]$PrematurePendingLotId,
+        [Parameter(Mandatory)][string]$ExpectedMissionId
+    )
+
+    $root = Get-CerebrauRepositoryRoot -Repository $Repository
+    $registry = Read-CerebrauRegistry -Repository $root
+
+    $invalid = Read-LotCertification -Repository $root -DomainId $DomainId -LotId $InvalidCertifiedLotId
+    $premature = Read-LotCertification -Repository $root -DomainId $DomainId -LotId $PrematurePendingLotId
+
+    if ([string]$invalid.Status -cne 'CERTIFIED' -or [string]$invalid.MissionId -cne $ExpectedMissionId) {
+        throw "CHAIN_REPAIR_PRECONDITION_FAILED:INVALID_CERTIFIED_LOT:$InvalidCertifiedLotId"
+    }
+    if ([string]$premature.Status -cne 'PENDING_EVIDENCE' -or [string]$premature.MissionId -cne $ExpectedMissionId) {
+        throw "CHAIN_REPAIR_PRECONDITION_FAILED:PREMATURE_PENDING_LOT:$PrematurePendingLotId"
+    }
+    if ([string]$premature.PreviousLot -cne $InvalidCertifiedLotId) {
+        throw 'CHAIN_REPAIR_PRECONDITION_FAILED:LOT_CONTINUITY'
+    }
+
+    $invalidEntry = @($registry.Entries | Where-Object {
+        [string]$_.DomainId -ceq $DomainId -and
+        [string]$_.LotId -ceq $InvalidCertifiedLotId
+    })
+    $prematureEntry = @($registry.Entries | Where-Object {
+        [string]$_.DomainId -ceq $DomainId -and
+        [string]$_.LotId -ceq $PrematurePendingLotId
+    })
+
+    if ($invalidEntry.Count -ne 1 -or $prematureEntry.Count -ne 1) {
+        throw 'CHAIN_REPAIR_PRECONDITION_FAILED:REGISTRY_ENTRIES'
+    }
+
+    $repairedCertification = [PSCustomObject][ordered]@{
+        MissionId = "REPAIR-$InvalidCertifiedLotId"
+        DomainId = $DomainId
+        LotId = $InvalidCertifiedLotId
+        Status = 'PENDING_EVIDENCE'
+        CertifiedAt = $null
+        Evidence = [object[]]@()
+        Tests = [object[]]@()
+        Regressions = 'NOT_EVALUATED'
+        PreviousLot = $invalid.PreviousLot
+        NextAuthorizedLot = $invalid.NextAuthorizedLot
+    }
+
+    Assert-LotCertification -Certification $repairedCertification
+
+    $entries = [Collections.Generic.List[object]]::new()
+    foreach ($entry in @($registry.Entries)) {
+        if ([string]$entry.DomainId -ceq $DomainId -and
+            [string]$entry.LotId -ceq $PrematurePendingLotId) {
+            continue
+        }
+        if ([string]$entry.DomainId -ceq $DomainId -and
+            [string]$entry.LotId -ceq $InvalidCertifiedLotId) {
+            $entries.Add([PSCustomObject][ordered]@{
+                DomainId = $DomainId
+                LotId = $InvalidCertifiedLotId
+                CertificationPath = [string]$entry.CertificationPath
+                Status = 'PENDING_EVIDENCE'
+                PreviousLot = $entry.PreviousLot
+                NextAuthorizedLot = $entry.NextAuthorizedLot
+            })
+            continue
+        }
+        $entries.Add($entry)
+    }
+
+    $nextRegistry = [PSCustomObject][ordered]@{
+        SchemaVersion = 1
+        Entries = [object[]]@($entries.ToArray() | Sort-Object DomainId,LotId)
+    }
+
+    Assert-CerebrauRegistry -Registry $nextRegistry
+    [void](Test-LotContinuity -Repository $root -DomainId $DomainId -Registry $nextRegistry)
+
+    $invalidPath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath ([string]$invalidEntry[0].CertificationPath)
+
+    $prematurePath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath ([string]$prematureEntry[0].CertificationPath)
+
+    $registryPath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath $script:RegistryRelativePath
+
+    $invalidBackup = [IO.File]::ReadAllText($invalidPath,$script:Utf8NoBom)
+    $prematureBackup = [IO.File]::ReadAllText($prematurePath,$script:Utf8NoBom)
+    $registryBackup = [IO.File]::ReadAllText($registryPath,$script:Utf8NoBom)
+
+    try {
+        Write-CerebrauAtomicText `
+            -Path $invalidPath `
+            -Content (ConvertTo-CerebrauJson $repairedCertification)
+
+        Write-CerebrauAtomicText `
+            -Path $registryPath `
+            -Content (ConvertTo-CerebrauJson $nextRegistry)
+
+        Remove-Item -LiteralPath $prematurePath -Force
+    }
+    catch {
+        Write-CerebrauAtomicText -Path $invalidPath -Content $invalidBackup
+        Write-CerebrauAtomicText -Path $registryPath -Content $registryBackup
+        Write-CerebrauAtomicText -Path $prematurePath -Content $prematureBackup
+        throw
+    }
+
+    return [PSCustomObject][ordered]@{
+        Status = 'CHAIN_REPAIRED'
+        RestoredLot = $InvalidCertifiedLotId
+        RemovedPrematureLot = $PrematurePendingLotId
+    }
+}
 function Write-LotCertification {
     [CmdletBinding()]
     param(
@@ -693,6 +816,7 @@ Export-ModuleMember -Function `
     Resolve-CertificationContext,`
     Read-LotCertification,`
     Write-LotCertification,`
+    Repair-CerebrauCertificationChain,`
     Get-LastCertifiedLot,`
     Get-NextAuthorizedLot,`
     Test-LotContinuity,`
