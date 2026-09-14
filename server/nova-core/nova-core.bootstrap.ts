@@ -56,7 +56,7 @@ export function assertNovaBootstrap(options: NovaBootstrapOptions): void {
       gitProbe,
     ));
   }
-  const codexCommand = process.platform === "win32" ? "codex.cmd" : "codex";
+  const codexCommand = process.platform === "win32" ? "codex.exe" : "codex";
   const codexProbe = probe(codexCommand);
   if (!commandProbeSucceeded(codexProbe)) {
     throw new Error(formatCommandProbeFailure(

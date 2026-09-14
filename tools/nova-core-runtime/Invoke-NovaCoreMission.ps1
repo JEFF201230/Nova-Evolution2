@@ -322,24 +322,35 @@ try {
             $prompt = "<NOVA_CORE_MISSION_CONTEXT>`n$($contextAssembly.FunctionalPayloadJson)`n</NOVA_CORE_MISSION_CONTEXT>`n`n$prompt"
         }
 
-        $codexArguments = @(
-            "exec"
-            "--ignore-user-config"
-            "--strict-config"
-            "--model"
-            $profile.Model
-            "--config"
-            ('model_reasoning_effort="{0}"' -f $profile.ReasoningEffort)
+            $codexArguments = @(
+        "exec"
+        "--ignore-user-config"
+        "--strict-config"
+        "--model"
+        $profile.Model
+        "--config"
+        ('model_reasoning_effort="{0}"' -f $profile.ReasoningEffort)
+    )
+
+    if ($profile.Sandbox -eq "workspace-write") {
+        $codexArguments += "--approve-for-me"
+    }
+    else {
+        $codexArguments += @(
             "--config"
             ('approval_policy="{0}"' -f $profile.ApprovalPolicy)
             "--sandbox"
             $profile.Sandbox
-            "--cd"
-            $validatedMission.Repository
-            "--color"
-            "never"
-            "-"
         )
+    }
+
+    $codexArguments += @(
+        "--cd"
+        $validatedMission.Repository
+        "--color"
+        "never"
+        "-"
+    )
 
         $promptArgument = $codexArguments[-1]
         $codexArguments = @(

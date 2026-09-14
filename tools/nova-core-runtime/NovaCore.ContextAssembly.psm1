@@ -123,6 +123,9 @@ function New-NovaCoreMissionContextAssembly {
             reason=$Reason
             sizeBytes=[int64](Get-Item -LiteralPath $absolutePath).Length
         }
+        if ($Role -eq 'READ_ONLY_SOURCE') {
+            $descriptor | Add-Member -NotePropertyName content -NotePropertyValue ([IO.File]::ReadAllText($absolutePath, $script:Utf8NoBom))
+        }
         if (-not [string]::IsNullOrWhiteSpace($EvidenceId)) { $descriptor | Add-Member -NotePropertyName evidenceId -NotePropertyValue $EvidenceId }
         $seen[$key] = $descriptor
         $sources.Add($descriptor)
