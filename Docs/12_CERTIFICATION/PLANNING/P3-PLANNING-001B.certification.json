@@ -1,0 +1,27 @@
+{
+    "MissionId":  "P3-PLANNING-001B-IMPLEMENTATION-001",
+    "DomainId":  "PLANNING",
+    "LotId":  "P3-PLANNING-001B",
+    "Status":  "CERTIFIED",
+    "CertifiedAt":  "2026-08-09T18:07:54.5816151+00:00",
+    "Evidence":  [
+                     "Docs/24_MODULES/WORK/PLANNING_DOMAIN_BLUEPRINT.md",
+                     "Docs/24_MODULES/WORK/PLANNING_IMPLEMENTATION_CONTRACT.md",
+                     "Docs/24_MODULES/WORK/WORK_DOMAIN_BLUEPRINT.md",
+                     "Docs/24_MODULES/WORK/WORK_PHASE2_CERTIFICATION.md",
+                     "tools/nova-core-runtime/reports/bootstrap-20260809T182515166/official-report.json",
+                     "tools/nova-core-runtime/reports/bootstrap-20260809T182515166/codex-transcript.txt"
+                 ],
+    "Tests":  [
+                  "node --import tsx --test server/domain/planning/planning-foundation.test.ts: PASS 13/13",
+                  "Planning strict TypeScript typecheck: PASS",
+                  "Planning unused-code TypeScript checks: PASS",
+                  "node --import tsx --test server/domain/people/*.test.ts: PASS 39/39",
+                  "npm test: PASS 565/565",
+                  "npm run typecheck:nova-core: PASS",
+                  "git diff --check: PASS"
+              ],
+    "Regressions":  "NONE",
+    "PreviousLot":  "P3-PLANNING-001A",
+    "NextAuthorizedLot":  "P3-PLANNING-001C"
+}

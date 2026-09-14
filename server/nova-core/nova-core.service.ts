@@ -33,6 +33,11 @@ import type {
   HomeActiveWorkResponse,
 } from "../../contracts/home-active-work.contract.js";
 import { HomeActiveWorkQuery } from "./home-active-work.query.js";
+import {
+  ActionsInternalAccess,
+  ActionsJournal,
+  type ActionsAdmissionPolicy,
+} from "../domain/actions/index.js";
 
 const DEFAULT_AGENTS: RuntimeAgent[] = [
   {
@@ -44,6 +49,7 @@ const DEFAULT_AGENTS: RuntimeAgent[] = [
 
 export interface NovaCoreServiceOptions {
   journalAttestationKey?: string;
+  actionsJournalPath?: string;
 }
 
 export interface NovaCoreProjectExecutionTarget {
@@ -63,6 +69,7 @@ export class NovaCoreService {
     private readonly store: JsonRuntimeSnapshotStore,
     private readonly defaultExecutionEngine: NovaCoreExecutionEngine | undefined,
     private readonly projectExecutionTargets: ReadonlyMap<string, NovaCoreProjectExecutionTarget>,
+    readonly actionsInternalAccess: ActionsInternalAccess,
   ) {}
 
   static async open(
@@ -75,13 +82,30 @@ export class NovaCoreService {
     });
     const snapshot = await store.load();
     const runtime = new OrchestratorRuntimeService(DEFAULT_AGENTS, snapshot ?? undefined);
+    const actionsAdmissionPolicy: ActionsAdmissionPolicy = {
+      workExists: (workReference) =>
+        runtime.getMission(
+          workReference.projectIdentity,
+          workReference.workIdentity,
+        ) !== null,
+    };
+    const actionsInternalAccess = ActionsInternalAccess.durable(
+      actionsAdmissionPolicy,
+      new ActionsJournal(options.actionsJournalPath ?? `${filePath}.actions.json`),
+    );
     const configuredTargets = isProjectExecutionTargetList(executionConfiguration)
       ? validateProjectExecutionTargets(executionConfiguration)
       : new Map<string, NovaCoreProjectExecutionTarget>();
     const defaultExecutionEngine = isProjectExecutionTargetList(executionConfiguration)
       ? undefined
       : executionConfiguration;
-    const service = new NovaCoreService(runtime, store, defaultExecutionEngine, configuredTargets);
+    const service = new NovaCoreService(
+      runtime,
+      store,
+      defaultExecutionEngine,
+      configuredTargets,
+      actionsInternalAccess,
+    );
     runtime.subscribeObservability(() => { service.requestSnapshotSave(); });
     for (const engine of uniqueExecutionEngines(defaultExecutionEngine, configuredTargets)) {
       engine.setOutputObserver((output) => {

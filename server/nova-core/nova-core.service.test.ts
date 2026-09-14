@@ -4,6 +4,15 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import type { MissionDefinition } from "../runtime/orchestrator/orchestrator-runtime.js";
+import {
+  ActionDomainError,
+  ActionId,
+  ActionProvenance,
+  ActionPurpose,
+  ActionReference,
+  CommandId,
+  WorkReference,
+} from "../domain/actions/index.js";
 import { NovaCoreService } from "./nova-core.service.js";
 
 const TEST_ATTESTATION_KEY = "nova-test-journal-attestation-key-003";
@@ -26,6 +35,54 @@ function mission(overrides: Partial<MissionDefinition> = {}): MissionDefinition 
     ...overrides,
   };
 }
+
+test("NOVA Core composes durable ACTIONS admission from the canonical Mission-backed Work", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "nova-core-actions-composition-"));
+  const dataFile = join(directory, "runtime.json");
+  let core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
+  await core.createMission(mission({ projectId: "ACTIONS-PROJECT", missionId: "WORK-001" }));
+  const workReference = WorkReference.of("ACTIONS-PROJECT", "WORK-001");
+  const actionReference = ActionReference.of(workReference, ActionId.of("ACTION-001"));
+  const proposal = {
+    type: "ProposeAction",
+    commandId: CommandId.of("PROPOSE-ACTION-001"),
+    causalityId: "nova-core-actions-composition",
+    expectedRevision: 0,
+    provenance: ActionProvenance.of(
+      "NOVA_ACTIONS_BUSINESS",
+      "EXPLICIT_BUSINESS_INTENT",
+      "production-composition-test",
+      new Date("2026-09-13T12:00:00.000Z"),
+      "AUTHORITATIVE_BUSINESS_SOURCE",
+    ),
+    actionReference,
+    purpose: ActionPurpose.of(
+      "Prove the production Work admission binding.",
+      "CONTRIBUTES_TO_WORK_OBJECTIVE",
+    ),
+  } as const;
+
+  const accepted = core.actionsInternalAccess.commands.execute(proposal);
+  assert.equal(accepted.action.reference.key, actionReference.key);
+  assert.equal(core.actionsInternalAccess.queries.getAction(actionReference)?.revision, 1);
+
+  assert.throws(
+    () => core.actionsInternalAccess.commands.execute({
+      ...proposal,
+      commandId: CommandId.of("PROPOSE-ACTION-ABSENT"),
+      causalityId: "nova-core-actions-absent-work",
+      actionReference: ActionReference.of(
+        WorkReference.of("ACTIONS-PROJECT", "WORK-ABSENT"),
+        ActionId.of("ACTION-ABSENT"),
+      ),
+    }),
+    (error: unknown) => error instanceof ActionDomainError
+      && error.code === "WORK_REFERENCE_NOT_FOUND",
+  );
+
+  core = await NovaCoreService.open(dataFile, undefined, { journalAttestationKey: TEST_ATTESTATION_KEY });
+  assert.equal(core.actionsInternalAccess.queries.getAction(actionReference)?.revision, 1);
+});
 
 test("NOVA Core conserve une mission et ses preuves après un redémarrage", async () => {
   const directory = await mkdtemp(join(tmpdir(), "nova-core-service-"));

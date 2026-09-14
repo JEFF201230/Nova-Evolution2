@@ -1,0 +1,478 @@
+{
+    "SchemaVersion":  "1.0.0",
+    "Mission":  {
+                    "MissionId":  "P3-PLANNING-001B-IMPLEMENTATION-001",
+                    "Program":  "PROGRAM-003",
+                    "Lot":  "P3-PLANNING-001B",
+                    "Title":  "Planning Foundation Model"
+                },
+    "Binding":  {
+                    "codexVersion":  "0.147.0",
+                    "codexPath":  "C:\\Users\\JEFF1\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+                    "codexBinaryHash":  "935a1911ed2556e4ffcec995f4886ac2ac425863ba26fed264df62e30272ad9d",
+                    "codexConfigPolicy":  "EXPLICIT_RUNTIME_PROFILE"
+                },
+    "AgenticProfileRequested":  "BUILD",
+    "AgenticProfileResolved":  "BUILD",
+    "ModelResolved":  "gpt-5.6-sol",
+    "ReasoningLevelResolved":  "medium",
+    "SandboxResolved":  "workspace-write",
+    "ApprovalPolicyResolved":  "on-request",
+    "CodexVersion":  "0.147.0",
+    "ProfileResolutionSource":  "Resolve-NovaCoreProfile.ps1",
+    "RoutingDecision":  "RESOLVED",
+    "RoutingJustification":  "Profil BUILD resolu par le registre NOVA_CORE vers BUILD.",
+    "RuntimeStartedAt":  "2026-08-09T16:25:16.8350000Z",
+    "Environment":  {
+                        "Branch":  "feature/nova-runtime-foundation",
+                        "Head":  "a33f9d6dc8d7728046d948d836514ac33824ba26",
+                        "CodexVersion":  "0.147.0",
+                        "Model":  "gpt-5.6-sol",
+                        "Sandbox":  "workspace-write",
+                        "Approval":  "on-request"
+                    },
+    "Codex":  {
+                  "Status":  "SUCCESS",
+                  "ExitCode":  0,
+                  "Version":  "0.147.0",
+                  "Path":  "C:\\Users\\JEFF1\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+                  "BinaryHash":  "935a1911ed2556e4ffcec995f4886ac2ac425863ba26fed264df62e30272ad9d",
+                  "ConfigPolicy":  "EXPLICIT_RUNTIME_PROFILE",
+                  "StartedAt":  "2026-08-09T16:25:16.8350000Z",
+                  "FinishedAt":  "2026-08-09T16:37:18.9450000Z",
+                  "DurationMs":  722047,
+                  "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\nova-core-runtime\\reports\\bootstrap-20260809T182515166\\codex-transcript.txt",
+                  "TranscriptAuthoritative":  false
+              },
+    "Git":  {
+                "Created":  [
+                                "server/domain/planning/index.ts",
+                                "server/domain/planning/planning.aggregate.ts",
+                                "server/domain/planning/planning.entities.ts",
+                                "server/domain/planning/planning.errors.ts",
+                                "server/domain/planning/planning.value-objects.ts",
+                                "server/domain/planning/planning-foundation.test.ts"
+                            ],
+                "Modified":  [
+
+                             ],
+                "Deleted":  [
+
+                            ],
+                "Renamed":  [
+
+                            ],
+                "Insertions":  1070,
+                "Deletions":  0,
+                "BranchChanged":  false,
+                "HeadChanged":  false
+            },
+    "Validations":  [
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/index.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/planning.aggregate.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/planning.entities.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/planning.errors.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/planning.value-objects.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:server/domain/planning/planning-foundation.test.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        }
+                    ],
+    "InputEvidence":  {
+                          "evidenceClass":  "INPUT_EVIDENCE",
+                          "capturedBeforeExecution":  true,
+                          "contextAssemblyRequested":  false,
+                          "admission":  {
+                                            "mode":  "NORMAL",
+                                            "recoveryLaneClass":  null,
+                                            "authority":  null,
+                                            "blockedRule":  null,
+                                            "reason":  null,
+                                            "authorizedScope":  [
+
+                                                                ],
+                                            "authorizedFiles":  [
+
+                                                                ],
+                                            "forbiddenFiles":  [
+
+                                                               ],
+                                            "inputFingerprint":  "060E4B6664FA23117EFDFF527D7DD36A3EBF6E9E520F5582D1F1E6C1C7A1FE9D",
+                                            "nonSelfBlockingException":  false,
+                                            "directProductionReleaseAuthorized":  false,
+                                            "freeze":  {
+                                                           "active":  false,
+                                                           "mode":  null,
+                                                           "exceptionApplied":  false,
+                                                           "source":  null,
+                                                           "authority":  null
+                                                       },
+                                            "admittedAt":  "2026-08-09T16:25:15.7043623+00:00"
+                                        },
+                          "entries":  [
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "MISSION_MANIFEST",
+                                              "kind":  "MANIFEST",
+                                              "path":  null,
+                                              "sha256":  "1088FB9CBE78CDA62D53555D0E0758C47CD27B64C1C73602C038946EA4BC5DC5",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-08-09T16:26:24.5687607+00:00"
+                                          },
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "GIT_BASELINE",
+                                              "kind":  "GIT_STATE",
+                                              "path":  null,
+                                              "sha256":  "C9DCAD3CBCECC0E40850A5BD5C5C3170378BA3918C52556CF45F480418553DBB",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-08-09T16:26:27.3935884+00:00"
+                                          }
+                                      ],
+                          "status":  "VALID",
+                          "registryFingerprint":  "E9B7A8DF411503EAD6B789248672E620617F2D0FDD8BA8E8A16A5FD5BF38A844"
+                      },
+    "OutputEvidence":  {
+                           "evidenceClass":  "OUTPUT_EVIDENCE",
+                           "capturedAfterExecution":  true,
+                           "entries":  [
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/index.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/index.ts",
+                                               "sha256":  "F36460DF0CE408C66930AA6F86F4246296D88291820F9370803FCBC80544F771",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/planning.aggregate.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/planning.aggregate.ts",
+                                               "sha256":  "44947931ED379687C53016FC58EDECC93B6BD1860881BAE93A3FE6A53D9724FF",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/planning.entities.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/planning.entities.ts",
+                                               "sha256":  "577C459C0A704E3F07DA9FF3F4653F6BA5A14813A84D04384682C64B44BB8B36",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/planning.errors.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/planning.errors.ts",
+                                               "sha256":  "6D644E5E171FFF88041457B062A5DEC7C050AA7B6D4A45932F22D19D844A874B",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/planning.value-objects.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/planning.value-objects.ts",
+                                               "sha256":  "6033A3837320F326C633EF6821EB1FBDF6C311E0AB47B4A53AB5F9AAFFD71D93",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:server/domain/planning/planning-foundation.test.ts",
+                                               "kind":  "CREATED",
+                                               "path":  "server/domain/planning/planning-foundation.test.ts",
+                                               "sha256":  "301331460809036AA41236D5C174DB6A4CEB6A417B6C02D06D447E0B096FF340",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/index.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "A1424E03F97DD239DF6BC0E9EF991777F600C0577A60DDD91ECF6C7B5B1C4744",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/planning.aggregate.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "80B4C534E5DF59AAA8B229EC57FEB0A4E6DA5B0EC03509B7501D2EFE612D2771",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/planning.entities.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "FB79941B52ABCBE58A1206E68B4F25EADA8661B658CAC22DD12300824DB677B7",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/planning.errors.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "224A02E28DF88529A0D707EC08B44E1EE9A1A26700883FDD1B6DAF4CD763B6CC",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/planning.value-objects.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "E00D438E713FFB91DF278F98062290AA34B53C60D7674EAC495C9B9A69A9352F",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:server/domain/planning/planning-foundation.test.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "F881DD3D5400209634541AB9BA84636A23FC9402DEC1E03346268862D3111BBC",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "OFFICIAL_REPORT",
+                                               "kind":  "OFFICIAL_REPORT",
+                                               "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\nova-core-runtime\\reports\\bootstrap-20260809T182515166\\official-report.json",
+                                               "sha256":  null,
+                                               "fingerprintReference":  "ReportFingerprint",
+                                               "status":  "VALID"
+                                           }
+                                       ],
+                           "status":  "VALID",
+                           "registryFingerprint":  "DA0479018CB60D98371C7BF93491DF8A207F7D52D443A52472BF6012858BBC60"
+                       },
+    "Admission":  {
+                      "mode":  "NORMAL",
+                      "recoveryLaneClass":  null,
+                      "authority":  null,
+                      "blockedRule":  null,
+                      "reason":  null,
+                      "authorizedScope":  [
+
+                                          ],
+                      "authorizedFiles":  [
+
+                                          ],
+                      "forbiddenFiles":  [
+
+                                         ],
+                      "inputFingerprint":  "060E4B6664FA23117EFDFF527D7DD36A3EBF6E9E520F5582D1F1E6C1C7A1FE9D",
+                      "nonSelfBlockingException":  false,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-08-09T16:25:15.7043623+00:00"
+                  },
+    "MissionLock":  {
+                        "schemaVersion":  "1.0.0",
+                        "missionId":  "P3-PLANNING-001B-IMPLEMENTATION-001",
+                        "programId":  "PROGRAM-003",
+                        "processId":  49080,
+                        "host":  "JEFFTCHE1200974",
+                        "startedAt":  "2026-08-09T16:25:15.9426240+00:00",
+                        "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+                        "branch":  "feature/nova-runtime-foundation",
+                        "inputFingerprint":  "060E4B6664FA23117EFDFF527D7DD36A3EBF6E9E520F5582D1F1E6C1C7A1FE9D",
+                        "scopeFingerprint":  "24B7ADE3D81CDB83DB11158255F8DED788E8004E1C9D537901F06E16B6E8D088",
+                        "acquired":  true
+                    },
+    "Warnings":  [
+
+                 ],
+    "Errors":  [
+
+               ],
+    "Diagnostics":  [
+                        {
+                            "Step":  "CODEX_EXECUTION",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex a retourne ExitCode 0.",
+                            "Consequence":  "L execution technique est terminee.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Poursuivre les validations autoritatives."
+                        },
+                        {
+                            "Step":  "WORKSPACE_DELTA",
+                            "Severity":  "INFO",
+                            "Fact":  "6 changement(s) attribue(s) a la mission.",
+                            "Consequence":  "Le perimetre mesure est disponible pour validation.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Verifier les controles de perimetre avant certification."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/index.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/planning.aggregate.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/planning.entities.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/planning.errors.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/planning.value-objects.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:server/domain/planning/planning-foundation.test.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "CLASSIFICATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Statut officiel calcule: READY_FOR_REVIEW.",
+                            "Consequence":  "Ce statut gouverne le rapport officiel.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Appliquer la revue requise."
+                        }
+                    ],
+    "TechnicalClassification":  "READY_FOR_REVIEW",
+    "FinalAuthority":  {
+                           "technicalClassification":  "READY_FOR_REVIEW",
+                           "validationResults":  [
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/index.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/planning.aggregate.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/planning.entities.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/planning.errors.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/planning.value-objects.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:server/domain/planning/planning-foundation.test.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     }
+                                                 ],
+                           "evidenceStatus":  "VALID",
+                           "reviewRequirement":  "HUMAN_REVIEW_REQUIRED",
+                           "authorityDecision":  "PENDING_REVIEW",
+                           "finalMissionState":  "READY_FOR_REVIEW",
+                           "decidedBy":  "RUNTIME",
+                           "decidedAt":  "2026-08-09T16:37:34.7677062+00:00",
+                           "reasonCode":  "HUMAN_REVIEW_REQUIRED",
+                           "transcriptUsed":  false
+                       },
+    "AuthorityDecision":  "PENDING_REVIEW",
+    "FinalMissionState":  "READY_FOR_REVIEW",
+    "ReportFingerprint":  "C2A35D575FCE70484039ACDBCD376E226AB939F23ACA70881B36F1B77DBCBA4A",
+    "Status":  "READY_FOR_REVIEW",
+    "ResumePoint":  {
+                        "MissionId":  "P3-PLANNING-001B-IMPLEMENTATION-001",
+                        "Status":  "READY_FOR_REVIEW",
+                        "ReportGeneratedAt":  "2026-08-09T16:37:34.9200000Z"
+                    }
+}

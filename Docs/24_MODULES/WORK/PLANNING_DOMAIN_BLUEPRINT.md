@@ -198,6 +198,7 @@ Condition explicite que le Planning doit respecter. Une contrainte possède une 
 | `PhaseRemoved` | Une Phase cesse d'appartenir au plan courant sans être effacée de l'histoire. |
 | `MilestoneScheduled` | Un Milestone et ses repères métier sont introduits. |
 | `MilestoneChanged` | Un Milestone planifié est révisé explicitement. |
+| `MilestoneRemoved`    | Un Milestone cesse d'appartenir au plan courant sans être effacé de l'histoire. |
 | `MilestoneReached` | L'atteinte métier du Milestone est constatée par une source autorisée. |
 | `DependencyDeclared` | Une dépendance explicite est ajoutée au Planning. |
 | `DependencyRemoved` | Une dépendance cesse de s'appliquer. |

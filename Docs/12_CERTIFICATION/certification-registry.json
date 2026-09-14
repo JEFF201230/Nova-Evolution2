@@ -2,6 +2,62 @@
     "SchemaVersion":  1,
     "Entries":  [
                     {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/ACTIONS_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-ACTIONS-001B"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001A",
+                        "NextAuthorizedLot":  "P3-ACTIONS-001C"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001C",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001C.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001B",
+                        "NextAuthorizedLot":  "P3-ACTIONS-001D"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001D",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001D.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001C",
+                        "NextAuthorizedLot":  "P3-ACTIONS-001E"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001E",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001E.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001D",
+                        "NextAuthorizedLot":  "P3-ACTIONS-001F"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001F",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001F.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001E",
+                        "NextAuthorizedLot":  "P3-ACTIONS-001G"
+                    },
+                    {
+                        "DomainId":  "ACTIONS",
+                        "LotId":  "P3-ACTIONS-001G",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/ACTIONS/P3-ACTIONS-001G.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-ACTIONS-001F",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
                         "DomainId":  "PEOPLE",
                         "LotId":  "P3-PEOPLE-001A",
                         "CertificationPath":  "Docs/24_MODULES/WORK/PEOPLE_IMPLEMENTATION_CONTRACT.md",
@@ -29,9 +85,97 @@
                         "DomainId":  "PEOPLE",
                         "LotId":  "P3-PEOPLE-001D",
                         "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001D.certification.json",
-                        "Status":  "PENDING_EVIDENCE",
+                        "Status":  "CERTIFIED",
                         "PreviousLot":  "P3-PEOPLE-001C",
                         "NextAuthorizedLot":  "P3-PEOPLE-001E"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001E",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001E.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001D",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001F"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001F",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001F.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001E",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001G"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001G",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001G.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001F",
+                        "NextAuthorizedLot":  "P3-PEOPLE-001H"
+                    },
+                    {
+                        "DomainId":  "PEOPLE",
+                        "LotId":  "P3-PEOPLE-001H",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PEOPLE/P3-PEOPLE-001H.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PEOPLE-001G",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/PLANNING_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-PLANNING-001B"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001A",
+                        "NextAuthorizedLot":  "P3-PLANNING-001C"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001C",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001C.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001B",
+                        "NextAuthorizedLot":  "P3-PLANNING-001D"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001D",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001D.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001C",
+                        "NextAuthorizedLot":  "P3-PLANNING-001E"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001E",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001E.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001D",
+                        "NextAuthorizedLot":  "P3-PLANNING-001F"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001F",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001F.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001E",
+                        "NextAuthorizedLot":  "P3-PLANNING-001G"
+                    },
+                    {
+                        "DomainId":  "PLANNING",
+                        "LotId":  "P3-PLANNING-001G",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/PLANNING/P3-PLANNING-001G.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-PLANNING-001F",
+                        "NextAuthorizedLot":  null
                     }
                 ]
 }

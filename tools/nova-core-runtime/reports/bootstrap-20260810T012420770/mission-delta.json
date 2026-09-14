@@ -1,0 +1,27 @@
+{
+    "Created":  [
+                    "server/domain/planning/planning-authority.commands.ts",
+                    "server/domain/planning/planning-authority.events.ts",
+                    "server/domain/planning/planning-authority.guard.ts",
+                    "server/domain/planning/planning-authority.test.ts",
+                    "server/domain/planning/planning-authority.ts",
+                    "server/domain/planning/planning-foundation-access.ts"
+                ],
+    "Modified":  [
+                     "server/domain/planning/index.ts",
+                     "server/domain/planning/planning.aggregate.ts",
+                     "server/domain/planning/planning.errors.ts",
+                     "server/domain/planning/planning-foundation.test.ts",
+                     "server/nova-core/nova-core.bootstrap.ts"
+                 ],
+    "Deleted":  [
+
+                ],
+    "Renamed":  [
+
+                ],
+    "Insertions":  1259,
+    "Deletions":  15,
+    "BranchChanged":  false,
+    "HeadChanged":  false
+}

@@ -77,6 +77,7 @@ $allowedNamedCommands = @(
     'exceptionCaptureTests',
     'runtimeE2ETests',
     'novaCoreTests',
+    'planningTests',
     'novaCoreTypecheck',
     'novaWebTests',
     'novaWebTypecheck',

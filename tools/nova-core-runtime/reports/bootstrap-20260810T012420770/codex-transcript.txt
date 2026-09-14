@@ -1,0 +1,113 @@
+## Rapport final
+
+- MissionId : `P3-PLANNING-001C-IMPLEMENTATION-001`
+- Lot : `P3-PLANNING-001C`
+- DÃ©cision : GO
+- Approbation humaine finale : toujours requise
+- Certification automatique de `001C` : non effectuÃ©e
+- `001D` : non commencÃ©
+
+### FAITS PROUVÃ‰S
+
+Entry gate : PASS.
+
+- `P3-PLANNING-001B` est `CERTIFIED`.
+- Son `NextAuthorizedLot` est `P3-PLANNING-001C`.
+- `001C` est le lot courant `PENDING_EVIDENCE`.
+- Blueprint et contrat Planning prÃ©sents et intÃ©gralement consultÃ©s.
+- Foundation Model rÃ©el prÃ©sent et testÃ© avant modification : 13/13 PASS.
+- Aucune autoritÃ© Planning exÃ©cutable concurrente dÃ©tectÃ©e.
+- Aucune seconde source Planning dÃ©tectÃ©e.
+
+Sources consultÃ©es :
+
+- `PLANNING_DOMAIN_BLUEPRINT.md`
+- `PLANNING_IMPLEMENTATION_CONTRACT.md`
+- `WORK_DOMAIN_BLUEPRINT.md`
+- `WORK_PHASE2_CERTIFICATION.md`
+- `certification-registry.json`
+- `P3-PLANNING-001B.certification.json`
+- intÃ©gralitÃ© de `server/domain/planning/**`
+
+ImplÃ©mentation :
+
+- AutoritÃ© unique : [planning-authority.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning-authority.ts:44>)
+- Commandes `EstablishPlanning`, `RevisePlanning`, `WithdrawPlanning` : [planning-authority.commands.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning-authority.commands.ts:16>)
+- Validation atomique des propositions complÃ¨tes : [planning-authority.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning-authority.ts:216>)
+- Construction directe de lâ€™agrÃ©gat protÃ©gÃ©e par un jeton interne : [planning.aggregate.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning.aggregate.ts:79>)
+
+Ã‰vÃ©nements implÃ©mentÃ©s :
+
+- `PlanningEstablished`, `PlanningRevised`, `PlanningWithdrawn`
+- `PhaseAdded`, `PhaseChanged`, `PhaseRemoved`
+- `MilestoneScheduled`, `MilestoneChanged`, `MilestoneRemoved`
+- `DependencyDeclared`, `DependencyRemoved`
+- `ConstraintDeclared`, `ConstraintReleased`
+- `ScheduleChanged`, `PriorityChanged`
+
+Le catalogue est dÃ©fini dans [planning-authority.events.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning-authority.events.ts:112>). `MilestoneReached` nâ€™est ni commandable ni Ã©missible.
+
+Fichiers crÃ©Ã©s :
+
+- `planning-authority.ts`
+- `planning-authority.commands.ts`
+- `planning-authority.events.ts`
+- `planning-authority.guard.ts`
+- `planning-foundation-access.ts`
+- `planning-authority.test.ts`
+
+Fichiers modifiÃ©s :
+
+- `planning.aggregate.ts`
+- `planning.errors.ts`
+- `planning-foundation.test.ts`
+- `index.ts`
+
+Invariants dÃ©montrÃ©s :
+
+- `WorkReference` demeure lâ€™identitÃ© racine.
+- Une seule version courante au maximum.
+- Historique contigu, immuable et non destructif.
+- Validation globale avant production du nouvel agrÃ©gat.
+- Aucun effet ni Ã©vÃ©nement aprÃ¨s rejet.
+- Provenance et causalitÃ© obligatoires.
+- Idempotence des rÃ©pÃ©titions conformes.
+- Ã‰vÃ©nement racine prÃ©cÃ©dant les Ã©vÃ©nements granulaires.
+- Relations retirÃ©es avant les Ã©lÃ©ments quâ€™elles ciblaient.
+- Aucun doublon de relation Ã©vÃ©nementielle.
+- Phase distincte du Lifecycle Work.
+- Timeline non autoritative.
+- Aucune persistence, intÃ©gration Work, exposition publique ou fonctionnalitÃ© `001D+`.
+
+Tests et validations :
+
+- Tests Planning ciblÃ©s + Foundation : 23/23 PASS
+  - Foundation `001B` : 13/13
+  - Authority `001C` : 10/10
+- Typecheck Planning strict avec contrÃ´les unused : PASS
+- Tests PEOPLE : 39/39 PASS
+- `npm test` : 565/565 PASS
+  - Runtime : 24/24
+  - Core : 541/541
+- `npm run typecheck:nova-core` : PASS
+- `git diff --check` : PASS
+
+Non-rÃ©gressions :
+
+- Aucun fichier PEOPLE, Work, Runtime, CEREBRAU, VEEDDA, BFF, API ou UI modifiÃ© par cette mission.
+- Objective, Lifecycle et Progress inchangÃ©s.
+- Aucune persistence, migration, repository, query ou Timeline ajoutÃ©e.
+- Aucun artefact de certification `001C` modifiÃ©.
+
+### INCONNUES
+
+- Le dossier Planning Ã©tait dÃ©jÃ  entiÃ¨rement non suivi par Git avant la mission. Son Ã©tat initial a donc Ã©tÃ© Ã©tabli par lecture complÃ¨te et tests, mais ne peut pas Ãªtre comparÃ© Ã  une baseline `HEAD`.
+- Le placeholder de certification `001C` existant porte encore un `MissionId` hÃ©ritÃ© de `001B`. Il nâ€™a pas Ã©tÃ© modifiÃ©, conformÃ©ment Ã  lâ€™interdiction de certification automatique.
+
+### BLOCKERS
+
+Aucun blocker dâ€™implÃ©mentation ou de validation.
+
+Changements hors pÃ©rimÃ¨tre : aucun.
+
+GO â€” P3-PLANNING-001C â€” PLANNING AUTHORITATIVE PRODUCER IMPLEMENTED

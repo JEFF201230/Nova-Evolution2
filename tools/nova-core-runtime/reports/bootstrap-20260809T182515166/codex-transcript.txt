@@ -1,0 +1,86 @@
+## Rapport final
+
+- Mission : Planning Foundation Model
+- Lot : `P3-PLANNING-001B`
+- DÃ©cision : GO
+- Approbation humaine finale : toujours requise
+- Certification automatique de `001B` : non effectuÃ©e
+
+### Sources consultÃ©es
+
+- `PLANNING_DOMAIN_BLUEPRINT.md`
+- `PLANNING_IMPLEMENTATION_CONTRACT.md`
+- `WORK_DOMAIN_BLUEPRINT.md`
+- `WORK_PHASE2_CERTIFICATION.md`
+- `certification-registry.json`
+
+Aucune contradiction autoritative bloquante dÃ©tectÃ©e.
+
+### Entry gate
+
+PASS :
+
+- `P3-PLANNING-001A` est `CERTIFIED`.
+- `NextAuthorizedLot` vaut `P3-PLANNING-001B`.
+- Blueprint et contrat Planning prÃ©sents.
+- Aucune implÃ©mentation `server/domain/planning/` concurrente prÃ©existante.
+- Aucune seconde source Planning identifiÃ©e.
+
+### Fichiers crÃ©Ã©s
+
+- [planning.errors.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning.errors.ts>)
+- [planning.value-objects.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning.value-objects.ts>)
+- [planning.entities.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning.entities.ts>)
+- [planning.aggregate.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning.aggregate.ts>)
+- [index.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/index.ts>)
+- [planning-foundation.test.ts](<C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/planning/planning-foundation.test.ts>)
+
+Fichiers existants modifiÃ©s : aucun.
+
+### Invariants matÃ©rialisÃ©s
+
+- Racine uniquement identifiÃ©e par `WorkReference`.
+- ZÃ©ro ou une version courante.
+- Versions strictement ordonnÃ©es, contiguÃ«s et immuables.
+- Historique non destructif.
+- `Phase` distincte du Lifecycle Work.
+- `Milestone` sans durÃ©e.
+- RÃ©fÃ©rences Phase/Milestone typÃ©es et validÃ©es.
+- Dependencies orientÃ©es, sans auto-rÃ©fÃ©rence et graphe global acyclique.
+- Schedule limitÃ© aux temps mÃ©tier qualifiÃ©s et sourcÃ©s.
+- Rejet des timestamps et origines techniques.
+- Priority sans qualification ni portÃ©e implicite.
+- Constraint avec source, portÃ©e et pÃ©riode dâ€™effet.
+- `PlanningProvenance` et `CausalityId` explicites.
+- Validation atomique du contenu complet dâ€™une version.
+- Timeline absente comme autoritÃ© ou stockage.
+
+### Validations
+
+- Tests Planning : 13/13 PASS.
+- Typecheck Planning strict : PASS.
+- Typecheck Planning avec contrÃ´les dâ€™inutilisÃ©s : PASS.
+- Tests PEOPLE : 39/39 PASS.
+- Tests Runtime/Work : 24/24 PASS.
+- Tests Core : 541/541 PASS.
+- Typecheck NOVA Core : PASS.
+- `git diff --check` : PASS, code retour 0.
+- ContrÃ´le complÃ©mentaire des nouveaux fichiers : aucun espace final et fin de fichier valide.
+
+### Non-rÃ©gression et pÃ©rimÃ¨tre
+
+- PEOPLE non modifiÃ© par la mission.
+- Work, Runtime NOVA/CEREBRAU, API, BFF et UI non modifiÃ©s.
+- Aucune persistence, migration, repository, commande opÃ©rationnelle ou Query opÃ©rationnelle.
+- Aucune Planning Authority ou intÃ©gration Work/Planning.
+- Aucun Ã©vÃ©nement `MilestoneReached`.
+- Aucun artefact `P3-PLANNING-001C+`.
+- Changements hors pÃ©rimÃ¨tre : aucun.
+
+Le dÃ©pÃ´t comportait dÃ©jÃ  des modifications Ã©trangÃ¨res au lot avant intervention, notamment PEOPLE et Runtime. Elles ont Ã©tÃ© prÃ©servÃ©es ; les validations correspondantes passent.
+
+Inconnues : aucune bloquant `001B`.
+
+Blockers : aucun.
+
+GO â€” P3-PLANNING-001B â€” PLANNING FOUNDATION MODEL IMPLEMENTED

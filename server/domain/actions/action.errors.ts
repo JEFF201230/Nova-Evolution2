@@ -1,0 +1,35 @@
+export const ACTION_FOUNDATION_ERROR_CODES = Object.freeze([
+  "WORK_REFERENCE_NOT_FOUND",
+  "ACTION_NOT_FOUND",
+  "ACTION_ALREADY_EXISTS",
+  "ACTION_PURPOSE_REQUIRED",
+  "ACTION_STATUS_TRANSITION_INVALID",
+  "ACTION_TERMINAL",
+  "ACTION_RESULT_REQUIRED",
+  "ACTION_RESULT_CONFLICT",
+  "ACTION_PROVENANCE_REQUIRED",
+  "ACTION_CAUSALITY_CONFLICT",
+  "ACTION_REVISION_CONFLICT",
+  "TASK_NOT_FOUND",
+  "TASK_DUPLICATE",
+  "TASK_PURPOSE_CONFLICT",
+  "EXECUTION_NOT_FOUND",
+  "EXECUTION_STATE_INVALID",
+  "INVALID_ACTION_DEPENDENCY",
+  "ACTION_DEPENDENCY_CYCLE",
+  "EXTERNAL_AUTHORITY_NOT_ADMITTED",
+  "TECHNICAL_ACTION_SOURCE_FORBIDDEN",
+] as const);
+
+export type ActionFoundationErrorCode =
+  (typeof ACTION_FOUNDATION_ERROR_CODES)[number];
+
+export class ActionDomainError extends Error {
+  constructor(
+    readonly code: ActionFoundationErrorCode,
+    message: string,
+  ) {
+    super(`${code}: ${message}`);
+    this.name = "ActionDomainError";
+  }
+}

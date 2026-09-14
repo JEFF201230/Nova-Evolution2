@@ -1,0 +1,76 @@
+﻿{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "P3-PLANNING-001E-IMPLEMENTATION-001",
+    "program":  "PROGRAM-003",
+    "lot":  "P3-PLANNING-001E",
+    "title":  "Planning Internal Access",
+    "missionType":  "IMPLEMENTATION",
+    "profile":  "BUILD",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001E-PLANNING-INTERNAL-ACCESS/P3-PLANNING-001E_PLANNING_INTERNAL_ACCESS_PROMPT.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "artifactRoot":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\PROGRAM-003\\P3-PLANNING-001E-IMPLEMENTATION-001",
+    "allowedPaths":  [
+                         "server/domain/planning/**",
+                         "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001E-PLANNING-INTERNAL-ACCESS/**"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "Docs/12_CERTIFICATION/**",
+                           "server/domain/people/**",
+                           "apps/**",
+                           "node_modules/**",
+                           ".env*",
+                           "*.pem",
+                           "*.key",
+                           "*secret*"
+                       ],
+    "deliverables":  [
+                         "Planning internal application access implementation",
+                         "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001E-PLANNING-INTERNAL-ACCESS/P3-PLANNING-001E_PLANNING_INTERNAL_ACCESS_REPORT.md"
+                     ],
+    "stopCriteria":  [
+                         "Planning Internal Access requirements implemented; required validations pass; final report exists; implementation is ready for human review"
+                     ],
+    "validations":  [
+                        {
+                            "name":  "planning-tests",
+                            "type":  "namedCommand",
+                            "command":  "planningTests",
+                            "required":  true
+                        },
+                        {
+                            "name":  "nova-core-typecheck",
+                            "type":  "namedCommand",
+                            "command":  "novaCoreTypecheck",
+                            "required":  true
+                        },
+                        {
+                            "name":  "nova-core-tests",
+                            "type":  "namedCommand",
+                            "command":  "novaCoreTests",
+                            "required":  true
+                        },
+                        {
+                            "name":  "git-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "validationPolicy":  {
+                             "version":  1,
+                             "source":  "actual-git-delta",
+                             "target":  "NOVA"
+                         },
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "enabled":  true,
+    "binding":  {
+                    "codexVersion":  "0.153.4",
+                    "codexPath":  "C:\\Users\\JEFF1\\AppData\\Roaming\\npm\\codex.cmd",
+                    "codexBinaryHash":  "c54db6755e710c39703f7c37512f9e35ed41042d8080558d2b84b8d2694323c3",
+                    "codexConfigPolicy":  "EXPLICIT_RUNTIME_PROFILE"
+                }
+}

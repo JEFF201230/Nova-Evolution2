@@ -1,0 +1,32 @@
+export const PLANNING_FOUNDATION_ERROR_CODES = Object.freeze([
+  "WORK_REFERENCE_NOT_FOUND",
+  "OBJECTIVE_UNAVAILABLE",
+  "PLANNING_ALREADY_CURRENT",
+  "PLANNING_NOT_FOUND",
+  "PLANNING_NOT_CURRENT",
+  "PLANNING_VERSION_CONFLICT",
+  "PLANNING_CAUSALITY_CONFLICT",
+  "PLANNING_PROVENANCE_REQUIRED",
+  "PLANNING_ELEMENT_NOT_FOUND",
+  "PLANNING_ELEMENT_DUPLICATE",
+  "INVALID_BUSINESS_TIME",
+  "INVALID_DEPENDENCY",
+  "DEPENDENCY_CYCLE",
+  "PRIORITY_SCOPE_REQUIRED",
+  "CONSTRAINT_QUALIFICATION_REQUIRED",
+  "TECHNICAL_PLANNING_SOURCE_FORBIDDEN",
+  "MILESTONE_REACH_AUTHORITY_UNDEFINED",
+] as const);
+
+export type PlanningFoundationErrorCode =
+  (typeof PLANNING_FOUNDATION_ERROR_CODES)[number];
+
+export class PlanningDomainError extends Error {
+  constructor(
+    readonly code: PlanningFoundationErrorCode,
+    message: string,
+  ) {
+    super(`${code}: ${message}`);
+    this.name = "PlanningDomainError";
+  }
+}

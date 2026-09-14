@@ -1,0 +1,77 @@
+﻿{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "P3-PLANNING-001G-IMPLEMENTATION-001",
+    "program":  "PROGRAM-003",
+    "repository":  ".",
+    "workingDirectory":  ".",
+    "lot":  "P3-PLANNING-001G",
+    "title":  "Planning Foundation Certification",
+    "missionType":  "IMPLEMENTATION",
+    "profile":  "BUILD",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001G-PLANNING-FOUNDATION-CERTIFICATION/P3-PLANNING-001G_PLANNING_FOUNDATION_CERTIFICATION_PROMPT.md",
+    "reportDirectory":  ".nova-data/execution/reports/PROGRAM-003/P3-PLANNING-001G-IMPLEMENTATION-001",
+    "allowedPaths":  [
+                         "server/domain/planning/**",
+                         "server/domain/work/**",
+                         "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001G-PLANNING-FOUNDATION-CERTIFICATION/**"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "Docs/12_CERTIFICATION/**",
+                           "server/domain/people/**",
+                           "apps/**",
+                           "node_modules/**",
+                           ".env*",
+                           "*.pem",
+                           "*.key",
+                           "*secret*"
+                       ],
+    "deliverables":  [
+                         "Docs/24_MODULES/WORK/PLANNING/MISSIONS/P3-PLANNING-001G-PLANNING-FOUNDATION-CERTIFICATION/P3-PLANNING-001G_PLANNING_FOUNDATION_CERTIFICATION_REPORT.md"
+                     ],
+    "stopCriteria":  [
+                         "P3-PLANNING-001G audit completed",
+                         "all required validations executed",
+                         "final report produced",
+                         "human review required before canonical certification"
+                     ],
+    "validations":  [
+                        {
+                            "type":  "namedCommand",
+                            "name":  "planningTests",
+                            "required":  true,
+                            "command":  "planningTests"
+                        },
+                        {
+                            "type":  "namedCommand",
+                            "name":  "novaCoreTypecheck",
+                            "required":  true,
+                            "command":  "novaCoreTypecheck"
+                        },
+                        {
+                            "type":  "namedCommand",
+                            "name":  "novaCoreTests",
+                            "required":  true,
+                            "command":  "novaCoreTests"
+                        },
+                        {
+                            "type":  "gitDiffCheck",
+                            "name":  "git-diff-check",
+                            "required":  true
+                        }
+                    ],
+    "validationPolicy":  {
+                             "source":  "actual-git-delta",
+                             "target":  "NOVA"
+                         },
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "enabled":  true,
+    "binding":  {
+                    "codexVersion":  "0.153.4",
+                    "codexPath":  "C:\\Users\\JEFF1\\AppData\\Roaming\\npm\\codex.cmd",
+                    "codexBinaryHash":  "c54db6755e710c39703f7c37512f9e35ed41042d8080558d2b84b8d2694323c3",
+                    "codexConfigPolicy":  "EXPLICIT_RUNTIME_PROFILE"
+                }
+}

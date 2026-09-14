@@ -211,8 +211,9 @@ function Invoke-NovaCoreNamedCommand {
         'reportingUnitTests' = [PSCustomObject]@{ FileName=$powershell; Arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $Repository 'tools/nova-core-runtime/Test-NovaCoreReporting.ps1')); WorkingDirectory=$Repository }
         'exceptionCaptureTests' = [PSCustomObject]@{ FileName=$powershell; Arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $Repository 'tools/nova-core-runtime/Test-NovaCoreExceptionCapture.ps1')); WorkingDirectory=$Repository }
         'runtimeE2ETests' = [PSCustomObject]@{ FileName=$powershell; Arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $Repository 'tools/nova-core-runtime/Test-NovaCoreRuntimeE2E.ps1')); WorkingDirectory=$Repository }
-        'novaCoreTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('test'); WorkingDirectory=$Repository }
-        'novaCoreTypecheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','typecheck:nova-core'); WorkingDirectory=$Repository }
+        'novaCoreTests' = [PSCustomObject]@{ FileName='node.exe'; Arguments=@('--import','tsx','--test','server/runtime/orchestrator/orchestrator-runtime.test.ts','server/runtime/work/work-core-foundation.test.ts','server/nova-core/*.test.ts'); WorkingDirectory=$Repository }
+        'planningTests' = [PSCustomObject]@{ FileName='node.exe'; Arguments=@('--import','tsx','--test','server/domain/planning/planning-authority.test.ts','server/domain/planning/planning-foundation.test.ts'); WorkingDirectory=$Repository }
+        'novaCoreTypecheck' = [PSCustomObject]@{ FileName=(Join-Path $Repository 'node_modules\.bin\tsc.cmd'); Arguments=@('-p','tsconfig.nova-core.json'); WorkingDirectory=$Repository }
         'novaWebTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('test'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
         'novaWebTypecheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','typecheck'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
         'novaWebBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
