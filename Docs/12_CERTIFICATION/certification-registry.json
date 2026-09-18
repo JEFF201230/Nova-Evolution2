@@ -58,6 +58,70 @@
                         "NextAuthorizedLot":  null
                     },
                     {
+                        "DomainId":  "BUSINESS_CERTIFICATION",
+                        "LotId":  "P3-BUSINESS-CERTIFICATION-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/BUSINESS_CERTIFICATION/BUSINESS_CERTIFICATION_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-BUSINESS-CERTIFICATION-001B"
+                    },
+                    {
+                        "DomainId":  "BUSINESS_CERTIFICATION",
+                        "LotId":  "P3-BUSINESS-CERTIFICATION-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/BUSINESS_CERTIFICATION/P3-BUSINESS-CERTIFICATION-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-BUSINESS-CERTIFICATION-001A",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "CONFIDENCE",
+                        "LotId":  "P3-CONFIDENCE-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/CONFIDENCE_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-CONFIDENCE-001B"
+                    },
+                    {
+                        "DomainId":  "CONFIDENCE",
+                        "LotId":  "P3-CONFIDENCE-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/CONFIDENCE/P3-CONFIDENCE-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-CONFIDENCE-001A",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "EVIDENCE",
+                        "LotId":  "P3-EVIDENCE-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/EVIDENCE_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-EVIDENCE-001B"
+                    },
+                    {
+                        "DomainId":  "EVIDENCE",
+                        "LotId":  "P3-EVIDENCE-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/EVIDENCE/P3-EVIDENCE-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-EVIDENCE-001A",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "INTELLIGENCE",
+                        "LotId":  "P3-INTELLIGENCE-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/INTELLIGENCE_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-INTELLIGENCE-001B"
+                    },
+                    {
+                        "DomainId":  "INTELLIGENCE",
+                        "LotId":  "P3-INTELLIGENCE-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/INTELLIGENCE/P3-INTELLIGENCE-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-INTELLIGENCE-001A",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
                         "DomainId":  "PEOPLE",
                         "LotId":  "P3-PEOPLE-001A",
                         "CertificationPath":  "Docs/24_MODULES/WORK/PEOPLE_IMPLEMENTATION_CONTRACT.md",
@@ -176,6 +240,54 @@
                         "Status":  "CERTIFIED",
                         "PreviousLot":  "P3-PLANNING-001F",
                         "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "SYNTHESIS",
+                        "LotId":  "P3-SYNTHESIS-001A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/SYNTHESIS_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "P3-SYNTHESIS-001B"
+                    },
+                    {
+                        "DomainId":  "SYNTHESIS",
+                        "LotId":  "P3-SYNTHESIS-001B",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/SYNTHESIS/P3-SYNTHESIS-001B.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "P3-SYNTHESIS-001A",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-004",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-004.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-004A",
+                        "NextAuthorizedLot":  "WORK-AUTHORIZED-STATE-001"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-004A",
+                        "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/WORK_IMPLEMENTATION_CONTRACT.md",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "WCF-004"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-008-CLOSURE",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-008-CLOSURE.certification.json",
+                        "Status":  "PENDING_EVIDENCE",
+                        "PreviousLot":  "WORK-AUTHORIZED-STATE-001",
+                        "NextAuthorizedLot":  null
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WORK-AUTHORIZED-STATE-001",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WORK-AUTHORIZED-STATE-001.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-004",
+                        "NextAuthorizedLot":  "WCF-008-CLOSURE"
                     }
                 ]
 }

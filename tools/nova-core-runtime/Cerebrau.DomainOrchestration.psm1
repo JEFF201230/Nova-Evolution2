@@ -212,7 +212,11 @@ function Resolve-DomainContext {
         }
         if (-not (Test-Path -LiteralPath $candidate -PathType Leaf)) { continue }
         $candidateText = [IO.File]::ReadAllText($candidate, $script:Utf8NoBom)
-        if ($candidateText -notmatch "(?im)^#\s+$([regex]::Escape($DomainId))\s+DOMAIN BLUEPRINT\s*$") {
+        $canonicalBlueprintPattern = "(?im)^#\s+$([regex]::Escape($DomainId))\s+DOMAIN BLUEPRINT\s*$"
+        $workBlueprintPattern = '(?im)^#\s+WD-001\s+\u2014\s+Work Domain Blueprint\s*$'
+        $isCanonicalBlueprint = $candidateText -match $canonicalBlueprintPattern
+        $isProtectedWorkBlueprint = $DomainId -eq 'WORK' -and $candidateText -match $workBlueprintPattern
+        if (-not ($isCanonicalBlueprint -or $isProtectedWorkBlueprint)) {
             continue
         }
         $key = $candidate.ToUpperInvariant()

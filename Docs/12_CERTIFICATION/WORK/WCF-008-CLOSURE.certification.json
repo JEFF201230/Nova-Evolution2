@@ -1,0 +1,16 @@
+{
+    "MissionId":  "REPAIR-WCF-008-CLOSURE",
+    "DomainId":  "WORK",
+    "LotId":  "WCF-008-CLOSURE",
+    "Status":  "PENDING_EVIDENCE",
+    "CertifiedAt":  null,
+    "Evidence":  [
+
+                 ],
+    "Tests":  [
+
+              ],
+    "Regressions":  "NOT_EVALUATED",
+    "PreviousLot":  "WORK-AUTHORIZED-STATE-001",
+    "NextAuthorizedLot":  null
+}

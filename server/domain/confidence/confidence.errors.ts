@@ -1,0 +1,22 @@
+export type ConfidenceErrorCode =
+  | "CONFIDENCE_INVALID_INPUT"
+  | "CONFIDENCE_INTELLIGENCE_NOT_FOUND"
+  | "CONFIDENCE_INTELLIGENCE_UNAVAILABLE"
+  | "CONFIDENCE_EVIDENCE_REQUIRED"
+  | "CONFIDENCE_EVIDENCE_NOT_FOUND"
+  | "CONFIDENCE_EVIDENCE_UNAVAILABLE"
+  | "CONFIDENCE_EVIDENCE_NOT_ADMISSIBLE"
+  | "CONFIDENCE_METHOD_MISMATCH"
+  | "CONFIDENCE_CURRENT_CONFLICT"
+  | "CONFIDENCE_NOT_FOUND"
+  | "CONFIDENCE_REVISION_CONFLICT"
+  | "CONFIDENCE_TERMINAL"
+  | "CONFIDENCE_IDEMPOTENCY_CONFLICT"
+  | "CONFIDENCE_JOURNAL_CORRUPT";
+
+export class ConfidenceDomainError extends Error {
+  constructor(readonly code: ConfidenceErrorCode, message: string, options?: ErrorOptions) {
+    super(message, options);
+    this.name = "ConfidenceDomainError";
+  }
+}

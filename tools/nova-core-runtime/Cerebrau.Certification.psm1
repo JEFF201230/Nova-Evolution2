@@ -688,6 +688,183 @@ function Repair-CerebrauCertificationChain {
         RemovedPrematureLot = $PrematurePendingLotId
     }
 }
+
+function Repair-CerebrauTerminalCertification {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$InvalidCertifiedLotId,
+        [Parameter(Mandatory)][string]$ExpectedMissionId
+    )
+
+    Assert-CerebrauIdentifier $DomainId 'DomainId'
+    Assert-CerebrauIdentifier $InvalidCertifiedLotId 'InvalidCertifiedLotId'
+    Assert-CerebrauIdentifier $ExpectedMissionId 'ExpectedMissionId'
+
+    $root = Get-CerebrauRepositoryRoot -Repository $Repository
+    $registry = Read-CerebrauRegistry -Repository $root
+    $lotEntries = @($registry.Entries | Where-Object {
+        [string]$_.LotId -ceq $InvalidCertifiedLotId
+    })
+    if ($lotEntries.Count -ne 1 -or
+        [string]$lotEntries[0].DomainId -cne $DomainId) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:REGISTRY_ENTRY:$InvalidCertifiedLotId"
+    }
+    $entry = $lotEntries[0]
+    $certificationPath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath ([string]$entry.CertificationPath)
+    if (-not (Test-Path -LiteralPath $certificationPath -PathType Leaf)) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:CERTIFICATE_MISSING:$InvalidCertifiedLotId"
+    }
+    if ([IO.Path]::GetExtension($certificationPath) -ine '.json') {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:CERTIFICATE_NOT_STRUCTURED:$InvalidCertifiedLotId"
+    }
+    try {
+        $invalid = Get-Content -LiteralPath $certificationPath -Raw -Encoding UTF8 |
+            ConvertFrom-Json
+        Assert-LotCertification -Certification $invalid
+    }
+    catch {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:CERTIFICATE_INVALID:$InvalidCertifiedLotId"
+    }
+    if ([string]$invalid.DomainId -cne $DomainId -or
+        [string]$invalid.LotId -cne $InvalidCertifiedLotId -or
+        [string]$invalid.Status -cne [string]$entry.Status -or
+        [string]$invalid.PreviousLot -cne [string]$entry.PreviousLot -or
+        [string]$invalid.NextAuthorizedLot -cne [string]$entry.NextAuthorizedLot) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:REGISTRY_MISMATCH:$InvalidCertifiedLotId"
+    }
+    if ([string]$invalid.Status -cne 'CERTIFIED') {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:NOT_CERTIFIED:$InvalidCertifiedLotId"
+    }
+    if ([string]$invalid.MissionId -cne $ExpectedMissionId) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:MISSION_MISMATCH:$InvalidCertifiedLotId"
+    }
+    if ($null -ne $invalid.NextAuthorizedLot -or
+        $null -ne $entry.NextAuthorizedLot) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:NEXT_AUTHORIZED_LOT:$InvalidCertifiedLotId"
+    }
+    $dependentEntries = @($registry.Entries | Where-Object {
+        $null -ne $_.PreviousLot -and
+        [string]$_.PreviousLot -ceq $InvalidCertifiedLotId
+    })
+    if ($dependentEntries.Count -ne 0) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:DEPENDENT_LOT:$InvalidCertifiedLotId"
+    }
+    $continuity = Test-LotContinuity `
+        -Repository $root `
+        -DomainId $DomainId `
+        -Registry $registry
+    $orderedLots = @($continuity.OrderedLots)
+    if ($orderedLots.Count -eq 0 -or
+        [string]$orderedLots[-1].LotId -cne $InvalidCertifiedLotId) {
+        throw "TERMINAL_REPAIR_PRECONDITION_FAILED:NOT_TERMINAL:$InvalidCertifiedLotId"
+    }
+
+    $repairMissionId = "REPAIR-$InvalidCertifiedLotId"
+    $repairedCertification = [PSCustomObject][ordered]@{
+        MissionId = $repairMissionId
+        DomainId = $DomainId
+        LotId = $InvalidCertifiedLotId
+        Status = 'PENDING_EVIDENCE'
+        CertifiedAt = $null
+        Evidence = [object[]]@()
+        Tests = [object[]]@()
+        Regressions = 'NOT_EVALUATED'
+        PreviousLot = $invalid.PreviousLot
+        NextAuthorizedLot = $null
+    }
+    Assert-LotCertification -Certification $repairedCertification
+
+    $nextEntries = [Collections.Generic.List[object]]::new()
+    foreach ($candidate in @($registry.Entries)) {
+        if ([string]$candidate.DomainId -ceq $DomainId -and
+            [string]$candidate.LotId -ceq $InvalidCertifiedLotId) {
+            $nextEntries.Add([PSCustomObject][ordered]@{
+                DomainId = $DomainId
+                LotId = $InvalidCertifiedLotId
+                CertificationPath = [string]$candidate.CertificationPath
+                Status = 'PENDING_EVIDENCE'
+                PreviousLot = $candidate.PreviousLot
+                NextAuthorizedLot = $null
+            })
+        }
+        else {
+            $nextEntries.Add($candidate)
+        }
+    }
+    $nextRegistry = [PSCustomObject][ordered]@{
+        SchemaVersion = 1
+        Entries = [object[]]@($nextEntries.ToArray() | Sort-Object DomainId,LotId)
+    }
+    Assert-CerebrauRegistry -Registry $nextRegistry
+    [void](Test-LotContinuity `
+        -Repository $root `
+        -DomainId $DomainId `
+        -Registry $nextRegistry)
+
+    $historyRelativePath = "$($script:CertificationRoot)/repairs/$DomainId/$InvalidCertifiedLotId.repair-history.jsonl"
+    $historyPath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath $historyRelativePath
+    $historyRecord = [PSCustomObject][ordered]@{
+        SchemaVersion = 1
+        EventType = 'TERMINAL_CERTIFICATION_REPAIRED'
+        RepairMissionId = $repairMissionId
+        DomainId = $DomainId
+        LotId = $InvalidCertifiedLotId
+        Reason = 'INVALID_CERTIFICATION_MISSION_SCOPE'
+        PreviousMissionId = [string]$invalid.MissionId
+        PreviousStatus = [string]$invalid.Status
+        PreviousCertifiedAt = [string]$invalid.CertifiedAt
+        RestoredStatus = 'PENDING_EVIDENCE'
+    }
+    $historyExisted = Test-Path -LiteralPath $historyPath -PathType Leaf
+    $historyBackup = if ($historyExisted) {
+        [IO.File]::ReadAllText($historyPath,$script:Utf8NoBom)
+    } else { $null }
+    $historyContent = if ($historyExisted) {
+        $historyBackup.TrimEnd("`r","`n") + [Environment]::NewLine +
+            (($historyRecord | ConvertTo-Json -Depth 10 -Compress) + [Environment]::NewLine)
+    } else {
+        ($historyRecord | ConvertTo-Json -Depth 10 -Compress) + [Environment]::NewLine
+    }
+    $registryPath = Resolve-CerebrauRepositoryPath `
+        -Repository $root `
+        -RelativePath $script:RegistryRelativePath
+    $certificationBackup = [IO.File]::ReadAllText($certificationPath,$script:Utf8NoBom)
+    $registryBackup = [IO.File]::ReadAllText($registryPath,$script:Utf8NoBom)
+
+    try {
+        Write-CerebrauAtomicText `
+            -Path $certificationPath `
+            -Content (ConvertTo-CerebrauJson $repairedCertification)
+        Write-CerebrauAtomicText `
+            -Path $registryPath `
+            -Content (ConvertTo-CerebrauJson $nextRegistry)
+        Write-CerebrauAtomicText -Path $historyPath -Content $historyContent
+    }
+    catch {
+        Write-CerebrauAtomicText -Path $certificationPath -Content $certificationBackup
+        Write-CerebrauAtomicText -Path $registryPath -Content $registryBackup
+        if ($historyExisted) {
+            Write-CerebrauAtomicText -Path $historyPath -Content $historyBackup
+        }
+        elseif (Test-Path -LiteralPath $historyPath -PathType Leaf) {
+            Remove-Item -LiteralPath $historyPath -Force
+        }
+        throw
+    }
+
+    return [PSCustomObject][ordered]@{
+        Status = 'TERMINAL_CERTIFICATION_REPAIRED'
+        RestoredLot = $InvalidCertifiedLotId
+        RepairMissionId = $repairMissionId
+        HistoryPath = $historyRelativePath
+    }
+}
 function Write-LotCertification {
     [CmdletBinding()]
     param(
@@ -817,6 +994,7 @@ Export-ModuleMember -Function `
     Read-LotCertification,`
     Write-LotCertification,`
     Repair-CerebrauCertificationChain,`
+    Repair-CerebrauTerminalCertification,`
     Get-LastCertifiedLot,`
     Get-NextAuthorizedLot,`
     Test-LotContinuity,`

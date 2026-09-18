@@ -1,0 +1,80 @@
+﻿{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "CEREBRAU-TERMINAL-CERTIFICATION-REPAIR-001",
+    "program":  "PROGRAM-003",
+    "lot":  "CEREBRAU-TERMINAL-CERTIFICATION-REPAIR",
+    "title":  "CEREBRAU Terminal Certification Repair",
+    "missionType":  "IMPLEMENTATION",
+    "profile":  "BUILD",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\Docs\\24_MODULES\\WORK\\EVIDENCE\\WAVES\\NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001\\CEREBRAU_TERMINAL_CERTIFICATION_REPAIR_PROMPT.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "artifactRoot":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\PROGRAM-003\\CEREBRAU-TERMINAL-CERTIFICATION-REPAIR-001",
+    "allowedPaths":  [
+                         "tools/nova-core-runtime/Cerebrau.Certification.psm1",
+                         "tools/nova-core-runtime/Test-CerebrauCertification.ps1",
+                         "tools/nova-core-runtime/Test-CerebrauDomainOrchestration.ps1",
+                         "Docs/12_CERTIFICATION/WORK/**",
+                         "Docs/12_CERTIFICATION/certification-registry.json",
+                         "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/**"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "server/**",
+                           "apps/**",
+                           "node_modules/**",
+                           ".env*",
+                           "*.pem",
+                           "*.key",
+                           "*secret*"
+                       ],
+    "deliverables":  [
+                         "Generic fail-closed terminal certification repair primitive",
+                         "Terminal certification repair regression tests",
+                         "Deterministic repair provenance",
+                         "WCF-008-CLOSURE restored to PENDING_EVIDENCE",
+                         "Terminal repair report"
+                     ],
+    "stopCriteria":  [
+                         "Terminal repair implementation reaches PASS or governed blocking state",
+                         "WCF-008-CLOSURE is not certified by this mission",
+                         "C-22 is not modified",
+                         "C-01 approval is preserved",
+                         "No product code modification"
+                     ],
+    "validations":  [
+                        {
+                            "name":  "nova-core-typecheck",
+                            "type":  "namedCommand",
+                            "command":  "novaCoreTypecheck",
+                            "required":  true
+                        },
+                        {
+                            "name":  "nova-core-tests",
+                            "type":  "namedCommand",
+                            "command":  "novaCoreTests",
+                            "required":  true
+                        },
+                        {
+                            "name":  "git-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "validationPolicy":  {
+                             "version":  1,
+                             "source":  "actual-git-delta",
+                             "target":  "NOVA"
+                         },
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "enabled":  true,
+    "binding":  {
+                    "codexVersion":  "0.153.4",
+                    "codexPath":  "C:\\Users\\JEFF1\\AppData\\Roaming\\npm\\codex.cmd",
+                    "codexBinaryHash":  "c54db6755e710c39703f7c37512f9e35ed41042d8080558d2b84b8d2694323c3",
+                    "codexConfigPolicy":  "EXPLICIT_RUNTIME_PROFILE"
+                }
+}

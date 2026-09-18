@@ -8,6 +8,6 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["./*.ts"],
-  "exclude": ["./*.test.ts"]
+  "include": ["./*.ts", "../synthesis/*.ts", "../intelligence/*.ts", "../evidence/*.ts", "../business-certification/*.ts", "../actions/*.ts", "../planning/*.ts", "../people/*.ts", "../../runtime/work/*.ts"],
+  "exclude": ["./*.test.ts", "../synthesis/*.test.ts", "../intelligence/*.test.ts", "../evidence/*.test.ts", "../business-certification/*.test.ts", "../actions/*.test.ts", "../planning/*.test.ts", "../people/*.test.ts", "../../runtime/work/*.test.ts"]
 }

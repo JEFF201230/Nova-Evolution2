@@ -415,6 +415,174 @@ try {
         ) -Raw | ConvertFrom-Json
         Assert-Equal 2 @($registry.Entries).Count
     }
+
+    Invoke-TestCase 'terminal-certified-invalid-mission-can-be-restored' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED' $null 'LOT-B'
+        ))
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-B' 'CERTIFIED' 'LOT-A' $null
+        ))
+        $result = Repair-CerebrauTerminalCertification `
+            $root PEOPLE LOT-B TEST-LOT-B
+        Assert-Equal 'TERMINAL_CERTIFICATION_REPAIRED' $result.Status
+        $restored = Read-LotCertification $root PEOPLE LOT-B
+        Assert-Equal 'PENDING_EVIDENCE' $restored.Status
+        Assert-Equal 'REPAIR-LOT-B' $restored.MissionId
+        Assert-Equal $null $restored.CertifiedAt
+        Assert-Equal 0 @($restored.Evidence).Count
+        Assert-Equal 0 @($restored.Tests).Count
+        Assert-Equal 'NOT_EVALUATED' $restored.Regressions
+        Assert-Equal 'LOT-A' $restored.PreviousLot
+        Assert-Equal $null $restored.NextAuthorizedLot
+        $history = Get-Content -LiteralPath (Join-Path $root $result.HistoryPath) |
+            ConvertFrom-Json
+        Assert-Equal 'TEST-LOT-B' $history.PreviousMissionId
+        Assert-Equal 'CERTIFIED' $history.PreviousStatus
+        Assert-Equal '2026-07-30T16:00:00.000Z' $history.PreviousCertifiedAt
+        Assert-Equal 'REPAIR-LOT-B' $history.RepairMissionId
+    }
+
+    Invoke-TestCase 'wrong-expected-mission-fails-closed' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        $path = Join-Path $root 'Docs/12_CERTIFICATION/PEOPLE/LOT-A.certification.json'
+        $before = (Get-FileHash $path -Algorithm SHA256).Hash
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A WRONG-MISSION
+        } 'TERMINAL_REPAIR_PRECONDITION_FAILED:MISSION_MISMATCH:*'
+        Assert-Equal $before (Get-FileHash $path -Algorithm SHA256).Hash
+    }
+
+    Invoke-TestCase 'non-certified-lot-fails-closed' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'PENDING_EVIDENCE'
+        ))
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A
+        } 'TERMINAL_REPAIR_PRECONDITION_FAILED:NOT_CERTIFIED:*'
+    }
+
+    Invoke-TestCase 'non-terminal-lot-fails-closed' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED' $null 'LOT-B'
+        ))
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A
+        } 'TERMINAL_REPAIR_PRECONDITION_FAILED:NEXT_AUTHORIZED_LOT:*'
+    }
+
+    Invoke-TestCase 'dependent-next-lot-fails-closed' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+        $registry = Get-Content $registryPath -Raw | ConvertFrom-Json
+        $registry.Entries = @($registry.Entries) + @(
+            (New-RegistryEntry 'LOT-X' 'PENDING_EVIDENCE' 'LOT-A' $null 'OTHER')
+        )
+        Write-TestRegistry $root $registry.Entries
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A
+        } 'TERMINAL_REPAIR_PRECONDITION_FAILED:DEPENDENT_LOT:*'
+    }
+
+    Invoke-TestCase 'registry-mismatch-fails-closed' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+        $registry = Get-Content $registryPath -Raw | ConvertFrom-Json
+        $registry.Entries[0].Status = 'PENDING_EVIDENCE'
+        Write-TestRegistry $root $registry.Entries
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A
+        } 'TERMINAL_REPAIR_PRECONDITION_FAILED:REGISTRY_MISMATCH:*'
+    }
+
+    Invoke-TestCase 'repaired-terminal-lot-resolves-as-pending' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        [void](Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A)
+        $context = Resolve-CertificationContext $root PEOPLE
+        Assert-Equal 'LOT-A' $context.NextLotRequiringEvidence
+        Assert-True $context.BackfillAuthorized
+    }
+
+    Invoke-TestCase 'previous-certified-lot-remains-certified' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED' $null 'LOT-B'
+        ))
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-B' 'CERTIFIED' 'LOT-A' $null
+        ))
+        [void](Repair-CerebrauTerminalCertification $root PEOPLE LOT-B TEST-LOT-B)
+        Assert-Equal 'CERTIFIED' (Read-LotCertification $root PEOPLE LOT-A).Status
+    }
+
+    Invoke-TestCase 'repair-preserves-domain-continuity' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED' $null 'LOT-B'
+        ))
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-B' 'CERTIFIED' 'LOT-A' $null
+        ))
+        [void](Repair-CerebrauTerminalCertification $root PEOPLE LOT-B TEST-LOT-B)
+        Assert-True (Test-LotContinuity $root PEOPLE).IsContinuous
+    }
+
+    Invoke-TestCase 'repair-does-not-touch-unrelated-domains' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        [void](Write-LotCertification $root (
+            New-Certification 'OTHER-A' 'CERTIFIED' $null $null 'OTHER'
+        ))
+        $otherPath = Join-Path $root 'Docs/12_CERTIFICATION/OTHER/OTHER-A.certification.json'
+        $before = (Get-FileHash $otherPath -Algorithm SHA256).Hash
+        [void](Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A)
+        Assert-Equal $before (Get-FileHash $otherPath -Algorithm SHA256).Hash
+        Assert-Equal 'CERTIFIED' (Read-LotCertification $root OTHER OTHER-A).Status
+    }
+
+    Invoke-TestCase 'partial-write-rolls-back-atomically' {
+        $root = New-TestRepository
+        [void](Write-LotCertification $root (
+            New-Certification 'LOT-A' 'CERTIFIED'
+        ))
+        $certificationPath = Join-Path $root (
+            'Docs/12_CERTIFICATION/PEOPLE/LOT-A.certification.json'
+        )
+        $registryPath = Join-Path $root (
+            'Docs/12_CERTIFICATION/certification-registry.json'
+        )
+        $certificationBefore = (Get-FileHash $certificationPath -Algorithm SHA256).Hash
+        $registryBefore = (Get-FileHash $registryPath -Algorithm SHA256).Hash
+        New-Item -ItemType File -Path (Join-Path $root 'Docs/12_CERTIFICATION/repairs') |
+            Out-Null
+        Assert-Throws {
+            Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A
+        } '*'
+        Assert-Equal $certificationBefore (
+            Get-FileHash $certificationPath -Algorithm SHA256
+        ).Hash
+        Assert-Equal $registryBefore (
+            Get-FileHash $registryPath -Algorithm SHA256
+        ).Hash
+        Assert-Equal 'CERTIFIED' (Read-LotCertification $root PEOPLE LOT-A).Status
+    }
 }
 finally {
     foreach ($root in $temporaryRoots) {

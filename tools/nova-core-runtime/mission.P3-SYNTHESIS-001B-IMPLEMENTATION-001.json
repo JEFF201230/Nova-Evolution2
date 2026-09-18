@@ -1,0 +1,85 @@
+﻿{
+  "schemaVersion": "1.0.0",
+  "missionId": "P3-SYNTHESIS-001B-IMPLEMENTATION-001",
+  "program": "PROGRAM-003",
+  "lot": "P3-SYNTHESIS-001B",
+  "title": "Synthesis Foundation",
+  "missionType": "IMPLEMENTATION",
+  "profile": "BUILD",
+  "repository": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "expectedBranch": "feature/nova-runtime-foundation",
+  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\Docs\\24_MODULES\\WORK\\EVIDENCE\\WAVES\\NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001\\P3_SYNTHESIS_001B_IMPLEMENTATION_PROMPT.md",
+  "workingDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "artifactRoot": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\PROGRAM-003\\P3-SYNTHESIS-001B-IMPLEMENTATION-001",
+  "allowedPaths": [
+    "server/domain/synthesis/**",
+    "server/domain/work/work-synthesis*.ts",
+    "server/domain/work/index.ts",
+    "server/domain/work/tsconfig.json",
+    "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/**",
+    "Docs/24_MODULES/WORK/SYNTHESIS/**"
+  ],
+  "forbiddenPaths": [
+    ".git/**",
+    "server/domain/evidence/**",
+    "server/domain/business-certification/**",
+    "server/domain/intelligence/**",
+    "server/domain/actions/**",
+    "server/domain/planning/**",
+    "server/domain/people/**",
+    "server/domain/confidence/**",
+    "apps/**",
+    "node_modules/**",
+    ".env*",
+    "*.pem",
+    "*.key",
+    "*secret*"
+  ],
+  "deliverables": [
+    "Authoritative Work Synthesis implementation",
+    "Current and historical Synthesis lifecycle",
+    "Source and conflict provenance",
+    "Read-only Work Synthesis association",
+    "Scoped Synthesis tests",
+    "Implementation report"
+  ],
+  "stopCriteria": [
+    "P3-SYNTHESIS-001B reaches READY_FOR_REVIEW or a governed blocking state",
+    "No Confidence implementation",
+    "No WCF-008 closure"
+  ],
+  "validations": [
+    {
+      "name": "nova-core-typecheck",
+      "type": "namedCommand",
+      "command": "novaCoreTypecheck",
+      "required": true
+    },
+    {
+      "name": "nova-core-tests",
+      "type": "namedCommand",
+      "command": "novaCoreTests",
+      "required": true
+    },
+    {
+      "name": "git-diff-check",
+      "type": "gitDiffCheck",
+      "required": true
+    }
+  ],
+  "validationPolicy": {
+    "version": 1,
+    "source": "actual-git-delta",
+    "target": "NOVA"
+  },
+  "changesExpected": true,
+  "humanReviewRequired": true,
+  "enabled": true,
+  "binding": {
+    "codexVersion": "0.153.4",
+    "codexPath": "C:\\Users\\JEFF1\\AppData\\Roaming\\npm\\codex.cmd",
+    "codexBinaryHash": "c54db6755e710c39703f7c37512f9e35ed41042d8080558d2b84b8d2694323c3",
+    "codexConfigPolicy": "EXPLICIT_RUNTIME_PROFILE"
+  }
+}
