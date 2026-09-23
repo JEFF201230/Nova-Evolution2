@@ -39,6 +39,16 @@ export type WorkPlanningAvailable = WorkPlanningReference & Readonly<{
   planningVersion: number;
   revision: number;
   applicability: BusinessPeriod;
+  phase: Readonly<{
+    current: number;
+    total: number;
+    phaseId: string;
+  }>;
+  dueAt: string | null;
+  dependencies: readonly Readonly<{
+    prerequisite: string;
+    dependent: string;
+  }>[];
   provenance: PlanningProvenance;
 }>;
 

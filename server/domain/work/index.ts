@@ -93,3 +93,5 @@ export {
   type WorkSynthesisUnavailableReason,
   type WorkSynthesisWithdrawn,
 } from "./work-synthesis.types.js";
+export { WorkConfidenceQuery, workResultReference, type WorkConfidenceReadSource } from "./work-confidence.query.js";
+export { WORK_CONFIDENCE_SOURCE_DOMAIN, type WorkConfidenceReadResult, type WorkConfidenceReference } from "./work-confidence.types.js";

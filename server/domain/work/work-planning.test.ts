@@ -235,10 +235,10 @@ test("Work owns no Planning aggregate, history, graph, command, store or persist
     const historyAfter = current.repository.readHistory(PLANNING_WORK);
 
     assert.equal(result.status, "PLANNING_AVAILABLE");
-    assert.deepEqual(Object.keys(query), ["planning"]);
+    assert.deepEqual(Object.keys(query), ["planning", "clock"]);
     assert.deepEqual(historyAfter, historyBefore);
     for (const forbidden of [
-      "phases", "milestones", "dependencies", "schedule", "priorities",
+      "phases", "milestones", "schedule", "priorities",
       "constraints", "history", "events", "commands", "store", "repository",
     ]) {
       assert.equal(forbidden in result, false);
@@ -246,6 +246,19 @@ test("Work owns no Planning aggregate, history, graph, command, store or persist
   } finally {
     current.database.close();
   }
+});
+
+test("Work Overview Planning projection does not promote a business start instant to a due date", () => {
+  const current = canonicalBoundary();
+  try {
+    const result = new WorkPlanningQuery(current.queries, { now: () => at(20) }).get(WORK);
+    assert.equal(result.status, "PLANNING_AVAILABLE");
+    if (result.status === "PLANNING_AVAILABLE") {
+      assert.deepEqual(result.phase, { current: 1, total: 1, phaseId: "delivery" });
+      assert.equal(result.dueAt, null);
+      assert.deepEqual(result.dependencies, []);
+    }
+  } finally { current.database.close(); }
 });
 
 test("unexpected structurally invalid provenance is unavailable rather than accepted", () => {
