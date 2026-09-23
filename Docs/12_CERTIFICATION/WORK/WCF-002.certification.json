@@ -1,0 +1,29 @@
+{
+    "MissionId":  "WCF-002-CURRENT-AUTHORITY-RATIFICATION-001",
+    "DomainId":  "WORK",
+    "LotId":  "WCF-002",
+    "Status":  "CERTIFIED",
+    "CertifiedAt":  "2026-09-22T15:29:53.2466019+00:00",
+    "Evidence":  [
+                     "AUTHORITY:Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/PROGRAM_OWNER_WCF002_CURRENT_AUTHORITY_DECISION.md#SHA256=B8E7A04D2EDE662F93FACA622AB155D30C631DD85E49071385656526F1DAB160",
+                     "CAPABILITY_VALIDATION:Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/WCF_008_C22_CERTIFICATION_RECONCILIATION_REPORT.md#SHA256=0B07929EAA81CEC80814D6870210360DBC85DD5293D1C75D339B3C54D8A29928",
+                     "CURRENT_VALIDATION:Docs/24_MODULES/WORK/WORK_PHASE1_CERTIFICATION.md#SHA256=2F18121587017B02E95ACBB035CD6D2BC1F9AA5AD187734843979786B083B91F"
+                 ],
+    "Tests":  [
+                  "WCF-002 focused tests: 8/8 PASS",
+                  "NOVA Runtime tests: 24/24 PASS",
+                  "NOVA Core tests: 546/546 PASS",
+                  "NOVA Core typecheck: PASS",
+                  "CEREBRAU certification tests: 57/57 PASS",
+                  "NOVA Core authority approval tests: 10/10 PASS"
+              ],
+    "Regressions":  "NONE_ESTABLISHED",
+    "PreviousLot":  "WCF-001",
+    "NextAuthorizedLot":  "WCF-004A",
+    "CertificationOrigin":  "CURRENT_AUTHORITY_RATIFICATION",
+    "HistoricalCertificationProvenance":  "UNAVAILABLE",
+    "CapabilityValidation":  "RATIFIED",
+    "AuthorityDecisionId":  "PO-WCF002-CURRENT-AUTHORITY-RATIFICATION-001",
+    "HistoricalMissionId":  null,
+    "HistoricalCertifiedAt":  null
+}

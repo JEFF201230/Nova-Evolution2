@@ -259,6 +259,22 @@
                     },
                     {
                         "DomainId":  "WORK",
+                        "LotId":  "WCF-001",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-001.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  null,
+                        "NextAuthorizedLot":  "WCF-002"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-002",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-002.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-001",
+                        "NextAuthorizedLot":  "WCF-004A"
+                    },
+                    {
+                        "DomainId":  "WORK",
                         "LotId":  "WCF-004",
                         "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-004.certification.json",
                         "Status":  "CERTIFIED",
@@ -270,7 +286,7 @@
                         "LotId":  "WCF-004A",
                         "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/WORK_IMPLEMENTATION_CONTRACT.md",
                         "Status":  "CERTIFIED",
-                        "PreviousLot":  null,
+                        "PreviousLot":  "WCF-002",
                         "NextAuthorizedLot":  "WCF-004"
                     },
                     {
