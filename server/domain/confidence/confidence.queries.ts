@@ -17,4 +17,13 @@ export class ConfidenceQueries {
       return assessment === undefined ? Object.freeze({ state: "ABSENT" }) : Object.freeze({ state: "FOUND", assessment });
     } catch (cause) { return Object.freeze({ state: "AUTHORITY_UNAVAILABLE", cause }); }
   }
+  currentWorkResults(): readonly ConfidenceAssessment[] {
+    try {
+      return Object.freeze([...this.authority.readAll().values()]
+        .filter((item) => item.lifecycle === "CURRENT" && item.subject.kind === "WORK_RESULT")
+        .sort((left, right) => left.confidenceAssessmentId < right.confidenceAssessmentId ? -1 : left.confidenceAssessmentId > right.confidenceAssessmentId ? 1 : 0));
+    } catch (cause) {
+      throw new Error("Confidence authority is unavailable.", { cause });
+    }
+  }
 }

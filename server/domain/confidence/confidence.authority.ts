@@ -126,7 +126,7 @@ function normalizeProduced(value: ProducedConfidenceAssessment): ProducedConfide
   assertExactKeys(value, ["subject", "context", "measure", "method", "supportingEvidence", "contradictingEvidence", "inconclusiveEvidence", "provenance", "observationDate", "limitations", "effect"], "produced assessment");
   assertExactKeys(value?.subject, ["kind", "reference", "statement"], "subject");
   if (!(value.subject.kind === "BUSINESS_PROPOSITION" || value.subject.kind === "WORK_RESULT" || value.subject.kind === "INTELLIGENCE_RESULT" || value.subject.kind === "SYNTHESIS_RESULT")) invalid("Subject kind is not admitted; general Person scores are forbidden.");
-  validateIdentity(value.subject.reference, "subject reference"); validateText(value.subject.statement, "subject statement");
+  validateSubjectReference(value.subject, "subject reference"); validateText(value.subject.statement, "subject statement");
   assertExactKeys(value.context, ["scope", "applicability"], "context"); validateText(value.context.scope, "context scope"); validateText(value.context.applicability, "context applicability");
   assertExactKeys(value.method, ["methodId", "version", "derivationBasis", "declaration"], "method");
   if (stable(value.method) !== stable(CONFIDENCE_METHOD)) throw new ConfidenceDomainError("CONFIDENCE_METHOD_MISMATCH", "Confidence method must be the declared deterministic method.");
@@ -187,6 +187,14 @@ function findEvent(records: ReadonlyMap<string, ConfidenceAssessment>, identity:
 function validateCommand(command: CommandIdentity): void { validateText(command.actor, "actor"); validateIdentity(command.causationIdentity, "causationIdentity"); validateIdentity(command.idempotencyIdentity, "idempotencyIdentity"); iso(command.at, "at"); }
 function assertExactKeys(value: unknown, keys: readonly string[], label: string): void { if (typeof value !== "object" || value === null || Array.isArray(value)) invalid(`${label} is required.`); const actual = Object.keys(value).sort(compare); const expected = [...keys].sort(compare); if (stable(actual) !== stable(expected)) invalid(`${label} contains missing or forbidden inputs.`); }
 function validateIdentity(value: unknown, label: string): asserts value is string { validateText(value, label); if (/[/\\]/u.test(value)) invalid(`${label} must be opaque and not a path.`); }
+function validateSubjectReference(subject: ConfidenceSubject, label: string): void {
+  if (subject.kind !== "WORK_RESULT") { validateIdentity(subject.reference, label); return; }
+  validateText(subject.reference, label);
+  const parts = subject.reference.split("/");
+  if (parts.length !== 2 || parts.some((part) => part.length === 0 || part.trim() !== part) || subject.reference.includes("\\")) {
+    invalid(`${label} must be a canonical projectId/workId reference for WORK_RESULT.`);
+  }
+}
 function validateText(value: unknown, label: string): asserts value is string { if (typeof value !== "string" || value.length === 0 || value.trim() !== value) invalid(`${label} must be explicit and canonical.`); }
 function validateIso(value: unknown, label: string): asserts value is string { if (typeof value !== "string") invalid(`${label} must be canonical ISO-8601.`); try { if (new Date(value).toISOString() !== value) invalid(`${label} must be canonical ISO-8601.`); } catch { invalid(`${label} must be canonical ISO-8601.`); } }
 function iso(value: Date, label: string): string { if (!(value instanceof Date) || !Number.isFinite(value.getTime())) invalid(`${label} must be a valid Date.`); return value.toISOString(); }
