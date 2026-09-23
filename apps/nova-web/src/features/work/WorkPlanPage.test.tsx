@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkSurface } from '../../components/routes/WorkSurface';
 import { NavigationShell } from '../../components/shell/NavigationShell';
 import { NavigationProvider } from '../../routes/NavigationProvider';
@@ -9,6 +9,10 @@ import { WorkSetupProvider } from '../work-setup';
 import { WorkPlanPage } from './WorkPlanPage';
 import { workOverviewFixtures } from './workOverviewFixture';
 import { workPlanFixtures } from './workPlanFixture';
+import { workOverviewTestResponse } from './workOverview.test-support';
+
+beforeEach(() => vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(workOverviewTestResponse('work-001')), { status: 200, headers: { 'Content-Type': 'application/json' } }))));
+afterEach(() => vi.unstubAllGlobals());
 
 function renderWorkSurface(pathname: string) {
   window.history.replaceState({}, '', pathname);
@@ -45,7 +49,7 @@ describe('Work Plan', () => {
     const user = userEvent.setup();
     renderWorkSurface('/work/work-001');
 
-    await user.click(screen.getByRole('link', { name: 'Plan' }));
+    await user.click(await screen.findByRole('link', { name: 'Plan' }));
 
     expect(window.location.pathname).toBe('/work/work-001/plan');
     expect(screen.getByRole('main', { name: 'Work plan' })).toBeInTheDocument();

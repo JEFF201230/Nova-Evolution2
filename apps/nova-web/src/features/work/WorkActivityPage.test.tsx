@@ -160,12 +160,12 @@ describe('Work Activity Runtime read-only', () => {
     expect(await screen.findByRole('main', { name: 'Work activity' })).toBeInTheDocument();
 
     const destinations = [
-      ['Overview', 'work.overview'],
       ['Plan', 'work.plan'],
       ['People', 'work.people'],
       ['Sources', 'work.sources'],
       ['Decisions (1)', 'work.decisions'],
       ['Deliverables (2)', 'work.deliverables'],
+      ['Overview', 'work.overview'],
     ] as const;
 
     for (const [label, routeName] of destinations) {

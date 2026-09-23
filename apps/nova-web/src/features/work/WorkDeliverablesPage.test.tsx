@@ -103,12 +103,12 @@ describe('Work Deliverables', () => {
     expect(screen.getByRole('main', { name: 'Work deliverables' })).toBeInTheDocument();
 
     const destinations = [
-      ['Overview', 'work.overview'],
       ['Plan', 'work.plan'],
       ['Activity', 'work.activity'],
       ['People', 'work.people'],
       ['Sources', 'work.sources'],
       ['Decisions (1)', 'work.decisions'],
+      ['Overview', 'work.overview'],
     ] as const;
 
     for (const [label, routeName] of destinations) {

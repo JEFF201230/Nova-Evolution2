@@ -1,10 +1,14 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NavigationProvider } from '../../routes/NavigationProvider';
 import { NavigationShell } from './NavigationShell';
 import { WorkSetupProvider } from '../../features/work-setup';
 import { buildRoutePath } from '../../routes/routeResolver';
+import { workOverviewTestResponse } from '../../features/work/workOverview.test-support';
+
+beforeEach(() => vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify(workOverviewTestResponse('work-001')), { status: 200, headers: { 'Content-Type': 'application/json' } }))));
+afterEach(() => vi.unstubAllGlobals());
 
 function renderNavigationShell(pathname = '/home') {
   window.history.replaceState({}, '', pathname);
@@ -128,7 +132,7 @@ describe('NavigationShell', () => {
     expect(screen.queryByRole('link', { name: 'Confirm' })).not.toBeInTheDocument();
   });
 
-  it('renders Work Overview without technical diagnostic panels', () => {
+  it('renders Work Overview without technical diagnostic panels', async () => {
     renderNavigationShell('/work/work-001');
 
     expect(screen.getAllByLabelText('NOVA')).toHaveLength(1);
@@ -137,7 +141,7 @@ describe('NavigationShell', () => {
     expect(getPrimaryNavigation().getByRole('link', { name: 'Decisions' })).toBeInTheDocument();
     expect(getPrimaryNavigation().getByRole('link', { name: 'Deliverables' })).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         name: 'Prepare Q3 budget review presentation for the board',
         level: 1,
       }),
