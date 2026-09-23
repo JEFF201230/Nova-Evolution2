@@ -9,13 +9,13 @@ import { PageContainer } from '../../components/surfaces/PageContainer';
 import { Surface } from '../../components/surfaces/Surface';
 import { useNavigation } from '../../hooks/useNavigation';
 import type { RouteName, WorkTab } from '../../routes/RouteDefinition';
-import type { WorkOverviewFixture } from './workOverviewFixture';
+import type { WorkOverviewReadModel } from '../../../../../contracts/work-overview.contract';
 import styles from './WorkOverviewPage.module.css';
 
 export type WorkOverviewState = 'ready' | 'loading' | 'empty' | 'error';
 
 export interface WorkOverviewPageProps {
-  work?: WorkOverviewFixture;
+  work?: WorkOverviewReadModel;
   state?: WorkOverviewState;
   activeTab?: WorkTab;
 }
@@ -40,7 +40,7 @@ function confidenceTone(confidence: number): 'success' | 'warning' | 'error' {
   return 'error';
 }
 
-function WorkTabs({ work, activeTab }: { work: WorkOverviewFixture; activeTab: WorkTab }) {
+function WorkTabs({ work, activeTab }: { work: WorkOverviewReadModel; activeTab: WorkTab }) {
   const { hrefFor, navigate } = useNavigation();
 
   function navigateToTab(event: MouseEvent<HTMLAnchorElement>, routeName: RouteName) {
@@ -60,7 +60,7 @@ function WorkTabs({ work, activeTab }: { work: WorkOverviewFixture; activeTab: W
 
   function tabLabel(tab: (typeof workTabs)[number]) {
     if (tab.id === 'decisions') {
-      return `${tab.label} (1)`;
+      return `${tab.label} (${work.pendingDecision ? 1 : 0})`;
     }
     if (tab.id === 'deliverables') {
       return `${tab.label} (${work.deliverables.length})`;
@@ -138,7 +138,7 @@ export function WorkOverviewPage({
             <div className={styles.workMeta}>
               <strong className={styles.confidenceText}>{work.confidence}%</strong>
               <span>
-                Phase {work.phase}/{work.phaseCount} · Due {work.dueLabel}
+                Phase {work.phase.current}/{work.phase.total} · Due {work.dueAt ?? 'Not scheduled'}
               </span>
             </div>
             <h1 className={styles.title}>{work.title}</h1>
@@ -158,16 +158,16 @@ export function WorkOverviewPage({
       {activeTab === 'overview' ? (
         <div className={styles.contentGrid}>
           <main className={styles.mainColumn}>
-            <Surface className={styles.insightCard} padding="lg" tone="hero">
+            {work.insight ? <Surface className={styles.insightCard} padding="lg" tone="hero">
               <div className={styles.insightMeta}>
                 <Badge size="sm" tone="nova">✣ NOVA</Badge>
                 <strong className={styles.confidenceText}>{work.confidence}%</strong>
               </div>
               <p className={styles.insightSummary}>{work.insight.summary}</p>
               <p className={styles.insightRecommendation}>{work.insight.recommendation}</p>
-            </Surface>
+            </Surface> : null}
 
-            <Surface className={styles.nextActionCard} padding="lg">
+            {work.nextAction ? <Surface className={styles.nextActionCard} padding="lg">
               <p className={styles.eyebrow}>NEXT BEST ACTION</p>
               <h2 className={styles.nextActionTitle}>{work.nextAction.title}</h2>
               <div className={styles.nextActionMeta}>
@@ -189,44 +189,44 @@ export function WorkOverviewPage({
                 </button>
               </div>
               {whyOpen ? <p className={styles.whyCopy}>{work.nextAction.why}</p> : null}
-            </Surface>
+            </Surface> : null}
 
             <button className={styles.laterActions} type="button">
               <span aria-hidden="true">›</span>
-              <span>{work.laterActionCount} more — Later &amp; Background</span>
+              <span>{work.deferredActionCount} more — Later &amp; Background</span>
             </button>
 
-            <Surface className={styles.decisionCard} padding="lg">
+            {work.pendingDecision ? <Surface className={styles.decisionCard} padding="lg">
               <span aria-hidden="true" className={styles.decisionIcon}>⚖</span>
               <div className={styles.decisionContent}>
                 <div className={styles.decisionMeta}>
-                  <Badge size="sm" tone="error">◷ {work.pendingDecision.dueLabel}</Badge>
+                  <Badge size="sm" tone="error">◷ {work.pendingDecision.dueAt ?? 'No due date'}</Badge>
                   <strong className={styles.successText}>{work.pendingDecision.confidence}%</strong>
                 </div>
                 <h2 className={styles.decisionTitle}>{work.pendingDecision.title}</h2>
                 <p className={styles.decisionConsequence}>{work.pendingDecision.consequence}</p>
               </div>
               <span aria-hidden="true" className={styles.decisionArrow}>→</span>
-            </Surface>
+            </Surface> : null}
           </main>
 
           <aside className={styles.sideColumn} aria-label="Work overview details">
             <Surface className={styles.sideCard} padding="md">
               <div className={styles.progressHeader}>
                 <span className={styles.sideLabel}>PROGRESS</span>
-                <strong>{work.progress.value}%</strong>
+                <strong>{work.progress.percentage}%</strong>
               </div>
               <Progress
                 className={styles.progressBar}
                 label="Work progress"
                 showValue={false}
-                value={work.progress.value}
+                value={work.progress.percentage}
               />
               <dl className={styles.progressDetails}>
-                <div><dt>OWNER</dt><dd>{work.progress.owner}</dd></div>
-                <div><dt>DEADLINE</dt><dd>{work.progress.deadline}</dd></div>
-                <div><dt>PHASE</dt><dd>{work.progress.phaseLabel}</dd></div>
-                <div><dt>UPDATED</dt><dd>{work.progress.updatedLabel}</dd></div>
+                <div><dt>OWNER</dt><dd>{work.progress.owner?.label ?? 'Unassigned'}</dd></div>
+                <div><dt>DEADLINE</dt><dd>{work.dueAt ?? 'Not scheduled'}</dd></div>
+                <div><dt>PHASE</dt><dd>{work.phase.current}/{work.phase.total}</dd></div>
+                <div><dt>UPDATED</dt><dd>{work.progress.updatedAt}</dd></div>
               </dl>
               <button className={styles.inlineLink} type="button">Full analysis ›</button>
             </Surface>
@@ -250,16 +250,16 @@ export function WorkOverviewPage({
                 <ul className={styles.sideList}>
                   {work.people.map((person) => (
                     <li className={styles.personRow} key={person.id}>
-                      <span className={[styles.avatar, person.kind === 'nova' && styles.novaAvatar].filter(Boolean).join(' ')}>
-                        {person.initials}
+                      <span className={[styles.avatar, person.kind === 'NOVA' && styles.novaAvatar].filter(Boolean).join(' ')}>
+                        {person.name.slice(0, 2).toUpperCase()}
                       </span>
                       <span className={styles.personCopy}>
                         <span className={styles.rowTitle}>{person.name}</span>
                         <span className={styles.personAvailability}>{person.availability}</span>
                       </span>
                       <span
-                        aria-label={person.active ? 'Available' : 'Unavailable'}
-                        className={[styles.availabilityDot, person.active && styles.availabilityDotActive].filter(Boolean).join(' ')}
+                        aria-label={person.status === 'AVAILABLE' ? 'Available' : 'Unavailable'}
+                        className={[styles.availabilityDot, person.status === 'AVAILABLE' && styles.availabilityDotActive].filter(Boolean).join(' ')}
                       />
                     </li>
                   ))}
@@ -271,7 +271,7 @@ export function WorkOverviewPage({
 
             <Surface className={styles.novaUpdate} padding="md">
               <Badge size="sm" tone="nova">✣ NOVA</Badge>
-              <p>{work.novaUpdate}</p>
+              <p>{work.novaUpdate?.message ?? 'No NOVA update available.'}</p>
             </Surface>
           </aside>
         </div>

@@ -12,6 +12,7 @@ import {
 import { HttpHomeActiveWorkGateway } from "./home-active-work.gateway.js";
 import { HttpWorkActivityGateway } from "./work-activity.gateway.js";
 import { HttpGlobalDeliverablesGateway } from "./global-deliverables.gateway.js";
+import { HttpWorkOverviewGateway } from "./work-overview.gateway.js";
 
 export async function createNovaBffServer(
   config: BffConfig,
@@ -25,6 +26,8 @@ export async function createNovaBffServer(
       ?? new HttpWorkActivityGateway(config.runtimeOrigin),
     globalDeliverablesGateway: dependencies.globalDeliverablesGateway
       ?? new HttpGlobalDeliverablesGateway(config.runtimeOrigin),
+    workOverviewGateway: dependencies.workOverviewGateway
+      ?? new HttpWorkOverviewGateway(config.runtimeOrigin),
   });
   if (!config.tls) {
     return createHttpServer(application.handler);

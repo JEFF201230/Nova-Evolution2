@@ -31,6 +31,8 @@ import {
 import type { WorkActivityGatewayPort } from "./work-activity.gateway.port.js";
 import { GLOBAL_DELIVERABLES_PATH, handleGlobalDeliverables } from "./global-deliverables.route.js";
 import type { GlobalDeliverablesGatewayPort } from "./global-deliverables.gateway.port.js";
+import { handleWorkOverview, workIdFromOverviewPath } from "./work-overview.route.js";
+import type { WorkOverviewGatewayPort } from "./work-overview.gateway.port.js";
 import {
   InMemorySessionStore,
   SessionManager,
@@ -55,6 +57,7 @@ export interface NovaBffDependencies {
   readonly homeActiveWorkGateway?: HomeActiveWorkGatewayPort;
   readonly workActivityGateway?: WorkActivityGatewayPort;
   readonly globalDeliverablesGateway?: GlobalDeliverablesGatewayPort;
+  readonly workOverviewGateway?: WorkOverviewGatewayPort;
   readonly clock?: () => number;
 }
 
@@ -104,6 +107,7 @@ export function createNovaBffApplication(
       dependencies.homeActiveWorkGateway,
       dependencies.workActivityGateway,
       dependencies.globalDeliverablesGateway,
+      dependencies.workOverviewGateway,
     ),
   ]);
 
@@ -143,12 +147,14 @@ function createBffRouter(
   homeActiveWorkGateway: HomeActiveWorkGatewayPort | undefined,
   workActivityGateway: WorkActivityGatewayPort | undefined,
   globalDeliverablesGateway: GlobalDeliverablesGatewayPort | undefined,
+  workOverviewGateway: WorkOverviewGatewayPort | undefined,
 ) {
   return async (
     context: BffRequestContext,
     _next: () => Promise<void>,
   ): Promise<void> => {
     const workId = workIdFromActivityPath(context.pathname);
+    const overviewWorkId = workIdFromOverviewPath(context.pathname);
     const publicPaths = new Set([
       "/health",
       "/readiness",
@@ -167,7 +173,7 @@ function createBffRouter(
         "This endpoint does not accept the requested method.",
       );
     }
-    if (workId && context.request.method !== "GET") {
+    if ((workId || overviewWorkId) && context.request.method !== "GET") {
       throw new BffError(
         405,
         "METHOD_NOT_ALLOWED",
@@ -241,6 +247,11 @@ function createBffRouter(
 
     if (context.request.method === "GET" && workId) {
       await handleWorkActivity(context, workActivityGateway, workId);
+      return;
+    }
+
+    if (context.request.method === "GET" && overviewWorkId) {
+      await handleWorkOverview(context, workOverviewGateway, overviewWorkId);
       return;
     }
 

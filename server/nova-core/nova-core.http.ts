@@ -137,6 +137,17 @@ async function route(
     return;
   }
 
+  if (request.method === "GET" && parts[5] === "overview" && parts.length === 6) {
+    const result = await core.getWorkOverview(projectId, missionId);
+    if (result.state === "NOT_FOUND") throw new NovaCoreError(404, "MISSION_NOT_FOUND", "La mission demandée n’existe pas.");
+    if (result.state === "NOT_READY") {
+      sendJson(response, 409, { error: { code: "WORK_OVERVIEW_NOT_READY", missingGroups: result.missingGroups } });
+      return;
+    }
+    sendJson(response, 200, { overview: result.overview });
+    return;
+  }
+
   if (request.method === "GET" && parts[5] === "monitor" && parts.length === 6) {
     if (!core.getMission(projectId, missionId)) {
       throw new NovaCoreError(404, "MISSION_NOT_FOUND", "La mission demandée n’existe pas.");

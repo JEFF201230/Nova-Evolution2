@@ -55,14 +55,23 @@ test("BFF routing declares the authorized technical and capability-specific read
   const globalDeliverablesPath = globalDeliverablesContract.match(
     /GLOBAL_DELIVERABLES_PATH\s*=\s*"([^"]+)"/,
   )?.[1];
+  const workOverviewContract = await readFile(
+    new URL("../../contracts/work-overview.contract.ts", BFF_ROOT),
+    "utf8",
+  );
+  const workOverviewPathPrefix = workOverviewContract.match(
+    /WORK_OVERVIEW_PATH_PREFIX\s*=\s*"([^"]+)"/,
+  )?.[1];
   assert.ok(runtimePath);
   assert.ok(homePath);
   assert.ok(workPathPrefix);
   assert.ok(globalDeliverablesPath);
+  assert.ok(workOverviewPathPrefix);
   declaredPaths.push(runtimePath);
   declaredPaths.push(homePath);
   declaredPaths.push(`${workPathPrefix}/:workId/activity`);
   declaredPaths.push(globalDeliverablesPath);
+  declaredPaths.push(`${workOverviewPathPrefix}/:workId/overview`);
   assert.deepEqual(declaredPaths, [
     "/health",
     "/readiness",
@@ -74,6 +83,7 @@ test("BFF routing declares the authorized technical and capability-specific read
     "/api/home/active-work",
     "/api/work/:workId/activity",
     "/api/global/deliverables",
+    "/api/work/:workId/overview",
   ]);
   assert.doesNotMatch(
     source,
@@ -109,6 +119,7 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
     "global-deliverables.gateway.ts",
     "home-active-work.gateway.ts",
     "work-activity.gateway.ts",
+    "work-overview.gateway.ts",
   ]);
   const adapter = await readFile(
     new URL("runtime-gateway.adapter.ts", BFF_ROOT),

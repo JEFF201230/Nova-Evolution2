@@ -8,6 +8,7 @@ import { WorkSourcesPage } from '../../features/work/WorkSourcesPage';
 import { getWorkDecisionsFixture } from '../../features/work/workDecisionsFixture';
 import { getWorkDeliverablesFixture } from '../../features/work/workDeliverablesFixture';
 import { getWorkOverviewFixture } from '../../features/work/workOverviewFixture';
+import { useWorkOverview } from '../../features/work/useWorkOverview';
 import { getWorkPeopleFixture } from '../../features/work/workPeopleFixture';
 import { getWorkPlanFixture } from '../../features/work/workPlanFixture';
 import { getWorkSourcesFixture } from '../../features/work/workSourcesFixture';
@@ -16,6 +17,11 @@ import { usePathParams, useWorkTab } from '../../hooks/useRouteParams';
 export function WorkSurface() {
   const { workId } = usePathParams();
   const activeTab = useWorkTab() ?? 'overview';
+  const overview = useWorkOverview(workId, activeTab === 'overview');
+
+  if (activeTab === 'overview') {
+    return <WorkOverviewPage activeTab="overview" state={overview.state} work={overview.work} />;
+  }
   const work = workId ? getWorkOverviewFixture(workId) : undefined;
 
   if (activeTab === 'plan') {
@@ -87,5 +93,5 @@ export function WorkSurface() {
     );
   }
 
-  return <WorkOverviewPage activeTab={activeTab} state={work ? 'ready' : 'empty'} work={work} />;
+  return <WorkOverviewPage activeTab={activeTab} state="empty" />;
 }

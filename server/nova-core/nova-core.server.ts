@@ -69,6 +69,21 @@ const core = await NovaCoreService.open(dataFile, executionConfiguration, {
   ...(process.env.NOVA_JOURNAL_ATTESTATION_KEY
     ? { journalAttestationKey: process.env.NOVA_JOURNAL_ATTESTATION_KEY }
     : {}),
+  planningDatabasePath: resolve(
+    process.env.NOVA_PLANNING_DATABASE_FILE ?? join(runtimeRoot, ".nova-data", "planning.sqlite"),
+  ),
+  confidenceJournalPath: resolve(
+    process.env.NOVA_CONFIDENCE_JOURNAL_FILE ?? join(runtimeRoot, ".nova-data", "confidence.json"),
+  ),
+  intelligenceJournalPath: resolve(
+    process.env.NOVA_INTELLIGENCE_JOURNAL_FILE ?? join(runtimeRoot, ".nova-data", "intelligence.json"),
+  ),
+  synthesisJournalPath: resolve(
+    process.env.NOVA_SYNTHESIS_JOURNAL_FILE ?? join(runtimeRoot, ".nova-data", "synthesis.json"),
+  ),
+  peopleDatabasePath: resolve(
+    process.env.NOVA_PEOPLE_DATABASE_FILE ?? join(runtimeRoot, ".nova-data", "people.sqlite"),
+  ),
 });
 const server = createNovaCoreHttpServer(core, { certificationAuthorities, certificationPolicy });
 

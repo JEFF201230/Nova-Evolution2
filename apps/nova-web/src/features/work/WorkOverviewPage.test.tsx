@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WorkSurface } from '../../components/routes/WorkSurface';
 import { NavigationShell } from '../../components/shell/NavigationShell';
 import { WorkSetupProvider } from '../work-setup';
@@ -8,6 +8,7 @@ import { NavigationProvider } from '../../routes/NavigationProvider';
 import { buildRoutePath, resolveRouteLocation } from '../../routes/routeResolver';
 import { WorkOverviewPage } from './WorkOverviewPage';
 import { workOverviewFixtures } from './workOverviewFixture';
+import { workOverviewTestResponse } from './workOverview.test-support';
 
 function renderWorkSurface(pathname: string) {
   window.history.replaceState({}, '', pathname);
@@ -19,13 +20,22 @@ function renderWorkSurface(pathname: string) {
   );
 }
 
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+    const workId = decodeURIComponent(String(input).split('/').at(-2) ?? '');
+    const response = workOverviewTestResponse(workId);
+    return new Response(response ? JSON.stringify(response) : '{}', { status: response ? 200 : 404, headers: { 'Content-Type': 'application/json' } });
+  }));
+});
+afterEach(() => vi.unstubAllGlobals());
+
 describe('Work Overview', () => {
-  it('reads workId from the dynamic URL and displays its fixture', () => {
+  it('reads workId from the dynamic URL and displays its authoritative response', async () => {
     const work = workOverviewFixtures['work-001'];
     renderWorkSurface('/work/work-001');
 
-    expect(screen.getByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(`Phase ${work.phase}/${work.phaseCount} · Due ${work.dueLabel}`)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText(`Phase ${work.phase}/${work.phaseCount} · Due 2026-10-01T00:00:00.000Z`)).toBeInTheDocument();
     expect(screen.getByText(work.insight.summary)).toBeInTheDocument();
     expect(screen.getByText(work.insight.recommendation)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: work.nextAction.title })).toBeInTheDocument();
@@ -48,11 +58,11 @@ describe('Work Overview', () => {
     expect(resolveRouteLocation(window.location.pathname).pathParams.workId).toBe(work.workId);
   });
 
-  it('selects the fixture matching another workId', () => {
+  it('selects the response matching another workId', async () => {
     const work = workOverviewFixtures['work-002'];
     renderWorkSurface('/work/work-002');
 
-    expect(screen.getByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: work.nextAction.title })).toBeInTheDocument();
   });
 
@@ -71,6 +81,7 @@ describe('Work Overview', () => {
 
     renderWorkSurface(`/work/${workId}`);
 
+    await screen.findByRole('heading', { name: workOverviewFixtures[workId].title });
     for (const [label, routeName] of tabs) {
       const link = screen.getByRole('link', { name: label });
       expect(link).toHaveAttribute('href', buildRoutePath(routeName, { workId }));
@@ -80,7 +91,7 @@ describe('Work Overview', () => {
     }
   });
 
-  it('keeps the existing shell around a dynamic Work Overview', () => {
+  it('keeps the existing shell around a dynamic Work Overview', async () => {
     const work = workOverviewFixtures['work-001'];
     window.history.replaceState({}, '', '/work/work-001');
 
@@ -94,7 +105,7 @@ describe('Work Overview', () => {
 
     expect(screen.getByRole('link', { name: 'Work' })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByText('Standard')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: work.title, level: 1 })).toBeInTheDocument();
   });
 
   it('renders the loading state with existing loading primitives', () => {
@@ -104,13 +115,13 @@ describe('Work Overview', () => {
     expect(document.querySelector('[aria-busy="true"]')).toBeInTheDocument();
   });
 
-  it('renders the empty state for the historical Work route and unknown workIds', () => {
+  it('renders empty and error states for missing and unknown workIds', async () => {
     const { unmount } = renderWorkSurface('/work');
     expect(screen.getByRole('heading', { name: 'No work selected' })).toBeInTheDocument();
 
     unmount();
     renderWorkSurface('/work/work-unknown');
-    expect(screen.getByRole('heading', { name: 'No work selected' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Work unavailable' })).toBeInTheDocument();
   });
 
   it('renders the error state', () => {

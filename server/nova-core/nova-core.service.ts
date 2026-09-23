@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import { relative, resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import {
   OrchestratorRuntimeService,
   RuntimeFailure,
@@ -38,6 +39,30 @@ import {
   ActionsJournal,
   type ActionsAdmissionPolicy,
 } from "../domain/actions/index.js";
+import {
+  PlanningQueries,
+  PlanningSQLiteRepository,
+} from "../domain/planning/index.js";
+import {
+  ConfidenceAuthority,
+  ConfidenceQueries,
+  FileConfidenceJournal,
+  type ConfidenceEvidenceReadPort,
+} from "../domain/confidence/index.js";
+import {
+  WorkConfidenceQuery,
+  WorkActionsQuery,
+  WorkPlanningQuery,
+  WorkSynthesisQuery,
+  type WorkConfidenceReadResult,
+  type WorkPlanningReadResult,
+} from "../domain/work/index.js";
+import { FileIntelligenceJournal, IntelligenceAuthority, IntelligenceQueries } from "../domain/intelligence/index.js";
+import { FileSynthesisJournal, SynthesisAuthority, SynthesisQueries } from "../domain/synthesis/index.js";
+import { PeopleAggregatePersistenceStore } from "../domain/people/people-persistence-aggregate-store.js";
+import { PeopleQueryService } from "../domain/people/people-query-service.js";
+import { WorkCoreFoundation, WorkDecisionsService, WorkDeliverablesQuery, WorkPeopleQuery } from "../runtime/work/work-core.js";
+import { WorkOverviewQuery, type WorkOverviewQueryResult } from "./work-overview.query.js";
 
 const DEFAULT_AGENTS: RuntimeAgent[] = [
   {
@@ -50,6 +75,11 @@ const DEFAULT_AGENTS: RuntimeAgent[] = [
 export interface NovaCoreServiceOptions {
   journalAttestationKey?: string;
   actionsJournalPath?: string;
+  planningDatabasePath?: string;
+  confidenceJournalPath?: string;
+  intelligenceJournalPath?: string;
+  synthesisJournalPath?: string;
+  peopleDatabasePath?: string;
 }
 
 export interface NovaCoreProjectExecutionTarget {
@@ -70,6 +100,9 @@ export class NovaCoreService {
     private readonly defaultExecutionEngine: NovaCoreExecutionEngine | undefined,
     private readonly projectExecutionTargets: ReadonlyMap<string, NovaCoreProjectExecutionTarget>,
     readonly actionsInternalAccess: ActionsInternalAccess,
+    private readonly workPlanning: WorkPlanningQuery,
+    private readonly workConfidence: WorkConfidenceQuery,
+    private readonly workOverview: WorkOverviewQuery,
   ) {}
 
   static async open(
@@ -93,6 +126,48 @@ export class NovaCoreService {
       actionsAdmissionPolicy,
       new ActionsJournal(options.actionsJournalPath ?? `${filePath}.actions.json`),
     );
+    const planning = options.planningDatabasePath
+      ? new WorkPlanningQuery(new PlanningQueries(new PlanningSQLiteRepository(
+          new DatabaseSync(options.planningDatabasePath),
+        )))
+      : new WorkPlanningQuery({ getCurrentPlanning: () => ({ status: "UNAVAILABLE" }) });
+    const unavailableEvidence: ConfidenceEvidenceReadPort = Object.freeze({
+      byEvidenceId: () => Object.freeze({ state: "AUTHORITY_UNAVAILABLE" as const, cause: new Error("Read-only Confidence recovery does not resolve Evidence.") }),
+    });
+    const confidenceAuthority = new ConfidenceAuthority(
+      new FileConfidenceJournal(options.confidenceJournalPath ?? `${filePath}.confidence.json`),
+      unavailableEvidence,
+    );
+    const confidence = new WorkConfidenceQuery(new ConfidenceQueries(confidenceAuthority));
+    const workCore = new WorkCoreFoundation(runtime);
+    const intelligence = new IntelligenceQueries(new IntelligenceAuthority(
+      new FileIntelligenceJournal(options.intelligenceJournalPath ?? `${filePath}.intelligence.json`),
+    ));
+    const synthesis = new WorkSynthesisQuery(new SynthesisQueries(new SynthesisAuthority(
+      new FileSynthesisJournal(options.synthesisJournalPath ?? `${filePath}.synthesis.json`),
+      { listByWork: () => Object.freeze([]) },
+    )));
+    const people = options.peopleDatabasePath
+      ? new WorkPeopleQuery(new PeopleQueryService(new PeopleAggregatePersistenceStore(new DatabaseSync(options.peopleDatabasePath))))
+      : new WorkPeopleQuery({ GetWorkParticipants: () => Object.freeze({ status: "AGGREGATE_ABSENT" as const }) });
+    const decisionService = new WorkDecisionsService();
+    const overview = new WorkOverviewQuery({
+      workCore,
+      planning,
+      confidence,
+      intelligence,
+      synthesis,
+      actions: new WorkActionsQuery(actionsInternalAccess.queries),
+      deliverables: new WorkDeliverablesQuery(runtime),
+      decisions: {
+        get: async (projectId, workId) => {
+          const work = workCore.load(projectId, workId);
+          if (work.progression.provenance.runId !== null) throw new Error("Decision authority is unavailable for an executed Work.");
+          return decisionService.create(work, []);
+        },
+      },
+      people,
+    });
     const configuredTargets = isProjectExecutionTargetList(executionConfiguration)
       ? validateProjectExecutionTargets(executionConfiguration)
       : new Map<string, NovaCoreProjectExecutionTarget>();
@@ -105,6 +180,9 @@ export class NovaCoreService {
       defaultExecutionEngine,
       configuredTargets,
       actionsInternalAccess,
+      planning,
+      confidence,
+      overview,
     );
     runtime.subscribeObservability(() => { service.requestSnapshotSave(); });
     for (const engine of uniqueExecutionEngines(defaultExecutionEngine, configuredTargets)) {
@@ -414,6 +492,18 @@ export class NovaCoreService {
 
   listHomeActiveWork(): HomeActiveWorkResponse {
     return new HomeActiveWorkQuery(this.runtime).list();
+  }
+
+  getWorkPlanning(projectId: string, workId: string): WorkPlanningReadResult {
+    return this.workPlanning.get({ projectId, workId });
+  }
+
+  getWorkConfidence(projectId: string, workId: string): WorkConfidenceReadResult {
+    return this.workConfidence.get({ projectId, workId });
+  }
+
+  getWorkOverview(projectId: string, workId: string): Promise<WorkOverviewQueryResult> {
+    return this.workOverview.get({ projectId, workId });
   }
 
   listProjectTargets(): Array<{ projectId: string; repositoryRoot: string }> {
