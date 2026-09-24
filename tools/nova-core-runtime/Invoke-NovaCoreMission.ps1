@@ -554,6 +554,14 @@ try {
         $report.ReportFingerprint = Get-NovaCoreOfficialReportFingerprint -Report $report
         Write-NovaCoreUtf8Json -Value $report.OutputEvidence -Path (Join-Path $runDirectory 'output-evidence.json')
         Write-NovaCoreUtf8Json -Value $report -Path $reportJsonPath
+        $persistedReport = [IO.File]::ReadAllText(
+            $reportJsonPath,
+            [Text.UTF8Encoding]::new($false)
+        ) | ConvertFrom-Json
+        $persistedFingerprint = Get-NovaCoreOfficialReportFingerprint -Report $persistedReport
+        if ([string]$persistedReport.ReportFingerprint -cne [string]$persistedFingerprint) {
+            throw 'NOVA_CORE_OFFICIAL_REPORT_SEAL_VERIFICATION_FAILED'
+        }
         [System.IO.File]::WriteAllText($reportMarkdownPath, (ConvertTo-NovaCoreMarkdown -Report $report), [System.Text.UTF8Encoding]::new($false))
         return $report
     } -Repository $validatedMission.Repository

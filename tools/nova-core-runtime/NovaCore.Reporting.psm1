@@ -23,7 +23,10 @@ function ConvertTo-NovaCoreSafeName {
 
 function Write-NovaCoreUtf8Json {
     param([Parameter(Mandatory)]$Value, [Parameter(Mandatory)][string]$Path)
-    $json = $Value | ConvertTo-Json -Depth 20
+    # The official-report fingerprint canonicalizer normalizes through the
+    # maximum Windows PowerShell JSON depth.  Persistence must use the same
+    # depth or deeply nested evidence is changed after the report is sealed.
+    $json = $Value | ConvertTo-Json -Depth 100
     [System.IO.File]::WriteAllText($Path, $json, [System.Text.UTF8Encoding]::new($false))
 }
 
@@ -206,6 +209,9 @@ function Test-NovaCoreRelativePathMatch {
 function Invoke-NovaCoreNamedCommand {
     param([Parameter(Mandatory)][string]$Name, [Parameter(Mandatory)][string]$Repository)
     $powershell = Join-Path $PSHOME 'powershell.exe'
+    $npmCommand = Get-Command 'npm.cmd' -ErrorAction SilentlyContinue
+    if ($null -eq $npmCommand) { throw 'NOVA_CORE_NPM_NOT_FOUND' }
+    $npmPath = [System.IO.Path]::GetFullPath([string]$npmCommand.Source)
     $commands = @{
         'powershellSyntax' = [PSCustomObject]@{ FileName=$powershell; Arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $Repository 'tools/nova-core-runtime/Test-NovaCoreSyntax.ps1')); WorkingDirectory=$Repository }
         'reportingUnitTests' = [PSCustomObject]@{ FileName=$powershell; Arguments=@('-NoProfile','-ExecutionPolicy','Bypass','-File',(Join-Path $Repository 'tools/nova-core-runtime/Test-NovaCoreReporting.ps1')); WorkingDirectory=$Repository }
@@ -214,13 +220,13 @@ function Invoke-NovaCoreNamedCommand {
         'novaCoreTests' = [PSCustomObject]@{ FileName='node.exe'; Arguments=@('--import','tsx','--test','server/runtime/orchestrator/orchestrator-runtime.test.ts','server/runtime/work/work-core-foundation.test.ts','server/nova-core/*.test.ts'); WorkingDirectory=$Repository }
         'planningTests' = [PSCustomObject]@{ FileName='node.exe'; Arguments=@('--import','tsx','--test','server/domain/planning/planning-authority.test.ts','server/domain/planning/planning-foundation.test.ts'); WorkingDirectory=$Repository }
         'novaCoreTypecheck' = [PSCustomObject]@{ FileName=(Join-Path $Repository 'node_modules\.bin\tsc.cmd'); Arguments=@('-p','tsconfig.nova-core.json'); WorkingDirectory=$Repository }
-        'novaWebTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('test'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
-        'novaWebTypecheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','typecheck'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
-        'novaWebBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
-        'veeddaRootTests' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','test:run'); WorkingDirectory=$Repository }
-        'veeddaClientCheck' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','check'); WorkingDirectory=(Join-Path $Repository 'client') }
-        'veeddaClientBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'client') }
-        'veeddaServerBuild' = [PSCustomObject]@{ FileName='npm.cmd'; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'server') }
+        'novaWebTests' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('test'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
+        'novaWebTypecheck' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','typecheck'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
+        'novaWebBuild' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'apps/nova-web') }
+        'veeddaRootTests' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','test:run'); WorkingDirectory=$Repository }
+        'veeddaClientCheck' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','check'); WorkingDirectory=(Join-Path $Repository 'client') }
+        'veeddaClientBuild' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'client') }
+        'veeddaServerBuild' = [PSCustomObject]@{ FileName=$npmPath; Arguments=@('run','build'); WorkingDirectory=(Join-Path $Repository 'server') }
     }
     if (-not $commands.ContainsKey($Name)) { throw "NOVA_CORE_NAMED_COMMAND_NOT_ALLOWED:$Name" }
     $command = $commands[$Name]
