@@ -1070,6 +1070,9 @@ finally {
 
 $results | Format-Table -AutoSize
 $failed = @($results | Where-Object { -not $_.Passed })
+foreach ($failure in $failed) {
+    Write-Output "CEREBRAU_DOMAIN_V2_FAILURE=$($failure.Name)::$($failure.Detail)"
+}
 Write-Output "CEREBRAU_DOMAIN_V2_TESTS=$($results.Count)"
 Write-Output "CEREBRAU_DOMAIN_V2_PASSED=$($results.Count-$failed.Count)"
 Write-Output "CEREBRAU_DOMAIN_V2_FAILED=$($failed.Count)"
