@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "NOVA-WORK-WCF008-C19-RED-TEAM-REVALIDATION-001",
+  "program": "PROGRAM-003",
+  "lot": "WCF-008-CLOSURE",
+  "title": "WCF-008 C-19 Final Red Team Revalidation",
+  "missionType": "AUDIT",
+  "profile": "ARCHITECTURE",
+  "repository": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "expectedBranch": "feature/nova-runtime-foundation",
+  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\Docs\\24_MODULES\\WORK\\EVIDENCE\\WAVES\\NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001\\WCF_008_C19_RED_TEAM_REVALIDATION_PROMPT.md",
+  "workingDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "artifactRoot": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\PROGRAM-003\\NOVA-WORK-WCF008-C19-RED-TEAM-REVALIDATION-001",
+  "allowedPaths": [],
+  "forbiddenPaths": ["**"],
+  "deliverables": ["C-19 independent Red Team revalidation"],
+  "stopCriteria": [
+    "C-19 resolves PASS or FAIL from current evidence",
+    "No repository write",
+    "No certification writer call",
+    "No WCF-008 certification"
+  ],
+  "validations": [],
+  "validationPolicy": {
+    "version": 1,
+    "source": "actual-git-delta",
+    "target": "NOVA"
+  },
+  "changesExpected": false,
+  "humanReviewRequired": true,
+  "enabled": true
+}
