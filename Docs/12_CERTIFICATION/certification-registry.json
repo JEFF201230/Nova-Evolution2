@@ -271,6 +271,14 @@
                         "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-002.certification.json",
                         "Status":  "CERTIFIED",
                         "PreviousLot":  "WCF-001",
+                        "NextAuthorizedLot":  "WCF-003"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-003",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-003.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-002",
                         "NextAuthorizedLot":  "WCF-004A"
                     },
                     {
@@ -279,15 +287,39 @@
                         "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-004.certification.json",
                         "Status":  "CERTIFIED",
                         "PreviousLot":  "WCF-004A",
-                        "NextAuthorizedLot":  "WORK-AUTHORIZED-STATE-001"
+                        "NextAuthorizedLot":  "WCF-005"
                     },
                     {
                         "DomainId":  "WORK",
                         "LotId":  "WCF-004A",
                         "CertificationPath":  "Docs/24_MODULES/WORK/EVIDENCE/WAVES/NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001/WORK_IMPLEMENTATION_CONTRACT.md",
                         "Status":  "CERTIFIED",
-                        "PreviousLot":  "WCF-002",
+                        "PreviousLot":  "WCF-003",
                         "NextAuthorizedLot":  "WCF-004"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-005",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-005.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-004",
+                        "NextAuthorizedLot":  "WCF-006"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-006",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-006.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-005",
+                        "NextAuthorizedLot":  "WCF-007"
+                    },
+                    {
+                        "DomainId":  "WORK",
+                        "LotId":  "WCF-007",
+                        "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-007.certification.json",
+                        "Status":  "CERTIFIED",
+                        "PreviousLot":  "WCF-006",
+                        "NextAuthorizedLot":  "WORK-AUTHORIZED-STATE-001"
                     },
                     {
                         "DomainId":  "WORK",
@@ -302,7 +334,7 @@
                         "LotId":  "WORK-AUTHORIZED-STATE-001",
                         "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WORK-AUTHORIZED-STATE-001.certification.json",
                         "Status":  "CERTIFIED",
-                        "PreviousLot":  "WCF-004",
+                        "PreviousLot":  "WCF-007",
                         "NextAuthorizedLot":  "WCF-008-CLOSURE"
                     }
                 ]
