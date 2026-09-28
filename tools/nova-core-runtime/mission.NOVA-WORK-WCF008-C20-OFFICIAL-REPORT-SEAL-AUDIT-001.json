@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0.0",
+  "missionId": "NOVA-WORK-WCF008-C20-OFFICIAL-REPORT-SEAL-AUDIT-001",
+  "program": "PROGRAM-003",
+  "lot": "WCF-008-CLOSURE",
+  "title": "WCF-008 C-20 Official Report Seal Audit",
+  "missionType": "AUDIT",
+  "profile": "ARCHITECTURE",
+  "repository": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "expectedBranch": "feature/nova-runtime-foundation",
+  "promptFile": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\Docs\\24_MODULES\\WORK\\EVIDENCE\\WAVES\\NOVA-EVIDENCE-INTELLIGENCE-CLOSURE-001\\WCF_008_C20_OFFICIAL_REPORT_SEAL_AUDIT_PROMPT.md",
+  "workingDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+  "artifactRoot": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution",
+  "reportDirectory": "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\.nova-data\\execution\\reports\\PROGRAM-003\\NOVA-WORK-WCF008-C20-OFFICIAL-REPORT-SEAL-AUDIT-001",
+  "allowedPaths": [],
+  "forbiddenPaths": [
+    "**"
+  ],
+  "deliverables": [
+    "C-20 official report seal forensic audit"
+  ],
+  "stopCriteria": [
+    "C-20 resolves PASS or FAIL from current and historical evidence",
+    "No repository write",
+    "No certification writer call",
+    "No WCF-008 certification",
+    "No C-21 approval"
+  ],
+  "validations": [],
+  "validationPolicy": {
+    "version": 1,
+    "source": "actual-git-delta",
+    "target": "NOVA"
+  },
+  "changesExpected": false,
+  "humanReviewRequired": true,
+  "enabled": true,
+  "binding": {
+    "codexVersion": "0.153.4",
+    "codexPath": "C:\\Users\\JEFF1\\AppData\\Roaming\\npm\\codex.cmd",
+    "codexBinaryHash": "c54db6755e710c39703f7c37512f9e35ed41042d8080558d2b84b8d2694323c3",
+    "codexConfigPolicy": "EXPLICIT_RUNTIME_PROFILE"
+  }
+}
