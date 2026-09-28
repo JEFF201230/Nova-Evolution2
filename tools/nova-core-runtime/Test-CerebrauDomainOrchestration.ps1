@@ -113,6 +113,133 @@ function New-TestCertification {
     }
 }
 
+function Add-TestDomainCertification {
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$LotId,
+        [ValidateSet('CERTIFIED','REJECTED','PENDING_EVIDENCE')]
+        [string]$Status = 'CERTIFIED'
+    )
+    $certification = [PSCustomObject][ordered]@{
+        MissionId = "TEST-$DomainId-$LotId"
+        DomainId = $DomainId
+        LotId = $LotId
+        Status = $Status
+        CertifiedAt = $(if ($Status -eq 'CERTIFIED') { '2026-09-28T09:00:00.000Z' } else { $null })
+        Evidence = [object[]]$(if ($Status -eq 'CERTIFIED') { @('evidence:verified') } else { @() })
+        Tests = [object[]]$(if ($Status -eq 'CERTIFIED') { @('tests:pass') } else { @() })
+        Regressions = $(if ($Status -eq 'CERTIFIED') { 'NONE' } else { 'NOT_EVALUATED' })
+        PreviousLot = $null
+        NextAuthorizedLot = $null
+    }
+    [void](Write-LotCertification -Repository $Repository -Certification $certification)
+}
+
+function New-Wcf008GateRepository {
+    $root = New-TestRepository
+
+    $workBlueprintPath = Join-Path $root 'Docs/contracts/WORK_DOMAIN_BLUEPRINT.md'
+    Write-TestText $workBlueprintPath @'
+# WD-001 — Work Domain Blueprint
+
+Canonical test Work blueprint.
+'@
+
+    $workContractPath = Join-Path $root 'Docs/contracts/WORK_IMPLEMENTATION_CONTRACT.md'
+    Write-TestText $workContractPath @'
+# WORK IMPLEMENTATION CONTRACT
+
+| Attribute | Value |
+|---|---|
+| Lot | WORK-AUTHORIZED-STATE-001 |
+| Authority | WORK_DOMAIN_BLUEPRINT.md |
+
+**VERDICT : GO**
+
+NEXT AUTHORIZED LOT : WCF-008-CLOSURE
+
+### 1.3 Out of scope
+
+- product changes
+
+### 2.2 Allowed dependencies
+
+- certified Evidence, Intelligence, Synthesis and Confidence
+
+### 2.3 Forbidden dependencies
+
+- uncertified cross-domain state
+
+### 14.7 Non-negotiable invariants
+
+1. WCF-008 cannot open until every required cross-domain certificate resolves.
+
+## 15. TEST CONTRACT
+
+### 15.1 TEST CONTRACT PAR SOUS-LOT
+
+| Sous-lot | Validations obligatoires |
+|---|---|
+| WCF-008-CLOSURE | cross-domain gate tests; zero-writer-call negative matrix |
+
+## 16. IMPLEMENTATION SEQUENCE
+
+### 16.1 Accepted order
+
+| Order | Sub-lot | Objective | Authorized deliverable |
+|---|---|---|---|
+| 1 | WCF-008-CLOSURE - Work Intelligence Closure | certify the full cross-domain chain | closure evidence and certification only |
+
+## 17. ENTRY AND EXIT GATES
+
+### 17.2 Lot gates
+
+| Sub-lot | Entry | Authorized files | Exit |
+|---|---|---|---|
+| WCF-008-CLOSURE | WORK-AUTHORIZED-STATE-001 plus Evidence, Intelligence, Synthesis and Confidence resolve CERTIFIED | closure mission/report files only | all closure criteria PASS |
+'@
+
+    $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+    $registry = Get-Content -LiteralPath $registryPath -Raw | ConvertFrom-Json
+    $registry.Entries = @($registry.Entries) + @(
+        [PSCustomObject][ordered]@{
+            DomainId = 'WORK'
+            LotId = 'WORK-AUTHORIZED-STATE-001'
+            CertificationPath = 'Docs/contracts/WORK_IMPLEMENTATION_CONTRACT.md'
+            Status = 'CERTIFIED'
+            PreviousLot = $null
+            NextAuthorizedLot = 'WCF-008-CLOSURE'
+        }
+    )
+    Write-TestJson $registryPath $registry
+    return $root
+}
+
+function Set-Wcf008DependencyState {
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$TargetDomain,
+        [ValidateSet('CERTIFIED','ABSENT','REJECTED','UNAVAILABLE')]
+        [Parameter(Mandatory)][string]$State
+    )
+    $required = [ordered]@{
+        EVIDENCE = 'P3-EVIDENCE-001B'
+        INTELLIGENCE = 'P3-INTELLIGENCE-001B'
+        SYNTHESIS = 'P3-SYNTHESIS-001B'
+        CONFIDENCE = 'P3-CONFIDENCE-001B'
+    }
+    foreach ($domain in $required.Keys) {
+        if ($domain -ceq $TargetDomain -and $State -ceq 'ABSENT') { continue }
+        $status = if ($domain -ceq $TargetDomain -and $State -ceq 'REJECTED') { 'REJECTED' } else { 'CERTIFIED' }
+        Add-TestDomainCertification -Repository $Repository -DomainId $domain -LotId $required[$domain] -Status $status
+        if ($domain -ceq $TargetDomain -and $State -ceq 'UNAVAILABLE') {
+            $certPath = Join-Path $Repository ("Docs/12_CERTIFICATION/$domain/$($required[$domain]).certification.json")
+            Remove-Item -LiteralPath $certPath -Force
+        }
+    }
+}
+
 function New-TestRepository {
     param([switch]$IncompleteContract)
     $root = Join-Path ([IO.Path]::GetTempPath()) (
@@ -876,6 +1003,32 @@ Invoke-TestCase 'policy-success-accepted-completed-certifies' {
             Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
         ) -Raw | ConvertFrom-Json
         Assert-Equal 2 @($registry.Entries).Count
+    }
+
+    Invoke-TestCase 'wcf008-cross-domain-gate-all-certified-allows-opening' {
+        $root = New-Wcf008GateRepository
+        Set-Wcf008DependencyState -Repository $root -TargetDomain INTELLIGENCE -State CERTIFIED
+        $opened = Open-NextDomainLot -Repository $root -DomainId WORK -CertifiedLotId WORK-AUTHORIZED-STATE-001 -MissionId TEST-WCF008
+        Assert-Equal 'WCF-008-CLOSURE' $opened.LotId
+        Assert-Equal 'PENDING_EVIDENCE' $opened.Status
+    }
+
+    foreach ($dependency in @('INTELLIGENCE','SYNTHESIS','CONFIDENCE')) {
+        foreach ($state in @('ABSENT','REJECTED','UNAVAILABLE')) {
+            Invoke-TestCase "wcf008-$($dependency.ToLower())-$($state.ToLower())-blocks-before-writer" {
+                $root = New-Wcf008GateRepository
+                Set-Wcf008DependencyState -Repository $root -TargetDomain $dependency -State $state
+                $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+                $before = (Get-FileHash -LiteralPath $registryPath -Algorithm SHA256).Hash
+                Assert-Throws {
+                    Open-NextDomainLot -Repository $root -DomainId WORK -CertifiedLotId WORK-AUTHORIZED-STATE-001 -MissionId TEST-WCF008
+                } 'CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:WORK:WCF-008-CLOSURE'
+                $after = (Get-FileHash -LiteralPath $registryPath -Algorithm SHA256).Hash
+                Assert-Equal $before $after 'WCF008_REGISTRY_CHANGED'
+                $wcf008Path = Join-Path $root 'Docs/12_CERTIFICATION/WORK/WCF-008-CLOSURE.certification.json'
+                Assert-False (Test-Path -LiteralPath $wcf008Path -PathType Leaf) 'WCF008_CERTIFICATION_WRITTEN'
+            }
+        }
     }
 
     Invoke-TestCase 'people-pilot-resolves-current-lot' {
