@@ -31,24 +31,32 @@ function Invoke-TestCase {
 
 function New-Wcf008WriterCertification {
     param([string]$Status = 'PENDING_EVIDENCE')
-    $evidence = if ($Status -eq 'CERTIFIED') {
-        [object[]]@('evidence:wcf008')
-    } else {
-        [object[]]@()
+    $evidenceValues = [object[]]@()
+    $testValues = [object[]]@()
+    if ($Status -eq 'CERTIFIED') {
+        $evidenceValues = [object[]]@('evidence:wcf008')
+        $testValues = [object[]]@('test:wcf008')
     }
-    $tests = if ($Status -eq 'CERTIFIED') {
-        [object[]]@('test:wcf008')
-    } else {
-        [object[]]@()
+    return [PSCustomObject][ordered]@{
+        MissionId = 'TEST-WCF-008-CLOSURE'
+        DomainId = 'WORK'
+        LotId = 'WCF-008-CLOSURE'
+        Status = $Status
+        CertifiedAt = $(if ($Status -eq 'CERTIFIED') {
+            '2026-07-30T16:00:00.000Z'
+        } else {
+            $null
+        })
+        Evidence = $evidenceValues
+        Tests = $testValues
+        Regressions = $(if ($Status -eq 'CERTIFIED') {
+            'NONE'
+        } else {
+            'NOT_EVALUATED'
+        })
+        PreviousLot = $null
+        NextAuthorizedLot = $null
     }
-    return New-Certification `
-        'WCF-008-CLOSURE' `
-        $Status `
-        $null `
-        $null `
-        'WORK' `
-        $evidence `
-        $tests
 }
 
 try {
