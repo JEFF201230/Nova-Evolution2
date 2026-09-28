@@ -191,6 +191,7 @@ NEXT AUTHORIZED LOT : WCF-008-CLOSURE
 
 | Sous-lot | Validations obligatoires |
 |---|---|
+| WORK-AUTHORIZED-STATE-001 | authorized-state baseline tests |
 | WCF-008-CLOSURE | cross-domain gate tests; zero-writer-call negative matrix |
 
 ## 16. IMPLEMENTATION SEQUENCE
