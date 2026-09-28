@@ -18,7 +18,40 @@ function Add-TestResult {
 
 function Invoke-TestCase {
     param([string]$Name,[scriptblock]$Action)
-    try {
+    function Add-CrossDomainCertifiedDependency {
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$LotId
+    )
+    [void](Write-LotCertification $Repository (
+        New-Certification $LotId 'CERTIFIED' $null $null $DomainId
+    ))
+}
+
+function New-Wcf008WriterCertification {
+    param([string]$Status = 'PENDING_EVIDENCE')
+    $evidence = if ($Status -eq 'CERTIFIED') {
+        [object[]]@('evidence:wcf008')
+    } else {
+        [object[]]@()
+    }
+    $tests = if ($Status -eq 'CERTIFIED') {
+        [object[]]@('test:wcf008')
+    } else {
+        [object[]]@()
+    }
+    return New-Certification `
+        'WCF-008-CLOSURE' `
+        $Status `
+        $null `
+        $null `
+        'WORK' `
+        $evidence `
+        $tests
+}
+
+try {
         & $Action
         Add-TestResult $Name $true $null
     }
@@ -555,6 +588,30 @@ try {
         [void](Repair-CerebrauTerminalCertification $root PEOPLE LOT-A TEST-LOT-A)
         Assert-Equal $before (Get-FileHash $otherPath -Algorithm SHA256).Hash
         Assert-Equal 'CERTIFIED' (Read-LotCertification $root OTHER OTHER-A).Status
+    }
+
+    Invoke-TestCase 'wcf008-direct-writer-blocks-without-cross-domain-certifications' {
+        $root = New-TestRepository
+        $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+        Assert-Throws {
+            Write-LotCertification $root (New-Wcf008WriterCertification)
+        } 'CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:WORK:WCF-008-CLOSURE'
+        Assert-False (Test-Path -LiteralPath $registryPath -PathType Leaf)
+        Assert-False (Test-Path -LiteralPath (
+            Join-Path $root 'Docs/12_CERTIFICATION/WORK/WCF-008-CLOSURE.certification.json'
+        ) -PathType Leaf)
+    }
+
+    Invoke-TestCase 'wcf008-direct-writer-allows-when-all-cross-domain-certifications-certified' {
+        $root = New-TestRepository
+        Add-CrossDomainCertifiedDependency $root EVIDENCE P3-EVIDENCE-001B
+        Add-CrossDomainCertifiedDependency $root INTELLIGENCE P3-INTELLIGENCE-001B
+        Add-CrossDomainCertifiedDependency $root SYNTHESIS P3-SYNTHESIS-001B
+        Add-CrossDomainCertifiedDependency $root CONFIDENCE P3-CONFIDENCE-001B
+        [void](Write-LotCertification $root (New-Wcf008WriterCertification))
+        $written = Read-LotCertification $root WORK WCF-008-CLOSURE
+        Assert-Equal 'PENDING_EVIDENCE' $written.Status
+        Assert-True $written.Materialized
     }
 
     Invoke-TestCase 'partial-write-rolls-back-atomically' {
