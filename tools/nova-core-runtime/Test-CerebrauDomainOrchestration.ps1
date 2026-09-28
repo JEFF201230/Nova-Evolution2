@@ -758,6 +758,38 @@ Invoke-TestCase 'policy-success-accepted-completed-certifies' {
         Assert-Equal 'TEST-B' $current.LastCertifiedLot
         Assert-Equal 'TEST-C' $current.CurrentLot
     }
+    Invoke-TestCase 'current-lot-allows-certified-registry-history-outside-local-contract' {
+        $root = New-TestRepository
+
+        $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
+        $registry = Get-Content -LiteralPath $registryPath -Raw | ConvertFrom-Json
+
+        $historicalEntry = [PSCustomObject][ordered]@{
+            DomainId = 'TEST'
+            LotId = 'TEST-HISTORICAL'
+            CertificationPath = 'Docs/12_CERTIFICATION/TEST/TEST-HISTORICAL.certification.json'
+            Status = 'CERTIFIED'
+            PreviousLot = $null
+            NextAuthorizedLot = 'TEST-A'
+        }
+
+        $registry.Entries = [object[]]@(
+            $historicalEntry
+            @($registry.Entries)
+        )
+
+        $registry.Entries[1].PreviousLot = 'TEST-HISTORICAL'
+            Write-TestJson $registryPath $registry
+
+        Add-TestLot $root TEST-B CERTIFIED TEST-A TEST-C
+        Add-TestLot $root TEST-C PENDING_EVIDENCE TEST-B $null
+
+        $current = Resolve-CurrentLot $root TEST
+
+        Assert-Equal 'TEST-B' $current.LastCertifiedLot
+        Assert-Equal 'TEST-C' $current.CurrentLot
+        Assert-Equal 'PENDING_EVIDENCE' $current.CurrentStatus
+        }
 
     Invoke-TestCase 'pending-with-real-code-resolves-backfill' {
         $root = New-TestRepository

@@ -535,26 +535,6 @@ function Resolve-CurrentLot {
     for ($index = 0; $index -lt $sequence.Count; $index += 1) {
         $order[[string]$sequence[$index].LotId] = $index
     }
-    foreach ($entry in @($DomainContext.Entries)) {
-        if (-not $order.ContainsKey([string]$entry.LotId)) {
-            throw "LOT_NOT_IN_IMPLEMENTATION_CONTRACT:$($entry.LotId)"
-        }
-        $position = [int]$order[[string]$entry.LotId]
-        $expectedPrevious = if ($position -eq 0) {
-            $null
-        } else {
-            [string]$sequence[$position - 1].LotId
-        }
-        $expectedNext = if ($position -eq $sequence.Count - 1) {
-            $null
-        } else {
-            [string]$sequence[$position + 1].LotId
-        }
-        if ([string]$entry.PreviousLot -cne [string]$expectedPrevious -or
-            [string]$entry.NextAuthorizedLot -cne [string]$expectedNext) {
-            throw "LOT_CONTINUITY_BROKEN:CONTRACT_LINK:$($entry.LotId)"
-        }
-    }
 
     $entriesByLot = @{}
     foreach ($entry in @($DomainContext.Entries)) {
