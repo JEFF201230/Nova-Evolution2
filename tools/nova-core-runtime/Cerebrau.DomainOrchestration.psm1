@@ -882,6 +882,41 @@ function Resolve-LotExecutionMode {
     }
 }
 
+function Test-CrossDomainProgramGate {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$LotId
+    )
+    if ($DomainId -cne 'WORK' -or $LotId -cne 'WCF-008-CLOSURE') {
+        return $true
+    }
+
+    $required = @(
+        [PSCustomObject]@{ DomainId='EVIDENCE'; LotId='P3-EVIDENCE-001B' },
+        [PSCustomObject]@{ DomainId='INTELLIGENCE'; LotId='P3-INTELLIGENCE-001B' },
+        [PSCustomObject]@{ DomainId='SYNTHESIS'; LotId='P3-SYNTHESIS-001B' },
+        [PSCustomObject]@{ DomainId='CONFIDENCE'; LotId='P3-CONFIDENCE-001B' }
+    )
+
+    foreach ($dependency in $required) {
+        try {
+            $certification = Read-LotCertification `
+                -Repository $Repository `
+                -DomainId ([string]$dependency.DomainId) `
+                -LotId ([string]$dependency.LotId)
+        }
+        catch {
+            return $false
+        }
+        if ([string]$certification.Status -cne 'CERTIFIED') {
+            return $false
+        }
+    }
+    return $true
+}
+
 function Test-LotAuthorization {
     [CmdletBinding()]
     param(
@@ -906,6 +941,12 @@ function Test-LotAuthorization {
     if ([string]$CurrentLot.Contract.PreviousLot -cne
         [string]$CurrentLot.LastCertifiedLot) {
         throw 'PREVIOUS_LOT_NOT_CERTIFIED'
+    }
+    if (-not (Test-CrossDomainProgramGate `
+        -Repository $DomainContext.Repository `
+        -DomainId $DomainId `
+        -LotId $LotId)) {
+        return $false
     }
     if ($CurrentLot.CurrentStatus -eq 'ABSENT') { return $true }
     return Test-LotExecutionAuthorization `
@@ -1719,6 +1760,7 @@ Export-ModuleMember -Function `
     Resolve-CurrentLot,`
     Resolve-LotExecutionMode,`
     Read-LotImplementationContract,`
+    Test-CrossDomainProgramGate,`
     Test-LotAuthorization,`
     Resolve-MissionOutcomeToLotCertificationDecision,`
     Invoke-DomainLot,`
