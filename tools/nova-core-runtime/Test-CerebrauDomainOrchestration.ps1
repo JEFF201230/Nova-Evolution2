@@ -208,7 +208,7 @@ NEXT AUTHORIZED LOT : WCF-008-CLOSURE
 
 | Sub-lot | Entry | Authorized files | Exit |
 |---|---|---|---|
-| WCF-008-CLOSURE | WORK-AUTHORIZED-STATE-001 plus Evidence, Intelligence, Synthesis and Confidence resolve CERTIFIED | closure mission/report files only | all closure criteria PASS |
+| WCF-008-CLOSURE | WORK-AUTHORIZED-STATE-001 plus Evidence, Intelligence, Synthesis and Confidence resolve CERTIFIED | closure mission/report files only | ClosureAuthority confirms all closure criteria PASS |
 '@
 
     $registryPath = Join-Path $root 'Docs/12_CERTIFICATION/certification-registry.json'
