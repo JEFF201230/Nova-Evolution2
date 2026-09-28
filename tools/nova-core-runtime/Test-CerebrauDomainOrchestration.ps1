@@ -121,15 +121,25 @@ function Add-TestDomainCertification {
         [ValidateSet('CERTIFIED','REJECTED','PENDING_EVIDENCE')]
         [string]$Status = 'CERTIFIED'
     )
+    $evidenceValues = [object[]]@()
+    $testValues = [object[]]@()
+    if ($Status -eq 'CERTIFIED') {
+        $evidenceValues = [object[]]@('evidence:verified')
+        $testValues = [object[]]@('tests:pass')
+    }
     $certification = [PSCustomObject][ordered]@{
         MissionId = "TEST-$DomainId-$LotId"
         DomainId = $DomainId
         LotId = $LotId
         Status = $Status
-        CertifiedAt = $(if ($Status -eq 'CERTIFIED') { '2026-09-28T09:00:00.000Z' } else { $null })
-        Evidence = $(if ($Status -eq 'CERTIFIED') { [object[]]@('evidence:verified') } else { [object[]]@() })
-        Tests = $(if ($Status -eq 'CERTIFIED') { [object[]]@('tests:pass') } else { [object[]]@() })
-        Regressions = $(if ($Status -eq 'CERTIFIED') { 'NONE' } else { 'NOT_EVALUATED' })
+        CertifiedAt = $(if ($Status -eq 'CERTIFIED') {
+            '2026-09-28T09:00:00.000Z'
+        } else { $null })
+        Evidence = $evidenceValues
+        Tests = $testValues
+        Regressions = $(if ($Status -eq 'CERTIFIED') {
+            'NONE'
+        } else { 'NOT_EVALUATED' })
         PreviousLot = $null
         NextAuthorizedLot = $null
     }
