@@ -127,8 +127,8 @@ function Add-TestDomainCertification {
         LotId = $LotId
         Status = $Status
         CertifiedAt = $(if ($Status -eq 'CERTIFIED') { '2026-09-28T09:00:00.000Z' } else { $null })
-        Evidence = [object[]]$(if ($Status -eq 'CERTIFIED') { @('evidence:verified') } else { @() })
-        Tests = [object[]]$(if ($Status -eq 'CERTIFIED') { @('tests:pass') } else { @() })
+        Evidence = $(if ($Status -eq 'CERTIFIED') { [object[]]@('evidence:verified') } else { [object[]]@() })
+        Tests = $(if ($Status -eq 'CERTIFIED') { [object[]]@('tests:pass') } else { [object[]]@() })
         Regressions = $(if ($Status -eq 'CERTIFIED') { 'NONE' } else { 'NOT_EVALUATED' })
         PreviousLot = $null
         NextAuthorizedLot = $null
@@ -141,7 +141,7 @@ function New-Wcf008GateRepository {
 
     $workBlueprintPath = Join-Path $root 'Docs/contracts/WORK_DOMAIN_BLUEPRINT.md'
     Write-TestText $workBlueprintPath @'
-# WD-001 — Work Domain Blueprint
+# WORK DOMAIN BLUEPRINT
 
 Canonical test Work blueprint.
 '@
