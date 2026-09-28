@@ -1017,6 +1017,12 @@ function Open-NextDomainLot {
     if ($existing.Count -gt 0) {
         throw "NEXT_LOT_ALREADY_OPEN:$($nextContract.LotId)"
     }
+    if (-not (Test-CrossDomainProgramGate `
+        -Repository $context.Repository `
+        -DomainId $DomainId `
+        -LotId ([string]$nextContract.LotId))) {
+        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:$DomainId:$($nextContract.LotId)"
+    }
     return Write-LotCertification `
         -Repository $context.Repository `
         -Certification (
@@ -1527,6 +1533,12 @@ function Complete-DomainLot {
     if ($current.DomainCertification -or
         [string]$current.CurrentLot -cne $LotId) {
         throw "LOT_NOT_CURRENT:$LotId"
+    }
+    if (-not (Test-CrossDomainProgramGate `
+        -Repository $context.Repository `
+        -DomainId $DomainId `
+        -LotId $LotId)) {
+        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:$DomainId:$LotId"
     }
     $certification = [PSCustomObject][ordered]@{
         MissionId = $MissionId
