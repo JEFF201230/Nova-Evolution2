@@ -1021,7 +1021,7 @@ function Open-NextDomainLot {
         -Repository $context.Repository `
         -DomainId $DomainId `
         -LotId ([string]$nextContract.LotId))) {
-        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:$DomainId:$($nextContract.LotId)"
+        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:${DomainId}:$($nextContract.LotId)"
     }
     return Write-LotCertification `
         -Repository $context.Repository `
@@ -1538,7 +1538,7 @@ function Complete-DomainLot {
         -Repository $context.Repository `
         -DomainId $DomainId `
         -LotId $LotId)) {
-        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:$DomainId:$LotId"
+        throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:${DomainId}:${LotId}"
     }
     $certification = [PSCustomObject][ordered]@{
         MissionId = $MissionId
