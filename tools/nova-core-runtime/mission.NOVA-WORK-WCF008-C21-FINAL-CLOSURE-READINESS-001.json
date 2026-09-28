@@ -27,7 +27,25 @@
     "No authority decision write",
     "No WCF-008 certification"
   ],
-  "validations": [],
+  "validations": [
+    {
+      "name": "nova-core-typecheck",
+      "type": "namedCommand",
+      "command": "novaCoreTypecheck",
+      "required": true
+    },
+    {
+      "name": "nova-core-tests",
+      "type": "namedCommand",
+      "command": "novaCoreTests",
+      "required": true
+    },
+    {
+      "name": "git-diff-check",
+      "type": "gitDiffCheck",
+      "required": true
+    }
+  ],
   "validationPolicy": {
     "version": 1,
     "source": "actual-git-delta",
