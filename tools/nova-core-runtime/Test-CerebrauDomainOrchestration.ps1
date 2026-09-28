@@ -153,7 +153,7 @@ Canonical test Work blueprint.
 | Attribute | Value |
 |---|---|
 | Lot | WORK-AUTHORIZED-STATE-001 |
-| Authority | WORK_DOMAIN_BLUEPRINT.md |
+| Authority | `WORK_DOMAIN_BLUEPRINT.md` |
 
 **VERDICT : GO**
 
