@@ -865,6 +865,40 @@ function Repair-CerebrauTerminalCertification {
         HistoryPath = $historyRelativePath
     }
 }
+function Assert-CrossDomainCertificationWriteGate {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Repository,
+        [Parameter(Mandatory)][string]$DomainId,
+        [Parameter(Mandatory)][string]$LotId
+    )
+    if ($DomainId -cne 'WORK' -or $LotId -cne 'WCF-008-CLOSURE') {
+        return
+    }
+
+    $required = @(
+        [PSCustomObject]@{ DomainId='EVIDENCE'; LotId='P3-EVIDENCE-001B' },
+        [PSCustomObject]@{ DomainId='INTELLIGENCE'; LotId='P3-INTELLIGENCE-001B' },
+        [PSCustomObject]@{ DomainId='SYNTHESIS'; LotId='P3-SYNTHESIS-001B' },
+        [PSCustomObject]@{ DomainId='CONFIDENCE'; LotId='P3-CONFIDENCE-001B' }
+    )
+
+    foreach ($dependency in $required) {
+        try {
+            $certification = Read-LotCertification `
+                -Repository $Repository `
+                -DomainId ([string]$dependency.DomainId) `
+                -LotId ([string]$dependency.LotId)
+        }
+        catch {
+            throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:${DomainId}:${LotId}"
+        }
+        if ([string]$certification.Status -cne 'CERTIFIED') {
+            throw "CROSS_DOMAIN_PROGRAM_GATE_BLOCKED:${DomainId}:${LotId}"
+        }
+    }
+}
+
 function Write-LotCertification {
     [CmdletBinding()]
     param(
@@ -876,6 +910,10 @@ function Write-LotCertification {
     $registry = Read-CerebrauRegistry -Repository $root
     $domainId = [string]$Certification.DomainId
     $lotId = [string]$Certification.LotId
+    Assert-CrossDomainCertificationWriteGate `
+        -Repository $root `
+        -DomainId $domainId `
+        -LotId $lotId
     $domainEntries = @(Get-CerebrauDomainEntries -Registry $registry -DomainId $domainId)
     $existing = @($domainEntries | Where-Object { [string]$_.LotId -ceq $lotId })
     if ($existing.Count -gt 1) {
