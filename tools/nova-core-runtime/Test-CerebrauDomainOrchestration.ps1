@@ -789,7 +789,7 @@ Invoke-TestCase 'policy-success-accepted-completed-certifies' {
         Assert-Equal 'TEST-B' $current.LastCertifiedLot
         Assert-Equal 'TEST-C' $current.CurrentLot
         Assert-Equal 'PENDING_EVIDENCE' $current.CurrentStatus
-        }
+    }
 
     Invoke-TestCase 'pending-with-real-code-resolves-backfill' {
         $root = New-TestRepository
