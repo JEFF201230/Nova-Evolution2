@@ -325,7 +325,7 @@
                         "DomainId":  "WORK",
                         "LotId":  "WCF-008-CLOSURE",
                         "CertificationPath":  "Docs/12_CERTIFICATION/WORK/WCF-008-CLOSURE.certification.json",
-                        "Status":  "PENDING_EVIDENCE",
+                        "Status":  "CERTIFIED",
                         "PreviousLot":  "WORK-AUTHORIZED-STATE-001",
                         "NextAuthorizedLot":  null
                     },
