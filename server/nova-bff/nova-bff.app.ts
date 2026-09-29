@@ -34,6 +34,16 @@ import type { GlobalDeliverablesGatewayPort } from "./global-deliverables.gatewa
 import { handleWorkOverview, workIdFromOverviewPath } from "./work-overview.route.js";
 import type { WorkOverviewGatewayPort } from "./work-overview.gateway.port.js";
 import {
+  MISSION_RUNTIME_MISSIONS_PATH,
+  missionIdentityFromExecutePath,
+} from "./mission-runtime.contract.js";
+import type { MissionRuntimeGatewayPort } from "./mission-runtime.gateway.port.js";
+import {
+  handleMissionCreate,
+  handleMissionExecute,
+  missionRuntimeAuthenticationMiddleware,
+} from "./mission-runtime.route.js";
+import {
   InMemorySessionStore,
   SessionManager,
   publicSessionView,
@@ -58,6 +68,7 @@ export interface NovaBffDependencies {
   readonly workActivityGateway?: WorkActivityGatewayPort;
   readonly globalDeliverablesGateway?: GlobalDeliverablesGatewayPort;
   readonly workOverviewGateway?: WorkOverviewGatewayPort;
+  readonly missionRuntimeGateway?: MissionRuntimeGatewayPort;
   readonly clock?: () => number;
 }
 
@@ -100,6 +111,7 @@ export function createNovaBffApplication(
     securityHeadersMiddleware,
     sessionMiddleware,
     runtimeExecuteAuthenticationMiddleware,
+    missionRuntimeAuthenticationMiddleware,
     csrfMiddleware,
     jsonBodyMiddleware,
     createBffRouter(
@@ -108,6 +120,7 @@ export function createNovaBffApplication(
       dependencies.workActivityGateway,
       dependencies.globalDeliverablesGateway,
       dependencies.workOverviewGateway,
+      dependencies.missionRuntimeGateway,
     ),
   ]);
 
@@ -148,6 +161,7 @@ function createBffRouter(
   workActivityGateway: WorkActivityGatewayPort | undefined,
   globalDeliverablesGateway: GlobalDeliverablesGatewayPort | undefined,
   workOverviewGateway: WorkOverviewGatewayPort | undefined,
+  missionRuntimeGateway: MissionRuntimeGatewayPort | undefined,
 ) {
   return async (
     context: BffRequestContext,
@@ -155,6 +169,7 @@ function createBffRouter(
   ): Promise<void> => {
     const workId = workIdFromActivityPath(context.pathname);
     const overviewWorkId = workIdFromOverviewPath(context.pathname);
+    const missionExecutionIdentity = missionIdentityFromExecutePath(context.pathname);
     const publicPaths = new Set([
       "/health",
       "/readiness",
@@ -165,6 +180,7 @@ function createBffRouter(
       RUNTIME_EXECUTE_PATH,
       HOME_ACTIVE_WORK_PATH,
       GLOBAL_DELIVERABLES_PATH,
+      MISSION_RUNTIME_MISSIONS_PATH,
     ]);
     if (publicPaths.has(context.pathname) && !isAllowedMethod(context)) {
       throw new BffError(
@@ -174,6 +190,13 @@ function createBffRouter(
       );
     }
     if ((workId || overviewWorkId) && context.request.method !== "GET") {
+      throw new BffError(
+        405,
+        "METHOD_NOT_ALLOWED",
+        "This endpoint does not accept the requested method.",
+      );
+    }
+    if (missionExecutionIdentity && context.request.method !== "POST") {
       throw new BffError(
         405,
         "METHOD_NOT_ALLOWED",
@@ -229,6 +252,24 @@ function createBffRouter(
       && context.pathname === RUNTIME_EXECUTE_PATH
     ) {
       await handleRuntimeExecute(context, runtimeGateway);
+      return;
+    }
+
+    if (
+      context.request.method === "POST"
+      && context.pathname === MISSION_RUNTIME_MISSIONS_PATH
+    ) {
+      await handleMissionCreate(context, missionRuntimeGateway);
+      return;
+    }
+
+    if (context.request.method === "POST" && missionExecutionIdentity) {
+      await handleMissionExecute(
+        context,
+        missionRuntimeGateway,
+        missionExecutionIdentity.projectId,
+        missionExecutionIdentity.missionId,
+      );
       return;
     }
 
@@ -413,6 +454,7 @@ function isAllowedMethod(context: BffRequestContext): boolean {
     context.pathname === "/session/login"
     || context.pathname === "/session/logout"
     || context.pathname === RUNTIME_EXECUTE_PATH
+    || context.pathname === MISSION_RUNTIME_MISSIONS_PATH
   ) {
     return context.request.method === "POST";
   }

@@ -62,16 +62,26 @@ test("BFF routing declares the authorized technical and capability-specific read
   const workOverviewPathPrefix = workOverviewContract.match(
     /WORK_OVERVIEW_PATH_PREFIX\s*=\s*"([^"]+)"/,
   )?.[1];
+  const missionRuntimeContract = await readFile(
+    new URL("mission-runtime.contract.ts", BFF_ROOT),
+    "utf8",
+  );
+  const missionRuntimePath = missionRuntimeContract.match(
+    /MISSION_RUNTIME_MISSIONS_PATH\s*=\s*"([^"]+)"/,
+  )?.[1];
   assert.ok(runtimePath);
   assert.ok(homePath);
   assert.ok(workPathPrefix);
   assert.ok(globalDeliverablesPath);
   assert.ok(workOverviewPathPrefix);
+  assert.ok(missionRuntimePath);
   declaredPaths.push(runtimePath);
   declaredPaths.push(homePath);
   declaredPaths.push(`${workPathPrefix}/:workId/activity`);
   declaredPaths.push(globalDeliverablesPath);
   declaredPaths.push(`${workOverviewPathPrefix}/:workId/overview`);
+  declaredPaths.push(missionRuntimePath);
+  declaredPaths.push(`${missionRuntimePath}/:projectId/:missionId/execute`);
   assert.deepEqual(declaredPaths, [
     "/health",
     "/readiness",
@@ -84,6 +94,8 @@ test("BFF routing declares the authorized technical and capability-specific read
     "/api/work/:workId/activity",
     "/api/global/deliverables",
     "/api/work/:workId/overview",
+    "/api/mission-runtime/missions",
+    "/api/mission-runtime/missions/:projectId/:missionId/execute",
   ]);
   assert.doesNotMatch(
     source,
@@ -118,6 +130,7 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
   assert.deepEqual(transports, [
     "global-deliverables.gateway.ts",
     "home-active-work.gateway.ts",
+    "mission-runtime.gateway.ts",
     "work-activity.gateway.ts",
     "work-overview.gateway.ts",
   ]);
