@@ -67,11 +67,29 @@ $Rows = foreach ($Report in $LatestReports) {
     $missionId = $Report.Directory.Parent.Name
     $certification = $CertifiedMissions[$missionId]
 
+    $authorityDecision = [string]$Json.AuthorityDecision
+    $finalMissionState = [string]$Json.FinalMissionState
+
+    $authorityFinalizationPath = Join-Path $Report.Directory.FullName 'authority-finalization.json'
+    if (Test-Path -LiteralPath $authorityFinalizationPath -PathType Leaf) {
+        $AuthorityFinalization = Get-Content -LiteralPath $authorityFinalizationPath -Raw | ConvertFrom-Json
+
+        if (
+            [string]$AuthorityFinalization.missionId -cne $missionId -or
+            [string]$AuthorityFinalization.reportFingerprint -cne [string]$Json.ReportFingerprint
+        ) {
+            throw "AUTHORITY_FINALIZATION_MISMATCH:$missionId"
+        }
+
+        $authorityDecision = [string]$AuthorityFinalization.decision
+        $finalMissionState = [string]$AuthorityFinalization.finalMissionState
+    }
+
     [PSCustomObject]@{
         MissionId         = $missionId
         RuntimeStatus     = [string]$Json.Status
-        AuthorityDecision = [string]$Json.AuthorityDecision
-        FinalMissionState = if ($null -ne $certification) { [string]$certification.Status } else { [string]$Json.FinalMissionState }
+        AuthorityDecision = $authorityDecision
+        FinalMissionState = if ($null -ne $certification) { [string]$certification.Status } else { $finalMissionState }
         ReportFingerprint = [string]$Json.ReportFingerprint
         ReportPath        = $Report.FullName.Substring($Repository.Length + 1)
     }
