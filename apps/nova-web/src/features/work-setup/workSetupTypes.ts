@@ -9,6 +9,9 @@ export interface WorkSetupState {
   clarifyAnswers: string[];
   canvasItems: WorkSetupCanvasItem[];
   selectedAutonomyLevel: number;
+  allowedScopeText: string;
+  forbiddenScopeText: string;
+  missionId: string | null;
 }
 
 export interface WorkSetupContextValue extends WorkSetupState {
@@ -16,6 +19,9 @@ export interface WorkSetupContextValue extends WorkSetupState {
   setClarifyAnswer: (index: number, answer: string) => void;
   setCanvasItem: (item: WorkSetupCanvasItem) => void;
   setAutonomyLevel: (level: number) => void;
+  setAllowedScopeText: (value: string) => void;
+  setForbiddenScopeText: (value: string) => void;
+  setMissionId: (missionId: string) => void;
   resetWorkSetup: () => void;
 }
 

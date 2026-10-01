@@ -2,6 +2,7 @@ import { BffError } from "./bff.errors.js";
 import { sendJson } from "./bff.http.js";
 import {
   MISSION_RUNTIME_MISSIONS_PATH,
+  MISSION_RUNTIME_PROJECTS_PATH,
   missionIdentityFromExecutePath,
   parseMissionCreateRequest,
   parseMissionExecuteRequest,
@@ -14,12 +15,23 @@ export const missionRuntimeAuthenticationMiddleware: BffMiddleware = async (
   context,
   next,
 ) => {
-  if (isMissionRuntimeMutation(context)) {
+  if (isMissionRuntimeRequest(context)) {
     await requireAuthentication(context, next);
     return;
   }
   await next();
 };
+
+export async function handleMissionRuntimeProjects(
+  context: BffRequestContext,
+  gateway: MissionRuntimeGatewayPort | undefined,
+): Promise<void> {
+  sendJson(
+    context.response,
+    200,
+    await requireGateway(gateway).listProjectTargets(context.correlationId),
+  );
+}
 
 export async function handleMissionCreate(
   context: BffRequestContext,
@@ -52,12 +64,17 @@ export async function handleMissionExecute(
   );
 }
 
-function isMissionRuntimeMutation(context: BffRequestContext): boolean {
-  return context.request.method === "POST"
+function isMissionRuntimeRequest(context: BffRequestContext): boolean {
+  return (
+    context.request.method === "GET"
+    && context.pathname === MISSION_RUNTIME_PROJECTS_PATH
+  ) || (
+    context.request.method === "POST"
     && (
       context.pathname === MISSION_RUNTIME_MISSIONS_PATH
       || missionIdentityFromExecutePath(context.pathname) !== null
-    );
+    )
+  );
 }
 
 function requireGateway(

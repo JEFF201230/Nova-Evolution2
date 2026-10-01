@@ -5,11 +5,13 @@ import type {
   MissionExecuteRequestDto,
   MissionExecuteResponseDto,
   MissionRuntimeMissionView,
+  MissionRuntimeProjectsResponseDto,
   MissionRuntimeReportView,
 } from "./mission-runtime.contract.js";
 import type { MissionRuntimeGatewayPort } from "./mission-runtime.gateway.port.js";
 
 const NOVA_CORE_MISSIONS_PATH = "/api/v1/missions";
+const NOVA_CORE_PROJECTS_PATH = "/api/v1/projects";
 const DEFAULT_CREATE_TIMEOUT_MS = 5_000;
 const DEFAULT_EXECUTION_TIMEOUT_MS = 30 * 60_000;
 const EXECUTION_TRANSPORT_MARGIN_MS = 30_000;
@@ -32,6 +34,29 @@ export class HttpMissionRuntimeGateway implements MissionRuntimeGatewayPort {
         "The Mission Runtime Gateway timeout is invalid.",
       );
     }
+  }
+
+  async listProjectTargets(correlationId: string): Promise<MissionRuntimeProjectsResponseDto> {
+    const response = await this.requestJson(
+      "GET",
+      NOVA_CORE_PROJECTS_PATH,
+      undefined,
+      correlationId,
+      this.timeoutMs ?? DEFAULT_CREATE_TIMEOUT_MS,
+    );
+    if (response.status !== 200 || !isRecord(response.value) || !Array.isArray(response.value.projects)) {
+      throw invalidResponse(correlationId);
+    }
+    const projects = response.value.projects.map((project) => {
+      if (!isRecord(project)) {
+        throw invalidResponse(correlationId);
+      }
+      return { projectId: requiredString(project.projectId, correlationId) };
+    });
+    if (new Set(projects.map(({ projectId }) => projectId)).size !== projects.length) {
+      throw invalidResponse(correlationId);
+    }
+    return { projects };
   }
 
   async createMission(
@@ -106,18 +131,28 @@ export class HttpMissionRuntimeGateway implements MissionRuntimeGatewayPort {
     correlationId: string,
     timeoutMs: number,
   ): Promise<{ status: number; value: unknown }> {
+    return await this.requestJson("POST", path, body, correlationId, timeoutMs);
+  }
+
+  private async requestJson(
+    method: "GET" | "POST",
+    path: string,
+    body: MissionCreateRequestDto | MissionExecuteRequestDto | undefined,
+    correlationId: string,
+    timeoutMs: number,
+  ): Promise<{ status: number; value: unknown }> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     timeout.unref();
     try {
       const response = await this.fetcher(new URL(path, this.runtimeOrigin), {
-        method: "POST",
+        method,
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json",
+          ...(body === undefined ? {} : { "Content-Type": "application/json" }),
           "X-Correlation-ID": correlationId,
         },
-        body: JSON.stringify(body),
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         signal: controller.signal,
       });
       if (!response.ok) {

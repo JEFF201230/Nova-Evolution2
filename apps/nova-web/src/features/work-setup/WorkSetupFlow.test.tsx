@@ -1,7 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '../../App';
+
+afterEach(() => vi.unstubAllGlobals());
 
 async function startWorkSetup(objective: string) {
   const user = userEvent.setup();
@@ -21,7 +23,40 @@ async function completeClarify(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('Work Setup flow', () => {
-  it('navigates Home → Clarify → Canvas → Plan → Confirm → Work and retains state', async () => {
+  it('navigates Home → Clarify → Canvas → Plan → Confirm → real Work Overview and retains state', async () => {
+    let createdMissionId = '';
+    vi.stubGlobal('fetch', vi.fn(async (request: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(request);
+      if (path === '/session') {
+        return new Response(JSON.stringify({ authenticated: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'csrf-work-setup' },
+        });
+      }
+      if (path === '/api/home/active-work') {
+        return new Response(JSON.stringify({ works: [] }), { status: 200 });
+      }
+      if (path === '/api/mission-runtime/projects') {
+        return new Response(JSON.stringify({ projects: [{ projectId: 'TARGET-PROJECT' }] }), { status: 200 });
+      }
+      if (path === '/api/mission-runtime/missions') {
+        createdMissionId = (JSON.parse(String(init?.body)) as { missionId: string }).missionId;
+        return new Response(JSON.stringify({
+          created: true,
+          mission: { projectId: 'TARGET-PROJECT', missionId: createdMissionId },
+        }), { status: 201 });
+      }
+      if (path.endsWith('/execute')) {
+        return new Response(JSON.stringify({
+          mission: { projectId: 'TARGET-PROJECT', missionId: createdMissionId },
+          report: { reportId: 'REPORT-1' },
+        }), { status: 200 });
+      }
+      if (path.startsWith('/api/work/')) {
+        return new Response('{}', { status: 404 });
+      }
+      throw new Error(`Unexpected request: ${path}`);
+    }));
     window.history.replaceState({}, '', '/home');
     render(<App />);
 
@@ -50,9 +85,10 @@ describe('Work Setup flow', () => {
     await user.click(screen.getByRole('button', { name: 'Continue to confirm' }));
     expect(screen.getByRole('radio', { name: /A2 — Delegated execution/ })).toBeChecked();
 
+    await user.type(screen.getByLabelText('Allowed repository paths (one per line)'), 'apps/nova-web/src/**');
     await user.click(screen.getByRole('button', { name: 'Create work' }));
-    expect(window.location.pathname).toBe('/work');
-    expect(screen.getByRole('heading', { name: 'No work selected' })).toBeInTheDocument();
+    await waitFor(() => expect(window.location.pathname).toBe(`/work/${createdMissionId}/overview`));
+    expect(createdMissionId).toMatch(/^NOVA-WORK-/);
   });
 
   it.each([

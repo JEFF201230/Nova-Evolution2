@@ -9,6 +9,9 @@ function createInitialState(): WorkSetupState {
     clarifyAnswers: [],
     canvasItems: initialWorkSetupCanvasItems.map((item) => ({ ...item })),
     selectedAutonomyLevel: 1,
+    allowedScopeText: '',
+    forbiddenScopeText: '',
+    missionId: null,
   };
 }
 
@@ -23,13 +26,13 @@ export function WorkSetupProvider({ children }: WorkSetupProviderProps) {
     () => ({
       ...state,
       setObjective(objective: string) {
-        setState((current) => ({ ...current, objective }));
+        setState((current) => ({ ...current, objective, missionId: null }));
       },
       setClarifyAnswer(index: number, answer: string) {
         setState((current) => {
           const clarifyAnswers = [...current.clarifyAnswers];
           clarifyAnswers[index] = answer;
-          return { ...current, clarifyAnswers };
+          return { ...current, clarifyAnswers, missionId: null };
         });
       },
       setCanvasItem(item: WorkSetupCanvasItem) {
@@ -43,11 +46,20 @@ export function WorkSetupProvider({ children }: WorkSetupProviderProps) {
             canvasItems[existingIndex] = item;
           }
 
-          return { ...current, canvasItems };
+          return { ...current, canvasItems, missionId: null };
         });
       },
       setAutonomyLevel(selectedAutonomyLevel: number) {
-        setState((current) => ({ ...current, selectedAutonomyLevel }));
+        setState((current) => ({ ...current, selectedAutonomyLevel, missionId: null }));
+      },
+      setAllowedScopeText(allowedScopeText: string) {
+        setState((current) => ({ ...current, allowedScopeText, missionId: null }));
+      },
+      setForbiddenScopeText(forbiddenScopeText: string) {
+        setState((current) => ({ ...current, forbiddenScopeText, missionId: null }));
+      },
+      setMissionId(missionId: string) {
+        setState((current) => ({ ...current, missionId }));
       },
       resetWorkSetup() {
         setState(createInitialState());

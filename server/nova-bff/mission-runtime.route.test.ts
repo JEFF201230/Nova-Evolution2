@@ -6,6 +6,7 @@ import test from "node:test";
 import { BffError } from "./bff.errors.js";
 import {
   MISSION_RUNTIME_MISSIONS_PATH,
+  MISSION_RUNTIME_PROJECTS_PATH,
   missionRuntimeExecutePath,
   type MissionCreateRequestDto,
   type MissionCreateResponseDto,
@@ -29,6 +30,10 @@ const MISSION_ID = "HTTP-BRIDGE-001";
 test("Mission Runtime routes validate requests and propagate the correlation ID", async (context) => {
   const observed: Array<{ operation: string; correlationId: string; value: unknown }> = [];
   const gateway: MissionRuntimeGatewayPort = {
+    async listProjectTargets(correlationId) {
+      observed.push({ operation: "projects", correlationId, value: null });
+      return { projects: [{ projectId: PROJECT_ID }] };
+    },
     async createMission(request, correlationId) {
       observed.push({ operation: "create", correlationId, value: request });
       return createResult(true);
@@ -41,6 +46,13 @@ test("Mission Runtime routes validate requests and propagate the correlation ID"
   const bff = await startTestBff(testBffConfig(), { missionRuntimeGateway: gateway });
   context.after(() => bff.close());
   const proof = await authenticatedProof(bff.baseUrl);
+
+  const projectsResponse = await fetch(
+    `${bff.baseUrl}${MISSION_RUNTIME_PROJECTS_PATH}`,
+    { headers: { Cookie: proof.cookie, "X-Correlation-ID": CORRELATION_ID } },
+  );
+  assert.equal(projectsResponse.status, 200);
+  assert.deepEqual(await projectsResponse.json(), { projects: [{ projectId: PROJECT_ID }] });
 
   const createResponse = await postJson(
     `${bff.baseUrl}${MISSION_RUNTIME_MISSIONS_PATH}`,
@@ -62,6 +74,7 @@ test("Mission Runtime routes validate requests and propagate the correlation ID"
   assert.equal(executeResponse.headers.get("x-correlation-id"), CORRELATION_ID);
   assert.deepEqual(await executeResponse.json(), executeResult());
   assert.deepEqual(observed, [
+    { operation: "projects", correlationId: CORRELATION_ID, value: null },
     { operation: "create", correlationId: CORRELATION_ID, value: missionDefinition() },
     {
       operation: "execute",
@@ -78,6 +91,10 @@ test("Mission Runtime routes validate requests and propagate the correlation ID"
 test("Mission Runtime routes reject unauthenticated and invalid contracts before the Gateway", async (context) => {
   let calls = 0;
   const gateway: MissionRuntimeGatewayPort = {
+    async listProjectTargets() {
+      calls += 1;
+      return { projects: [{ projectId: PROJECT_ID }] };
+    },
     async createMission() {
       calls += 1;
       return createResult(true);
@@ -97,6 +114,9 @@ test("Mission Runtime routes reject unauthenticated and invalid contracts before
   });
   assert.equal(unauthenticated.status, 401);
   assert.equal((await errorBody(unauthenticated)).error.code, "AUTHENTICATION_REQUIRED");
+  const unauthenticatedProjects = await fetch(`${bff.baseUrl}${MISSION_RUNTIME_PROJECTS_PATH}`);
+  assert.equal(unauthenticatedProjects.status, 401);
+  assert.equal((await errorBody(unauthenticatedProjects)).error.code, "AUTHENTICATION_REQUIRED");
 
   const proof = await authenticatedProof(bff.baseUrl);
   for (const body of [
@@ -153,6 +173,25 @@ test("HTTP Mission Runtime Gateway creates idempotently and exposes only the red
     body: missionDefinition(),
   })));
   assert.doesNotMatch(JSON.stringify(createResult(true)), /internalOnly|objective|scope|authority/);
+});
+
+test("HTTP Mission Runtime Gateway reduces project discovery to project identifiers", async () => {
+  const gateway = new HttpMissionRuntimeGateway(
+    "http://127.0.0.1:4100",
+    async (input, init) => {
+      assert.equal(String(input), "http://127.0.0.1:4100/api/v1/projects");
+      assert.equal(init?.method, "GET");
+      assert.equal(new Headers(init?.headers).get("x-correlation-id"), CORRELATION_ID);
+      return jsonResponse({
+        projects: [{ projectId: PROJECT_ID, repositoryRoot: "C:/private/repository" }],
+      });
+    },
+  );
+
+  const result = await gateway.listProjectTargets(CORRELATION_ID);
+
+  assert.deepEqual(result, { projects: [{ projectId: PROJECT_ID }] });
+  assert.doesNotMatch(JSON.stringify(result), /repositoryRoot|private\/repository/);
 });
 
 test("HTTP Mission Runtime Gateway executes through NOVA Core and minimizes its report", async () => {

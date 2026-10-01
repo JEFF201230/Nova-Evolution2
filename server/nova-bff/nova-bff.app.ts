@@ -35,12 +35,14 @@ import { handleWorkOverview, workIdFromOverviewPath } from "./work-overview.rout
 import type { WorkOverviewGatewayPort } from "./work-overview.gateway.port.js";
 import {
   MISSION_RUNTIME_MISSIONS_PATH,
+  MISSION_RUNTIME_PROJECTS_PATH,
   missionIdentityFromExecutePath,
 } from "./mission-runtime.contract.js";
 import type { MissionRuntimeGatewayPort } from "./mission-runtime.gateway.port.js";
 import {
   handleMissionCreate,
   handleMissionExecute,
+  handleMissionRuntimeProjects,
   missionRuntimeAuthenticationMiddleware,
 } from "./mission-runtime.route.js";
 import {
@@ -181,6 +183,7 @@ function createBffRouter(
       HOME_ACTIVE_WORK_PATH,
       GLOBAL_DELIVERABLES_PATH,
       MISSION_RUNTIME_MISSIONS_PATH,
+      MISSION_RUNTIME_PROJECTS_PATH,
     ]);
     if (publicPaths.has(context.pathname) && !isAllowedMethod(context)) {
       throw new BffError(
@@ -244,6 +247,14 @@ function createBffRouter(
 
     if (context.request.method === "POST" && context.pathname === "/session/logout") {
       await handleLogout(context);
+      return;
+    }
+
+    if (
+      context.request.method === "GET"
+      && context.pathname === MISSION_RUNTIME_PROJECTS_PATH
+    ) {
+      await handleMissionRuntimeProjects(context, missionRuntimeGateway);
       return;
     }
 
@@ -450,6 +461,9 @@ function parseLoginBody(
 }
 
 function isAllowedMethod(context: BffRequestContext): boolean {
+  if (context.pathname === MISSION_RUNTIME_PROJECTS_PATH) {
+    return context.request.method === "GET";
+  }
   if (
     context.pathname === "/session/login"
     || context.pathname === "/session/logout"

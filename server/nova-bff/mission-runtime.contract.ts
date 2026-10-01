@@ -1,6 +1,15 @@
 import { BffError } from "./bff.errors.js";
 
 export const MISSION_RUNTIME_MISSIONS_PATH = "/api/mission-runtime/missions";
+export const MISSION_RUNTIME_PROJECTS_PATH = "/api/mission-runtime/projects";
+
+export interface MissionRuntimeProjectTargetView {
+  readonly projectId: string;
+}
+
+export interface MissionRuntimeProjectsResponseDto {
+  readonly projects: readonly MissionRuntimeProjectTargetView[];
+}
 
 export interface MissionCreateRequestDto {
   readonly projectId: string;

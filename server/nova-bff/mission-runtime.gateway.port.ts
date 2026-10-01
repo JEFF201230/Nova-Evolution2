@@ -3,9 +3,11 @@ import type {
   MissionCreateResponseDto,
   MissionExecuteRequestDto,
   MissionExecuteResponseDto,
+  MissionRuntimeProjectsResponseDto,
 } from "./mission-runtime.contract.js";
 
 export interface MissionRuntimeGatewayPort {
+  listProjectTargets(correlationId: string): Promise<MissionRuntimeProjectsResponseDto>;
   createMission(
     request: MissionCreateRequestDto,
     correlationId: string,
