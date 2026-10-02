@@ -1,0 +1,54 @@
+{
+    "evidenceClass":  "INPUT_EVIDENCE",
+    "capturedBeforeExecution":  true,
+    "contextAssemblyRequested":  false,
+    "admission":  {
+                      "mode":  "NORMAL",
+                      "recoveryLaneClass":  null,
+                      "authority":  null,
+                      "blockedRule":  null,
+                      "reason":  null,
+                      "authorizedScope":  [
+
+                                          ],
+                      "authorizedFiles":  [
+
+                                          ],
+                      "forbiddenFiles":  [
+
+                                         ],
+                      "inputFingerprint":  "4B219AC30812516150DC9D501F02AC84C978D4C024BDE74E97A14F60A722750F",
+                      "nonSelfBlockingException":  false,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-10-02T10:22:36.4190630+00:00"
+                  },
+    "entries":  [
+                    {
+                        "evidenceClass":  "INPUT_EVIDENCE",
+                        "evidenceId":  "MISSION_MANIFEST",
+                        "kind":  "MANIFEST",
+                        "path":  null,
+                        "sha256":  "0E0C290C426FFFAA40650AE368C4F7CEF74C320BC1971B431B614392F5B29E0E",
+                        "status":  "VALID",
+                        "observedAt":  "2026-10-02T10:23:11.5983249+00:00"
+                    },
+                    {
+                        "evidenceClass":  "INPUT_EVIDENCE",
+                        "evidenceId":  "GIT_BASELINE",
+                        "kind":  "GIT_STATE",
+                        "path":  null,
+                        "sha256":  "197A062F5B27F337B04F08956B2F26B360E9F81B2C08AA654C949B460061B50D",
+                        "status":  "VALID",
+                        "observedAt":  "2026-10-02T10:23:14.0417956+00:00"
+                    }
+                ],
+    "status":  "VALID",
+    "registryFingerprint":  "E15853E86F917EDB5422AEFD835355DB0B54B01112AEAE76C879776F2CB604E8"
+}

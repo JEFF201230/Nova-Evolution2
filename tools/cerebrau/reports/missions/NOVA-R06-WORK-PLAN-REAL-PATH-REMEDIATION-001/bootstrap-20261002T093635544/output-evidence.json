@@ -1,0 +1,97 @@
+{
+    "evidenceClass":  "OUTPUT_EVIDENCE",
+    "capturedAfterExecution":  true,
+    "entries":  [
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:repository-diff-check",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "DFCCC0037372B36348308EA4E38B36D6546E36C07E351E62FF24D7A49F70C24A",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:contracts/work-plan.contract.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "75C6776D18292F0ABDCC972AAA87C757AAB93DCF03E4B3DC19A56911EE7E6278",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:server/nova-core/work-plan.http.test.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "9A98B2A16DB8287AE35787DBA9BAB03B7E05F9CB4CC50427C4477DDF2109E32D",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.gateway.port.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "946EFD0F6B512AF48F6BDE92863B2BF0BFDF2324DA7BD62F3B0E6701CA9F8A37",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.gateway.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "FBCF81B12C505FEC0C08B1742F64B9A3059A64231B01E0C5D4E771D050B7DDFA",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.route.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "ED678691396CD95F178323E217132364A8AD78F31E9A77FD5402F089667C6E85",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.route.test.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "F8A4373478FE28C9D7CAF14A17E9713807B46229747CD7905675E1E891FB6817",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/workPlan.service.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "75133BD988059060E50D976F8E6FA620C9B7CB5533BE2D5027A2FD3D8DB22BE1",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/useWorkPlan.ts",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "C1E5D13965F4260117AF0E853EFF61AF08FACD67254F8F1BC9050FC08BA44279",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "8FB4A516C925CF71E276243D23C672CB96EB299E1778BD2B10883C07AB54D90F",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "OFFICIAL_REPORT",
+                        "kind":  "OFFICIAL_REPORT",
+                        "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\official-report.json",
+                        "sha256":  null,
+                        "fingerprintReference":  "ReportFingerprint",
+                        "status":  "VALID"
+                    }
+                ],
+    "status":  "INVALID",
+    "registryFingerprint":  "D7CBD579088943FE64EBE14C408AB500D8A8C443AC6D043A5FD4AA906CF2B28A"
+}

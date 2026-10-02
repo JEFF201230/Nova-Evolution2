@@ -1,0 +1,568 @@
+{
+    "SchemaVersion":  "2.0.0",
+    "Mission":  {
+                    "MissionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001",
+                    "MissionType":  "REMEDIATION",
+                    "ChangesExpected":  true,
+                    "Program":  "NOVA-AS-BUILT-COMPLETION",
+                    "Lot":  "NOVA-R06",
+                    "Title":  "Remediate R06 Work Plan real path certification scope"
+                },
+    "AgenticProfileRequested":  "ARCHITECTURE",
+    "AgenticProfileResolved":  "ARCHITECTURE",
+    "ModelResolved":  "gpt-5.6-sol",
+    "ReasoningLevelResolved":  "high",
+    "SandboxResolved":  "workspace-write",
+    "ApprovalPolicyResolved":  "on-request",
+    "CodexVersion":  "0.153.4",
+    "ProfileResolutionSource":  "Resolve-CerebrauProfile.ps1",
+    "RoutingDecision":  "RESOLVED",
+    "RoutingJustification":  "Profil ARCHITECTURE resolu par le registre CEREBRAU vers ARCHITECTURE.",
+    "RuntimeStartedAt":  "\/Date(1790926595980)\/",
+    "Environment":  {
+                        "Branch":  "feature/nova-runtime-foundation",
+                        "Head":  "bed43713540c6e991ae4776526d194c7497d81de",
+                        "CodexVersion":  "0.153.4",
+                        "Model":  "gpt-5.6-sol",
+                        "Sandbox":  "workspace-write",
+                        "Approval":  "on-request"
+                    },
+    "Codex":  {
+                  "Status":  "SUCCESS",
+                  "ExitCode":  0,
+                  "StartedAt":  "\/Date(1790926595980)\/",
+                  "FinishedAt":  "\/Date(1790926994096)\/",
+                  "DurationMs":  398110,
+                  "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-transcript.txt",
+                  "TranscriptAuthoritative":  false,
+                  "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-stdout.log",
+                  "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-stderr.log",
+                  "TranscriptSource":  "OUTPUT_LAST_MESSAGE",
+                  "OutputLastMessageEmpty":  false,
+                  "StdoutLength":  160932,
+                  "StderrLength":  0,
+                  "TranscriptLength":  3843,
+                  "DiagnosticSummary":  "## Statut technique\n\n`READY_FOR_REVIEW`\n\nLa remédiation confirme que le vertical slice R06 existant est fonctionnel et correctement gouverné. Aucune correction source supplémentaire n’a été nécessaire. Seuls les artefacts temporaires produits par Vite ont été nettoyés/restaurés.\n\n## Validations\n\n| Validation | Résultat |\n|---|---:|\n| Core complet | 547/547 PASS |\n| Runtime/WCF | 24/24 PASS |\n| BFF complet | 96/96 PASS |\n| Frontend complet | 162/162 PASS |\n| Typecheck Core | PASS |\n| Typecheck frontend | PAS[TRUNCATED]",
+                  "DiagnosticSummaryTruncated":  true,
+                  "TerminalEventDetected":  true,
+                  "TerminalSucceeded":  true,
+                  "TerminationForced":  false
+              },
+    "Git":  {
+                "Created":  [
+
+                            ],
+                "Modified":  [
+
+                             ],
+                "Deleted":  [
+
+                            ],
+                "Renamed":  [
+
+                            ],
+                "Insertions":  0,
+                "Deletions":  0,
+                "BranchChanged":  false,
+                "HeadChanged":  false
+            },
+    "Validations":  [
+                        {
+                            "Type":  "gitDiffCheck",
+                            "Name":  "repository-diff-check",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  "warning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkActivityPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDecisionsPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDeliverablesPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPageHeader.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.module.css\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                            "DurationMs":  53.7672
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:contracts/work-plan.contract.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:server/nova-core/work-plan.http.test.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:server/nova-bff/work-plan.gateway.port.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:server/nova-bff/work-plan.gateway.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:server/nova-bff/work-plan.route.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:server/nova-bff/work-plan.route.test.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:apps/nova-web/src/features/work/workPlan.service.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:apps/nova-web/src/features/work/useWorkPlan.ts",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        }
+                    ],
+    "InputEvidence":  {
+                          "evidenceClass":  "INPUT_EVIDENCE",
+                          "capturedBeforeExecution":  true,
+                          "contextAssemblyRequested":  false,
+                          "admission":  {
+                                            "mode":  "NORMAL",
+                                            "recoveryLaneClass":  null,
+                                            "authority":  null,
+                                            "blockedRule":  null,
+                                            "reason":  null,
+                                            "authorizedScope":  [
+
+                                                                ],
+                                            "authorizedFiles":  [
+
+                                                                ],
+                                            "forbiddenFiles":  [
+
+                                                               ],
+                                            "inputFingerprint":  "CFBB20CF3FD30A3CDE86698AF47407FE1BD0E2EC9D56E37D66BE492879CF091C",
+                                            "nonSelfBlockingException":  false,
+                                            "directProductionReleaseAuthorized":  false,
+                                            "freeze":  {
+                                                           "active":  false,
+                                                           "mode":  null,
+                                                           "exceptionApplied":  false,
+                                                           "source":  null,
+                                                           "authority":  null
+                                                       },
+                                            "admittedAt":  "2026-10-02T07:36:35.6653159+00:00"
+                                        },
+                          "entries":  [
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "MISSION_MANIFEST",
+                                              "kind":  "MANIFEST",
+                                              "path":  null,
+                                              "sha256":  "F271850D0D2FE797F15B1F7C4755B08ECCFE5F0D161AD16DE2F30578E6E5F788",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-02T07:37:29.5935220+00:00"
+                                          },
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "GIT_BASELINE",
+                                              "kind":  "GIT_STATE",
+                                              "path":  null,
+                                              "sha256":  "546546A3B81232D59CD92A8169B64DCC95F7EF21514DB6A9AF2506DAB644ADE8",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-02T07:37:31.9510647+00:00"
+                                          }
+                                      ],
+                          "status":  "VALID",
+                          "registryFingerprint":  "74DD7A92125F050DDECDE1B83452DDBCC8D185CECD4BD5C4951A8AC3C7C3092F"
+                      },
+    "OutputEvidence":  {
+                           "evidenceClass":  "OUTPUT_EVIDENCE",
+                           "capturedAfterExecution":  true,
+                           "entries":  [
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:repository-diff-check",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "DFCCC0037372B36348308EA4E38B36D6546E36C07E351E62FF24D7A49F70C24A",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:contracts/work-plan.contract.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "75C6776D18292F0ABDCC972AAA87C757AAB93DCF03E4B3DC19A56911EE7E6278",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:server/nova-core/work-plan.http.test.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "9A98B2A16DB8287AE35787DBA9BAB03B7E05F9CB4CC50427C4477DDF2109E32D",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.gateway.port.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "946EFD0F6B512AF48F6BDE92863B2BF0BFDF2324DA7BD62F3B0E6701CA9F8A37",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.gateway.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "FBCF81B12C505FEC0C08B1742F64B9A3059A64231B01E0C5D4E771D050B7DDFA",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.route.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "ED678691396CD95F178323E217132364A8AD78F31E9A77FD5402F089667C6E85",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:server/nova-bff/work-plan.route.test.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "F8A4373478FE28C9D7CAF14A17E9713807B46229747CD7905675E1E891FB6817",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/workPlan.service.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "75133BD988059060E50D976F8E6FA620C9B7CB5533BE2D5027A2FD3D8DB22BE1",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/useWorkPlan.ts",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "C1E5D13965F4260117AF0E853EFF61AF08FACD67254F8F1BC9050FC08BA44279",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "8FB4A516C925CF71E276243D23C672CB96EB299E1778BD2B10883C07AB54D90F",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "OFFICIAL_REPORT",
+                                               "kind":  "OFFICIAL_REPORT",
+                                               "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\official-report.json",
+                                               "sha256":  null,
+                                               "fingerprintReference":  "ReportFingerprint",
+                                               "status":  "VALID"
+                                           }
+                                       ],
+                           "status":  "INVALID",
+                           "registryFingerprint":  "D7CBD579088943FE64EBE14C408AB500D8A8C443AC6D043A5FD4AA906CF2B28A"
+                       },
+    "Admission":  {
+                      "mode":  "NORMAL",
+                      "recoveryLaneClass":  null,
+                      "authority":  null,
+                      "blockedRule":  null,
+                      "reason":  null,
+                      "authorizedScope":  [
+
+                                          ],
+                      "authorizedFiles":  [
+
+                                          ],
+                      "forbiddenFiles":  [
+
+                                         ],
+                      "inputFingerprint":  "CFBB20CF3FD30A3CDE86698AF47407FE1BD0E2EC9D56E37D66BE492879CF091C",
+                      "nonSelfBlockingException":  false,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-10-02T07:36:35.6653159+00:00"
+                  },
+    "MissionLock":  {
+                        "schemaVersion":  "1.0.0",
+                        "missionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001",
+                        "programId":  "NOVA-AS-BUILT-COMPLETION",
+                        "processId":  38776,
+                        "host":  "JEFFTCHE1200974",
+                        "startedAt":  "2026-10-02T07:36:35.7265125+00:00",
+                        "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+                        "branch":  "feature/nova-runtime-foundation",
+                        "inputFingerprint":  "CFBB20CF3FD30A3CDE86698AF47407FE1BD0E2EC9D56E37D66BE492879CF091C",
+                        "scopeFingerprint":  "014F4E2D183C5AA4E63DA0C7C2A3618D5D6E067B7C7146EC17F5EE664E1BD00F",
+                        "acquired":  true
+                    },
+    "Warnings":  [
+
+                 ],
+    "Errors":  [
+
+               ],
+    "Diagnostics":  [
+                        {
+                            "Step":  "CODEX_EXECUTION",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex a retourne ExitCode 0.",
+                            "Consequence":  "L execution technique est terminee.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Poursuivre les validations autoritatives."
+                        },
+                        {
+                            "Step":  "WORKSPACE_DELTA",
+                            "Severity":  "INFO",
+                            "Fact":  "0 changement(s) attribue(s) a la mission.",
+                            "Consequence":  "Le perimetre mesure est disponible pour validation.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Verifier les controles de perimetre avant certification."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation repository-diff-check reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:contracts/work-plan.contract.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:server/nova-core/work-plan.http.test.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:server/nova-bff/work-plan.gateway.port.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:server/nova-bff/work-plan.gateway.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:server/nova-bff/work-plan.route.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:server/nova-bff/work-plan.route.test.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:apps/nova-web/src/features/work/workPlan.service.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:apps/nova-web/src/features/work/useWorkPlan.ts reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:apps/nova-web/src/features/work/WorkPlanPage.test.tsx reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "CLASSIFICATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Statut officiel calcule: NO_CHANGE.",
+                            "Consequence":  "Ce statut gouverne le rapport officiel.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Appliquer la revue requise."
+                        },
+                        {
+                            "Step":  "CODEX_DIAGNOSTIC_CAPTURE",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex execution streams persisted; ExitCode 0; output-last-message empty: False.",
+                            "Consequence":  "Complete non-authoritative execution diagnostics are available at the recorded paths.",
+                            "Hypothesis":  null,
+                            "CorrectiveAction":  "No corrective action.",
+                            "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-stdout.log",
+                            "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-stderr.log",
+                            "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\\bootstrap-20261002T093635544\\codex-transcript.txt"
+                        }
+                    ],
+    "TechnicalClassification":  "NO_CHANGE",
+    "FinalAuthority":  {
+                           "technicalClassification":  "NO_CHANGE",
+                           "validationResults":  [
+                                                     {
+                                                         "Type":  "gitDiffCheck",
+                                                         "Name":  "repository-diff-check",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  "warning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkActivityPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDecisionsPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDeliverablesPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPageHeader.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.module.css\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                                                         "DurationMs":  53.7672
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:contracts/work-plan.contract.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:server/nova-core/work-plan.http.test.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:server/nova-bff/work-plan.gateway.port.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:server/nova-bff/work-plan.gateway.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:server/nova-bff/work-plan.route.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:server/nova-bff/work-plan.route.test.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:apps/nova-web/src/features/work/workPlan.service.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:apps/nova-web/src/features/work/useWorkPlan.ts",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     }
+                                                 ],
+                           "evidenceStatus":  "INVALID",
+                           "reviewRequirement":  "HUMAN_REVIEW_REQUIRED",
+                           "authorityDecision":  "REJECTED",
+                           "finalMissionState":  "REJECTED",
+                           "decidedBy":  "RUNTIME_VALIDATION_AUTHORITY",
+                           "decidedAt":  "2026-10-02T07:43:19.0266827+00:00",
+                           "reasonCode":  "VALIDATION_OR_EVIDENCE_REJECTED",
+                           "transcriptUsed":  false
+                       },
+    "AuthorityDecision":  "REJECTED",
+    "FinalMissionState":  "REJECTED",
+    "ReportFingerprint":  "09A9515E971E9B1225B937A3A31457A6A32638792BD9237B4AB1623512E2B01D",
+    "Status":  "NO_CHANGE",
+    "ResumePoint":  {
+                        "MissionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001",
+                        "Status":  "NO_CHANGE",
+                        "ReportGeneratedAt":  "\/Date(1790926999044)\/"
+                    }
+}

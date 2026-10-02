@@ -1,0 +1,128 @@
+{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-001",
+    "program":  "NOVA-AS-BUILT-COMPLETION",
+    "lot":  "NOVA-R06",
+    "title":  "Connect Work Plan to authoritative Planning runtime path",
+    "missionType":  "IMPLEMENTATION",
+    "executionMode":  "RUNTIME_MUTATION",
+    "profile":  "ARCHITECTURE",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\missions\\generated\\NOVA-R06-WORK-PLAN-REAL-PATH-001.prompt.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-001",
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "reviewRequired":  true,
+    "enabled":  true,
+    "dependsOn":  [
+                      "NOVA-R05-CONFIRM-TO-REAL-WORK-001"
+                  ],
+    "scopes":  {
+                   "readOnly":  [
+
+                                ],
+                   "write":  [
+                                 "contracts/work-plan.contract.ts",
+                                 "server/nova-core/nova-core.http.ts",
+                                 "server/nova-bff/nova-bff.app.ts",
+                                 "server/nova-bff/nova-bff.server.ts",
+                                 "server/nova-bff/nova-bff.boundary.test.ts",
+                                 "server/nova-bff/work-plan.gateway.port.ts",
+                                 "server/nova-bff/work-plan.gateway.ts",
+                                 "server/nova-bff/work-plan.route.ts",
+                                 "server/nova-bff/work-plan.route.test.ts",
+                                 "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                                 "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                                 "apps/nova-web/src/features/work/WorkPlanPage.module.css",
+                                 "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                                 "apps/nova-web/src/features/work/workPlan.service.ts",
+                                 "apps/nova-web/src/features/work/useWorkPlan.ts",
+                                 "apps/nova-web/src/features/work/WorkPlanRealPath.test.tsx"
+                             ]
+               },
+    "resourceScopes":  [
+                           "contracts/work-plan.contract.ts",
+                           "server/nova-core/nova-core.http.ts",
+                           "server/nova-bff/nova-bff.app.ts",
+                           "server/nova-bff/nova-bff.server.ts",
+                           "server/nova-bff/nova-bff.boundary.test.ts",
+                           "server/nova-bff/work-plan.gateway.port.ts",
+                           "server/nova-bff/work-plan.gateway.ts",
+                           "server/nova-bff/work-plan.route.ts",
+                           "server/nova-bff/work-plan.route.test.ts",
+                           "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                           "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                           "apps/nova-web/src/features/work/WorkPlanPage.module.css",
+                           "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                           "apps/nova-web/src/features/work/workPlan.service.ts",
+                           "apps/nova-web/src/features/work/useWorkPlan.ts",
+                           "apps/nova-web/src/features/work/WorkPlanRealPath.test.tsx"
+                       ],
+    "allowedPaths":  [
+                         "contracts/work-plan.contract.ts",
+                         "server/nova-core/nova-core.http.ts",
+                         "server/nova-bff/nova-bff.app.ts",
+                         "server/nova-bff/nova-bff.server.ts",
+                         "server/nova-bff/nova-bff.boundary.test.ts",
+                         "server/nova-bff/work-plan.gateway.port.ts",
+                         "server/nova-bff/work-plan.gateway.ts",
+                         "server/nova-bff/work-plan.route.ts",
+                         "server/nova-bff/work-plan.route.test.ts",
+                         "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                         "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                         "apps/nova-web/src/features/work/WorkPlanPage.module.css",
+                         "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                         "apps/nova-web/src/features/work/workPlan.service.ts",
+                         "apps/nova-web/src/features/work/useWorkPlan.ts",
+                         "apps/nova-web/src/features/work/WorkPlanRealPath.test.tsx"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "server/domain/planning/**",
+                           "server/domain/work/work-planning.query.ts",
+                           "server/domain/work/work-planning.types.ts",
+                           "server/runtime/**"
+                       ],
+    "deliverables":  [
+                         "contracts/work-plan.contract.ts",
+                         "server/nova-core/nova-core.http.ts",
+                         "server/nova-bff/work-plan.gateway.port.ts",
+                         "server/nova-bff/work-plan.gateway.ts",
+                         "server/nova-bff/work-plan.route.ts",
+                         "server/nova-bff/work-plan.route.test.ts",
+                         "server/nova-bff/nova-bff.app.ts",
+                         "server/nova-bff/nova-bff.server.ts",
+                         "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                         "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                         "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                         "apps/nova-web/src/features/work/workPlan.service.ts",
+                         "apps/nova-web/src/features/work/useWorkPlan.ts",
+                         "apps/nova-web/src/features/work/WorkPlanRealPath.test.tsx"
+                     ],
+    "expectedFiles":  [
+                          "contracts/work-plan.contract.ts",
+                          "server/nova-core/nova-core.http.ts",
+                          "server/nova-bff/work-plan.gateway.port.ts",
+                          "server/nova-bff/work-plan.gateway.ts",
+                          "server/nova-bff/work-plan.route.ts",
+                          "server/nova-bff/work-plan.route.test.ts",
+                          "server/nova-bff/nova-bff.app.ts",
+                          "server/nova-bff/nova-bff.server.ts",
+                          "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                          "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                          "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                          "apps/nova-web/src/features/work/workPlan.service.ts",
+                          "apps/nova-web/src/features/work/useWorkPlan.ts",
+                          "apps/nova-web/src/features/work/WorkPlanRealPath.test.tsx"
+                      ],
+    "validations":  [
+                        {
+                            "name":  "repository-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "architecturalDecision":  "WORK_PLAN_REAL_PATH"
+}

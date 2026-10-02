@@ -1,0 +1,23 @@
+{
+    "schemaVersion":  "1.0.0",
+    "finalizationId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001-AUTHORITY-REVIEW-001",
+    "missionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+    "reportFileName":  "official-report.json",
+    "reportFingerprint":  "A64262EAB37049FCEC500102421437A65112C45330E56C7A0CD4330AB398C9E5",
+    "reportFileSha256":  "11233EB11BAFC686C9C03AFBABFFC1CEC73456BC9E29FBBEE1621FD8A255C66D",
+    "authorityReviewFileSha256":  "EEF039D11EDA1AF31BF6FA9E4A852536DA997D3F3E1ADFAA0625B0075444D862",
+    "decision":  "ACCEPTED",
+    "finalMissionState":  "ACCEPTED",
+    "authority":  "HUMAN_PROGRAM_AUTHORITY",
+    "decidedAt":  "2026-10-02T13:23:37.4031053+00:00",
+    "source":  {
+                   "type":  "STRUCTURED_ATTESTED"
+               },
+    "reservations":  [
+
+                     ],
+    "technicalClassification":  "READY_FOR_REVIEW",
+    "reasonCode":  "STRUCTURED_HUMAN_AUTHORITY_DECISION",
+    "finalizedAt":  "2026-10-02T13:24:01.0546887+00:00",
+    "finalizationFingerprint":  "0D0854760E086074E6C47B7167553AC6BC16B01B6454A53F03000539CE08ACF8"
+}

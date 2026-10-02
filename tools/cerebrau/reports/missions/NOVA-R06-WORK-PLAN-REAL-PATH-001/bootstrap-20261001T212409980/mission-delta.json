@@ -1,0 +1,39 @@
+{
+    "Created":  [
+                    "apps/nova-web/src/features/work/useWorkPlan.ts",
+                    "apps/nova-web/src/features/work/workPlan.service.ts",
+                    "contracts/work-plan.contract.ts",
+                    "server/nova-bff/work-plan.gateway.port.ts",
+                    "server/nova-bff/work-plan.gateway.ts",
+                    "server/nova-bff/work-plan.route.test.ts",
+                    "server/nova-bff/work-plan.route.ts",
+                    "server/nova-core/work-plan.http.test.ts"
+                ],
+    "Modified":  [
+                     "apps/nova-web/dist/assets/index-Czqz2fVL.css",
+                     "apps/nova-web/dist/assets/index-lmoOEJD5.js",
+                     "apps/nova-web/dist/index.html",
+                     "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                     "apps/nova-web/src/features/work/WorkActivityPage.test.tsx",
+                     "apps/nova-web/src/features/work/WorkDecisionsPage.test.tsx",
+                     "apps/nova-web/src/features/work/WorkDeliverablesPage.test.tsx",
+                     "apps/nova-web/src/features/work/WorkPageHeader.tsx",
+                     "apps/nova-web/src/features/work/WorkPlanPage.module.css",
+                     "apps/nova-web/src/features/work/WorkPlanPage.test.tsx",
+                     "apps/nova-web/src/features/work/WorkPlanPage.tsx",
+                     "server/nova-bff/nova-bff.app.ts",
+                     "server/nova-bff/nova-bff.boundary.test.ts",
+                     "server/nova-bff/nova-bff.server.ts",
+                     "server/nova-core/nova-core.http.ts"
+                 ],
+    "Deleted":  [
+
+                ],
+    "Renamed":  [
+
+                ],
+    "Insertions":  943,
+    "Deletions":  131,
+    "BranchChanged":  false,
+    "HeadChanged":  false
+}

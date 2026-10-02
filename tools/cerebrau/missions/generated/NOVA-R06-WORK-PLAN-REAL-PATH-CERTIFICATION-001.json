@@ -1,0 +1,54 @@
+{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+    "program":  "NOVA-AS-BUILT-COMPLETION",
+    "lot":  "NOVA-R06",
+    "title":  "Certify R06 Work Plan real runtime path",
+    "missionType":  "CERTIFICATION",
+    "executionMode":  "READ_ONLY_EVIDENCE",
+    "profile":  "ARCHITECTURE",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\missions\\generated\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001.prompt.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+    "changesExpected":  false,
+    "humanReviewRequired":  true,
+    "reviewRequired":  true,
+    "enabled":  true,
+    "dependsOn":  [
+                      "NOVA-R06-WORK-PLAN-REAL-PATH-001",
+                      "NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001"
+                  ],
+    "scopes":  {
+                   "readOnly":  [
+
+                                ],
+                   "write":  [
+
+                             ]
+               },
+    "resourceScopes":  [
+
+                       ],
+    "allowedPaths":  [
+
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**"
+                       ],
+    "deliverables":  [
+
+                     ],
+    "expectedFiles":  [
+
+                      ],
+    "validations":  [
+                        {
+                            "name":  "repository-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "architecturalDecision":  "WORK_PLAN_REAL_PATH_CERTIFICATION"
+}

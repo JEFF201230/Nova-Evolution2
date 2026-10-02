@@ -1,0 +1,280 @@
+{
+    "SchemaVersion":  "2.0.0",
+    "Mission":  {
+                    "MissionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+                    "MissionType":  "CERTIFICATION",
+                    "ChangesExpected":  false,
+                    "Program":  "NOVA-AS-BUILT-COMPLETION",
+                    "Lot":  "NOVA-R06",
+                    "Title":  "Certify R06 Work Plan real runtime path"
+                },
+    "AgenticProfileRequested":  "ARCHITECTURE",
+    "AgenticProfileResolved":  "ARCHITECTURE",
+    "ModelResolved":  "gpt-5.6-sol",
+    "ReasoningLevelResolved":  "high",
+    "SandboxResolved":  "workspace-write",
+    "ApprovalPolicyResolved":  "on-request",
+    "CodexVersion":  "0.153.4",
+    "ProfileResolutionSource":  "Resolve-CerebrauProfile.ps1",
+    "RoutingDecision":  "RESOLVED",
+    "RoutingJustification":  "Profil ARCHITECTURE resolu par le registre CEREBRAU vers ARCHITECTURE.",
+    "RuntimeStartedAt":  "\/Date(1790936556729)\/",
+    "Environment":  {
+                        "Branch":  "feature/nova-runtime-foundation",
+                        "Head":  "bed43713540c6e991ae4776526d194c7497d81de",
+                        "CodexVersion":  "0.153.4",
+                        "Model":  "gpt-5.6-sol",
+                        "Sandbox":  "workspace-write",
+                        "Approval":  "on-request"
+                    },
+    "Codex":  {
+                  "Status":  "SUCCESS",
+                  "ExitCode":  0,
+                  "StartedAt":  "\/Date(1790936556729)\/",
+                  "FinishedAt":  "\/Date(1790936958407)\/",
+                  "DurationMs":  401659,
+                  "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-transcript.txt",
+                  "TranscriptAuthoritative":  false,
+                  "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-stdout.log",
+                  "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-stderr.log",
+                  "TranscriptSource":  "OUTPUT_LAST_MESSAGE",
+                  "OutputLastMessageEmpty":  false,
+                  "StdoutLength":  990934,
+                  "StderrLength":  0,
+                  "TranscriptLength":  3351,
+                  "DiagnosticSummary":  "# READY_FOR_REVIEW\n\nMission `NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001` is certified.\n\nThe verified runtime chain is:\n\n`WorkPlanningQuery → NovaCoreService → Core HTTP → authenticated BFF → frontend service/hook → Work Plan UI`\n\nEvidence:\n\n- Planning remains authoritative in [work-planning.query.ts](\u003cC:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/server/domain/work/work-planning.query.ts:26\u003e).\n- `NovaCoreService.getWorkPlanning()` delegates directly to that query in [nova-core.servic[TRUNCATED]",
+                  "DiagnosticSummaryTruncated":  true,
+                  "TerminalEventDetected":  true,
+                  "TerminalSucceeded":  true,
+                  "TerminationForced":  false
+              },
+    "Git":  {
+                "Created":  [
+
+                            ],
+                "Modified":  [
+
+                             ],
+                "Deleted":  [
+
+                            ],
+                "Renamed":  [
+
+                            ],
+                "Insertions":  0,
+                "Deletions":  0,
+                "BranchChanged":  false,
+                "HeadChanged":  false
+            },
+    "Validations":  [
+                        {
+                            "Type":  "gitDiffCheck",
+                            "Name":  "repository-diff-check",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  "warning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkActivityPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDecisionsPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDeliverablesPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPageHeader.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.module.css\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                            "DurationMs":  71.256
+                        }
+                    ],
+    "InputEvidence":  {
+                          "evidenceClass":  "INPUT_EVIDENCE",
+                          "capturedBeforeExecution":  true,
+                          "contextAssemblyRequested":  false,
+                          "admission":  {
+                                            "mode":  "NORMAL",
+                                            "recoveryLaneClass":  null,
+                                            "authority":  null,
+                                            "blockedRule":  null,
+                                            "reason":  null,
+                                            "authorizedScope":  [
+
+                                                                ],
+                                            "authorizedFiles":  [
+
+                                                                ],
+                                            "forbiddenFiles":  [
+
+                                                               ],
+                                            "inputFingerprint":  "4B219AC30812516150DC9D501F02AC84C978D4C024BDE74E97A14F60A722750F",
+                                            "nonSelfBlockingException":  false,
+                                            "directProductionReleaseAuthorized":  false,
+                                            "freeze":  {
+                                                           "active":  false,
+                                                           "mode":  null,
+                                                           "exceptionApplied":  false,
+                                                           "source":  null,
+                                                           "authority":  null
+                                                       },
+                                            "admittedAt":  "2026-10-02T10:22:36.4190630+00:00"
+                                        },
+                          "entries":  [
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "MISSION_MANIFEST",
+                                              "kind":  "MANIFEST",
+                                              "path":  null,
+                                              "sha256":  "0E0C290C426FFFAA40650AE368C4F7CEF74C320BC1971B431B614392F5B29E0E",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-02T10:23:11.5983249+00:00"
+                                          },
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "GIT_BASELINE",
+                                              "kind":  "GIT_STATE",
+                                              "path":  null,
+                                              "sha256":  "197A062F5B27F337B04F08956B2F26B360E9F81B2C08AA654C949B460061B50D",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-02T10:23:14.0417956+00:00"
+                                          }
+                                      ],
+                          "status":  "VALID",
+                          "registryFingerprint":  "E15853E86F917EDB5422AEFD835355DB0B54B01112AEAE76C879776F2CB604E8"
+                      },
+    "OutputEvidence":  {
+                           "evidenceClass":  "OUTPUT_EVIDENCE",
+                           "capturedAfterExecution":  true,
+                           "entries":  [
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:repository-diff-check",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "0CC7FD38C0DB981E48B406118B33C7766F6959460631FDFE50DCA6C352377EF3",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "OFFICIAL_REPORT",
+                                               "kind":  "OFFICIAL_REPORT",
+                                               "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\official-report.json",
+                                               "sha256":  null,
+                                               "fingerprintReference":  "ReportFingerprint",
+                                               "status":  "VALID"
+                                           }
+                                       ],
+                           "status":  "VALID",
+                           "registryFingerprint":  "617C8C199F6A6062D41B45263DBF2476A7F7F4282BD6E590950CAC2F0357D5D8"
+                       },
+    "Admission":  {
+                      "mode":  "NORMAL",
+                      "recoveryLaneClass":  null,
+                      "authority":  null,
+                      "blockedRule":  null,
+                      "reason":  null,
+                      "authorizedScope":  [
+
+                                          ],
+                      "authorizedFiles":  [
+
+                                          ],
+                      "forbiddenFiles":  [
+
+                                         ],
+                      "inputFingerprint":  "4B219AC30812516150DC9D501F02AC84C978D4C024BDE74E97A14F60A722750F",
+                      "nonSelfBlockingException":  false,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-10-02T10:22:36.4190630+00:00"
+                  },
+    "MissionLock":  {
+                        "schemaVersion":  "1.0.0",
+                        "missionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+                        "programId":  "NOVA-AS-BUILT-COMPLETION",
+                        "processId":  25560,
+                        "host":  "JEFFTCHE1200974",
+                        "startedAt":  "2026-10-02T10:22:36.5300566+00:00",
+                        "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+                        "branch":  "feature/nova-runtime-foundation",
+                        "inputFingerprint":  "4B219AC30812516150DC9D501F02AC84C978D4C024BDE74E97A14F60A722750F",
+                        "scopeFingerprint":  "D86146544277D32A53AE10EF6B48885840882E9469FDCA28A29A33CE1265FB98",
+                        "acquired":  true
+                    },
+    "Warnings":  [
+
+                 ],
+    "Errors":  [
+
+               ],
+    "Diagnostics":  [
+                        {
+                            "Step":  "CODEX_EXECUTION",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex a retourne ExitCode 0.",
+                            "Consequence":  "L execution technique est terminee.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Poursuivre les validations autoritatives."
+                        },
+                        {
+                            "Step":  "WORKSPACE_DELTA",
+                            "Severity":  "INFO",
+                            "Fact":  "0 changement(s) attribue(s) a la mission.",
+                            "Consequence":  "Le perimetre mesure est disponible pour validation.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Verifier les controles de perimetre avant certification."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation repository-diff-check reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "CLASSIFICATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Statut officiel calcule: READY_FOR_REVIEW.",
+                            "Consequence":  "Ce statut gouverne le rapport officiel.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Appliquer la revue requise."
+                        },
+                        {
+                            "Step":  "CODEX_DIAGNOSTIC_CAPTURE",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex execution streams persisted; ExitCode 0; output-last-message empty: False.",
+                            "Consequence":  "Complete non-authoritative execution diagnostics are available at the recorded paths.",
+                            "Hypothesis":  null,
+                            "CorrectiveAction":  "No corrective action.",
+                            "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-stdout.log",
+                            "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-stderr.log",
+                            "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\\bootstrap-20261002T122236181\\codex-transcript.txt"
+                        }
+                    ],
+    "TechnicalClassification":  "READY_FOR_REVIEW",
+    "FinalAuthority":  {
+                           "technicalClassification":  "READY_FOR_REVIEW",
+                           "validationResults":  [
+                                                     {
+                                                         "Type":  "gitDiffCheck",
+                                                         "Name":  "repository-diff-check",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  "warning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkActivityPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDecisionsPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkDeliverablesPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPageHeader.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.module.css\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPlanPage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                                                         "DurationMs":  71.256
+                                                     }
+                                                 ],
+                           "evidenceStatus":  "VALID",
+                           "reviewRequirement":  "HUMAN_REVIEW_REQUIRED",
+                           "authorityDecision":  "PENDING_REVIEW",
+                           "finalMissionState":  "READY_FOR_REVIEW",
+                           "decidedBy":  "RUNTIME",
+                           "decidedAt":  "2026-10-02T10:29:23.2636801+00:00",
+                           "reasonCode":  "HUMAN_REVIEW_REQUIRED",
+                           "transcriptUsed":  false
+                       },
+    "AuthorityDecision":  "PENDING_REVIEW",
+    "FinalMissionState":  "READY_FOR_REVIEW",
+    "ReportFingerprint":  "A64262EAB37049FCEC500102421437A65112C45330E56C7A0CD4330AB398C9E5",
+    "Status":  "READY_FOR_REVIEW",
+    "ResumePoint":  {
+                        "MissionId":  "NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001",
+                        "Status":  "READY_FOR_REVIEW",
+                        "ReportGeneratedAt":  "\/Date(1790936963317)\/"
+                    }
+}
