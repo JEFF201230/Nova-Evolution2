@@ -8,6 +8,7 @@ $ErrorActionPreference = 'Stop'
 
 $Repository = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $ReportsRoot = Join-Path $Repository '.nova-data\execution\reports'
+$CerebrauReportsRoot = Join-Path $Repository 'tools\cerebrau\reports\missions'
 $CertificationRegistryPath = Join-Path $Repository 'Docs\12_CERTIFICATION\certification-registry.json'
 $TrackerPath = Join-Path $Repository 'Docs\00_GOVERNANCE\PROJECT_TRACKING\NOVA_MISSION_PROGRESS_REPORT.md'
 
@@ -31,7 +32,10 @@ if (-not (Test-Path -LiteralPath $CertificationRegistryPath -PathType Leaf)) {
 
 $CertificationRegistry = Get-Content -LiteralPath $CertificationRegistryPath -Raw | ConvertFrom-Json
 
-$LatestReports = Get-ChildItem -LiteralPath $ReportsRoot -Recurse -File -Filter 'official-report.json' |
+$ReportRoots = @($ReportsRoot)
+if (Test-Path -LiteralPath $CerebrauReportsRoot -PathType Container) { $ReportRoots += $CerebrauReportsRoot }
+
+$LatestReports = $ReportRoots | ForEach-Object { Get-ChildItem -LiteralPath $_ -Recurse -File -Filter 'official-report.json' } |
     Group-Object { $_.Directory.Parent.Name } |
     ForEach-Object {
         $_.Group |
