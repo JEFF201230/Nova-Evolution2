@@ -1,60 +1,75 @@
+import { type ReactNode } from 'react';
+import type { WorkPlanAvailable } from '../../../../../contracts/work-plan.contract';
 import { Skeleton } from '../../components/shared/Skeleton';
 import { Spinner } from '../../components/shared/Spinner';
 import { EmptyState } from '../../components/surfaces/EmptyState';
 import { PageContainer } from '../../components/surfaces/PageContainer';
 import { Surface } from '../../components/surfaces/Surface';
-import type { WorkOverviewFixture } from './workOverviewFixture';
-import type { WorkPlanFixture, WorkPlanPhaseFixture } from './workPlanFixture';
 import { WorkPageHeader } from './WorkPageHeader';
 import overviewStyles from './WorkOverviewPage.module.css';
 import styles from './WorkPlanPage.module.css';
 
-export type WorkPlanState = 'ready' | 'loading' | 'empty' | 'error';
+export type WorkPlanState =
+  | 'ready'
+  | 'loading'
+  | 'empty'
+  | 'withdrawn'
+  | 'unavailable'
+  | 'not-found'
+  | 'error';
 
 export interface WorkPlanPageProps {
-  work?: WorkOverviewFixture;
-  plan?: WorkPlanFixture;
+  plan?: WorkPlanAvailable;
   state?: WorkPlanState;
+  workId?: string;
 }
 
-function PhaseCard({ phase }: { phase: WorkPlanPhaseFixture }) {
+function WorkPlanStateFrame({ children, workId }: { children: ReactNode; workId?: string }) {
+  if (!workId) {
+    return <PageContainer className={overviewStyles.pageState}>{children}</PageContainer>;
+  }
   return (
-    <Surface
-      className={[styles.phaseCard, styles[phase.state]].join(' ')}
-      padding="none"
-    >
-      <span aria-hidden="true" className={styles.phaseStatus}>
-        {phase.state === 'complete' ? '✓' : phase.state === 'active' ? '↻' : ''}
-      </span>
+    <PageContainer className={overviewStyles.page}>
+      <WorkPageHeader activeTab="plan" work={{ workId, title: workId }} />
+      <div className={overviewStyles.pageState}>{children}</div>
+    </PageContainer>
+  );
+}
+
+function CurrentPhase({ plan }: { plan: WorkPlanAvailable }) {
+  return (
+    <Surface className={[styles.phaseCard, styles.active].join(' ')} padding="none">
+      <span aria-hidden="true" className={styles.phaseStatus}>↻</span>
       <div className={styles.phaseContent}>
-        <h2>{phase.title}</h2>
+        <h2>Current phase: {plan.phase.phaseId}</h2>
         <p className={styles.phaseMeta}>
-          <span>{phase.category}</span>
+          <span>Phase {plan.phase.current} of {plan.phase.total}</span>
           <span>·</span>
-          <strong>{phase.probability}% probability</strong>
-          <span>·</span>
-          <span>Remaining: {phase.remaining}</span>
+          <span>Due {plan.dueAt ?? 'Not scheduled'}</span>
         </p>
-        {phase.warning ? <p className={styles.warning}>⚠ {phase.warning}</p> : null}
-        <ul className={styles.taskList}>
-          {phase.tasks.map((task) => (
-            <li className={task.complete ? styles.taskComplete : undefined} key={task.id}>
-              <span aria-hidden="true" className={styles.taskMarker}>
-                {task.complete ? '✓' : ''}
-              </span>
-              <span>{task.label}</span>
-            </li>
-          ))}
-        </ul>
+        {plan.dependencies.length > 0 ? (
+          <>
+            <h3 className={styles.dependencyHeading}>Dependencies</h3>
+            <ul className={styles.dependencyList}>
+              {plan.dependencies.map((dependency) => (
+                <li key={`${dependency.prerequisite}:${dependency.dependent}`}>
+                  <span>{dependency.prerequisite}</span>
+                  <span aria-hidden="true">→</span>
+                  <span>{dependency.dependent}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : <p className={styles.noDependencies}>No dependencies declared.</p>}
       </div>
     </Surface>
   );
 }
 
-export function WorkPlanPage({ work, plan, state = 'ready' }: WorkPlanPageProps) {
+export function WorkPlanPage({ plan, state = 'ready', workId }: WorkPlanPageProps) {
   if (state === 'loading') {
     return (
-      <PageContainer className={overviewStyles.pageState}>
+      <WorkPlanStateFrame workId={workId}>
         <div aria-busy="true" className={styles.loading}>
           <div className={styles.loadingStatus}>
             <Spinner label="Loading Work Plan" />
@@ -64,31 +79,64 @@ export function WorkPlanPage({ work, plan, state = 'ready' }: WorkPlanPageProps)
           <Skeleton height="var(--n-space-120)" />
           <Skeleton height="var(--n-space-120)" />
         </div>
-      </PageContainer>
+      </WorkPlanStateFrame>
     );
   }
 
   if (state === 'error') {
     return (
-      <PageContainer className={overviewStyles.pageState}>
+      <WorkPlanStateFrame workId={workId}>
         <EmptyState heading="Plan unavailable" description="The Work Plan could not be displayed." />
-      </PageContainer>
+      </WorkPlanStateFrame>
     );
   }
 
-  if (state === 'empty' || !work || !plan) {
+  if (state === 'unavailable') {
     return (
-      <PageContainer className={overviewStyles.pageState}>
-        <EmptyState heading="No plan available" description="Select a Work with an available Plan." />
-      </PageContainer>
+      <WorkPlanStateFrame workId={workId}>
+        <EmptyState heading="Plan unavailable" description="The Planning producer is currently unavailable." />
+      </WorkPlanStateFrame>
+    );
+  }
+
+  if (state === 'not-found') {
+    return (
+      <WorkPlanStateFrame workId={workId}>
+        <EmptyState heading="Work not found" description="The requested Work does not exist." />
+      </WorkPlanStateFrame>
+    );
+  }
+
+  if (state === 'withdrawn') {
+    return (
+      <WorkPlanStateFrame workId={workId}>
+        <EmptyState heading="Plan withdrawn" description="The authoritative Planning revision was withdrawn." />
+      </WorkPlanStateFrame>
+    );
+  }
+
+  if (state === 'empty' || !plan) {
+    return (
+      <WorkPlanStateFrame workId={workId}>
+        <EmptyState heading="No plan available" description="No Planning data is available for this Work." />
+      </WorkPlanStateFrame>
     );
   }
 
   return (
     <PageContainer className={overviewStyles.page}>
-      <WorkPageHeader activeTab="plan" showConfidenceLabel work={work} />
+      <WorkPageHeader
+        activeTab="plan"
+        work={{
+          workId: plan.workIdentity.workId,
+          title: plan.workIdentity.workId,
+          phase: plan.phase.current,
+          phaseCount: plan.phase.total,
+          dueLabel: plan.dueAt ?? 'Not scheduled',
+        }}
+      />
       <main aria-label="Work plan" className={styles.planList}>
-        {plan.phases.map((phase) => <PhaseCard key={phase.id} phase={phase} />)}
+        <CurrentPhase plan={plan} />
       </main>
     </PageContainer>
   );

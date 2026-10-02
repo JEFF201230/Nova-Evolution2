@@ -101,6 +101,34 @@
   line-height: var(--n-line-height-145);
 }
 
+.dependencyHeading {
+  margin: var(--n-space-8) 0 0;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-11);
+  text-transform: uppercase;
+}
+
+.dependencyList {
+  display: grid;
+  gap: var(--n-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dependencyList li {
+  display: flex;
+  gap: var(--n-space-8);
+  color: var(--n-color-text);
+  font-size: var(--n-font-size-11);
+}
+
+.noDependencies {
+  margin-top: var(--n-space-8) !important;
+  color: var(--n-color-text-secondary);
+  font-size: var(--n-font-size-11);
+}
+
 .taskList {
   display: grid;
   gap: var(--n-space-6);

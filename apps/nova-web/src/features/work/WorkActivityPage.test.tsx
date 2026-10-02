@@ -6,6 +6,7 @@ import {
   type WorkActivityResponse,
   type WorkActivityRuntimeEvent,
 } from '../../../../../contracts/work-activity.contract';
+import { workPlanPath } from '../../../../../contracts/work-plan.contract';
 import { WorkSurface } from '../../components/routes/WorkSurface';
 import { NavigationShell } from '../../components/shell/NavigationShell';
 import { NavigationProvider } from '../../routes/NavigationProvider';
@@ -150,11 +151,25 @@ describe('Work Activity Runtime read-only', () => {
   });
 
   it('opens Activity from Plan and navigates to the other Work tabs', async () => {
-    installBffFetch();
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>(async (input) => {
+      if (String(input) === workPlanPath('work-001')) {
+        return jsonResponse({
+          plan: {
+            workIdentity: { projectId: 'NOVA-CORE', workId: 'work-001' },
+            state: 'AVAILABLE',
+            phase: { current: 1, total: 1, phaseId: 'execution' },
+            dueAt: null,
+            dependencies: [],
+          },
+        });
+      }
+      return jsonResponse(activityResponse());
+    }));
     const user = userEvent.setup();
     const workId = 'work-001';
     renderWorkSurface(`/work/${workId}/plan`);
 
+    await screen.findByRole('main', { name: 'Work plan' });
     await user.click(screen.getByRole('link', { name: 'Activity' }));
     expect(window.location.pathname).toBe(buildRoutePath('work.activity', { workId }));
     expect(await screen.findByRole('main', { name: 'Work activity' })).toBeInTheDocument();
@@ -173,6 +188,9 @@ describe('Work Activity Runtime read-only', () => {
       await screen.findByRole('main', { name: 'Work activity' });
       await user.click(screen.getByRole('link', { name: label }));
       expect(window.location.pathname).toBe(buildRoutePath(routeName, { workId }));
+      if (routeName === 'work.plan') {
+        await screen.findByRole('main', { name: 'Work plan' });
+      }
     }
   });
 

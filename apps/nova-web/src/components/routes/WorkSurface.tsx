@@ -9,8 +9,8 @@ import { getWorkDecisionsFixture } from '../../features/work/workDecisionsFixtur
 import { getWorkDeliverablesFixture } from '../../features/work/workDeliverablesFixture';
 import { getWorkOverviewFixture } from '../../features/work/workOverviewFixture';
 import { useWorkOverview } from '../../features/work/useWorkOverview';
+import { useWorkPlan } from '../../features/work/useWorkPlan';
 import { getWorkPeopleFixture } from '../../features/work/workPeopleFixture';
-import { getWorkPlanFixture } from '../../features/work/workPlanFixture';
 import { getWorkSourcesFixture } from '../../features/work/workSourcesFixture';
 import { usePathParams, useWorkTab } from '../../hooks/useRouteParams';
 
@@ -18,23 +18,22 @@ export function WorkSurface() {
   const { workId } = usePathParams();
   const activeTab = useWorkTab() ?? 'overview';
   const overview = useWorkOverview(workId, activeTab === 'overview');
+  const plan = useWorkPlan(workId, activeTab === 'plan');
 
   if (activeTab === 'overview') {
     return <WorkOverviewPage activeTab="overview" state={overview.state} work={overview.work} />;
   }
-  const work = workId ? getWorkOverviewFixture(workId) : undefined;
-
   if (activeTab === 'plan') {
-    const plan = workId ? getWorkPlanFixture(workId) : undefined;
-
     return (
       <WorkPlanPage
-        plan={plan}
-        state={work && plan ? 'ready' : 'empty'}
-        work={work}
+        plan={plan.state === 'ready' ? plan.plan : undefined}
+        state={plan.state}
+        workId={workId}
       />
     );
   }
+
+  const work = workId ? getWorkOverviewFixture(workId) : undefined;
 
   if (activeTab === 'activity') {
     return (

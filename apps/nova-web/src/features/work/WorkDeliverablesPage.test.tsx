@@ -112,7 +112,7 @@ describe('Work Deliverables', () => {
     ] as const;
 
     for (const [label, routeName] of destinations) {
-      await user.click(screen.getByRole('link', { name: 'Deliverables (2)' }));
+      await user.click(screen.getByRole('link', { name: /^Deliverables(?: \(2\))?$/ }));
       await user.click(screen.getByRole('link', { name: label }));
       expect(window.location.pathname).toBe(buildRoutePath(routeName, { workId }));
     }

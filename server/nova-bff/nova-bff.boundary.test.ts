@@ -139,6 +139,7 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
     "mission-runtime.gateway.ts",
     "work-activity.gateway.ts",
     "work-overview.gateway.ts",
+    "work-plan.gateway.ts",
   ]);
   const adapter = await readFile(
     new URL("runtime-gateway.adapter.ts", BFF_ROOT),

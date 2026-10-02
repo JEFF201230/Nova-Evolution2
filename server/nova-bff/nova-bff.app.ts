@@ -33,6 +33,8 @@ import { GLOBAL_DELIVERABLES_PATH, handleGlobalDeliverables } from "./global-del
 import type { GlobalDeliverablesGatewayPort } from "./global-deliverables.gateway.port.js";
 import { handleWorkOverview, workIdFromOverviewPath } from "./work-overview.route.js";
 import type { WorkOverviewGatewayPort } from "./work-overview.gateway.port.js";
+import { handleWorkPlan, workIdFromPlanPath } from "./work-plan.route.js";
+import type { WorkPlanGatewayPort } from "./work-plan.gateway.port.js";
 import {
   MISSION_RUNTIME_MISSIONS_PATH,
   MISSION_RUNTIME_PROJECTS_PATH,
@@ -70,6 +72,7 @@ export interface NovaBffDependencies {
   readonly workActivityGateway?: WorkActivityGatewayPort;
   readonly globalDeliverablesGateway?: GlobalDeliverablesGatewayPort;
   readonly workOverviewGateway?: WorkOverviewGatewayPort;
+  readonly workPlanGateway?: WorkPlanGatewayPort;
   readonly missionRuntimeGateway?: MissionRuntimeGatewayPort;
   readonly clock?: () => number;
 }
@@ -122,6 +125,7 @@ export function createNovaBffApplication(
       dependencies.workActivityGateway,
       dependencies.globalDeliverablesGateway,
       dependencies.workOverviewGateway,
+      dependencies.workPlanGateway,
       dependencies.missionRuntimeGateway,
     ),
   ]);
@@ -163,6 +167,7 @@ function createBffRouter(
   workActivityGateway: WorkActivityGatewayPort | undefined,
   globalDeliverablesGateway: GlobalDeliverablesGatewayPort | undefined,
   workOverviewGateway: WorkOverviewGatewayPort | undefined,
+  workPlanGateway: WorkPlanGatewayPort | undefined,
   missionRuntimeGateway: MissionRuntimeGatewayPort | undefined,
 ) {
   return async (
@@ -171,6 +176,7 @@ function createBffRouter(
   ): Promise<void> => {
     const workId = workIdFromActivityPath(context.pathname);
     const overviewWorkId = workIdFromOverviewPath(context.pathname);
+    const planWorkId = workIdFromPlanPath(context.pathname);
     const missionExecutionIdentity = missionIdentityFromExecutePath(context.pathname);
     const publicPaths = new Set([
       "/health",
@@ -192,7 +198,7 @@ function createBffRouter(
         "This endpoint does not accept the requested method.",
       );
     }
-    if ((workId || overviewWorkId) && context.request.method !== "GET") {
+    if ((workId || overviewWorkId || planWorkId) && context.request.method !== "GET") {
       throw new BffError(
         405,
         "METHOD_NOT_ALLOWED",
@@ -304,6 +310,11 @@ function createBffRouter(
 
     if (context.request.method === "GET" && overviewWorkId) {
       await handleWorkOverview(context, workOverviewGateway, overviewWorkId);
+      return;
+    }
+
+    if (context.request.method === "GET" && planWorkId) {
+      await handleWorkPlan(context, workPlanGateway, planWorkId);
       return;
     }
 

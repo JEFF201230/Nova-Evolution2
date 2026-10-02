@@ -2,9 +2,18 @@ import type { MouseEvent } from 'react';
 import { Button } from '../../components/shared/Button';
 import { useNavigation } from '../../hooks/useNavigation';
 import type { RouteName, WorkTab } from '../../routes/RouteDefinition';
-import type { WorkOverviewFixture } from './workOverviewFixture';
 import styles from './WorkOverviewPage.module.css';
 import planStyles from './WorkPlanPage.module.css';
+
+export interface WorkPageHeaderModel {
+  readonly workId: string;
+  readonly title: string;
+  readonly confidence?: number;
+  readonly phase?: number;
+  readonly phaseCount?: number;
+  readonly dueLabel?: string;
+  readonly deliverables?: readonly unknown[];
+}
 
 const workTabs: readonly { id: WorkTab; label: string; routeName: RouteName }[] = [
   { id: 'overview', label: 'Overview', routeName: 'work.overview' },
@@ -25,7 +34,7 @@ export function WorkPageHeader({
   activeTab,
   showConfidenceLabel = false,
 }: {
-  work: WorkOverviewFixture;
+  work: WorkPageHeaderModel;
   activeTab: WorkTab;
   showConfidenceLabel?: boolean;
 }) {
@@ -47,10 +56,10 @@ export function WorkPageHeader({
   }
 
   function tabLabel(tab: (typeof workTabs)[number]) {
-    if (tab.id === 'decisions') {
+    if (tab.id === 'decisions' && work.deliverables) {
       return `${tab.label} (1)`;
     }
-    if (tab.id === 'deliverables') {
+    if (tab.id === 'deliverables' && work.deliverables) {
       return `${tab.label} (${work.deliverables.length})`;
     }
     return tab.label;
@@ -65,7 +74,7 @@ export function WorkPageHeader({
             showConfidenceLabel && planStyles.workMetaCompact,
           ].filter(Boolean).join(' ')}
         >
-          {showConfidenceLabel ? (
+          {showConfidenceLabel && work.confidence !== undefined ? (
             <>
               <span className={planStyles.confidenceCluster}>
                 <strong>{work.confidence}%</strong>
@@ -73,12 +82,14 @@ export function WorkPageHeader({
               </span>
               <span aria-hidden="true">·</span>
             </>
-          ) : (
+          ) : work.confidence !== undefined ? (
             <strong className={styles.confidenceText}>{work.confidence}%</strong>
-          )}
-          <span>
-            Phase {work.phase}/{work.phaseCount} · Due {work.dueLabel}
-          </span>
+          ) : null}
+          {work.phase !== undefined && work.phaseCount !== undefined ? (
+            <span>
+              Phase {work.phase}/{work.phaseCount} · Due {work.dueLabel ?? 'Not scheduled'}
+            </span>
+          ) : null}
         </div>
         <h1 className={styles.title}>{work.title}</h1>
       </div>

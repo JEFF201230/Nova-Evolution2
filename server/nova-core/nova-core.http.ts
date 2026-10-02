@@ -13,6 +13,11 @@ import {
   type CertificationAuthorizationPolicy,
 } from "./mission-certification.js";
 import { RUNTIME_ACTIVE_WORK_PATH } from "../../contracts/home-active-work.contract.js";
+import {
+  parseWorkPlanResponse,
+  type WorkPlanResponse,
+} from "../../contracts/work-plan.contract.js";
+import type { WorkPlanningReadResult } from "../domain/work/index.js";
 
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -145,6 +150,14 @@ async function route(
       return;
     }
     sendJson(response, 200, { overview: result.overview });
+    return;
+  }
+
+  if (request.method === "GET" && parts[5] === "plan" && parts.length === 6) {
+    if (!core.getMission(projectId, missionId)) {
+      throw new NovaCoreError(404, "WORK_NOT_FOUND", "Le Work demande n'existe pas.");
+    }
+    sendJson(response, 200, workPlanResponse(core.getWorkPlanning(projectId, missionId)));
     return;
   }
 
@@ -300,6 +313,31 @@ async function route(
 
 function missionView(mission: RuntimeMission | null): (RuntimeMission & { canonicalState: string }) | null {
   return mission ? { ...mission, canonicalState: canonicalStateOf(mission.state) } : null;
+}
+
+function workPlanResponse(result: WorkPlanningReadResult): WorkPlanResponse {
+  const workIdentity = { projectId: result.projectId, workId: result.workId };
+  const response: WorkPlanResponse = result.status === "PLANNING_AVAILABLE"
+    ? {
+      plan: {
+        workIdentity,
+        state: "AVAILABLE",
+        phase: result.phase,
+        dueAt: result.dueAt,
+        dependencies: result.dependencies,
+      },
+    }
+    : {
+      plan: {
+        workIdentity,
+        state: result.status === "PLANNING_ABSENT"
+          ? "ABSENT"
+          : result.status === "PLANNING_WITHDRAWN"
+            ? "WITHDRAWN"
+            : "UNAVAILABLE",
+      },
+    };
+  return parseWorkPlanResponse(response);
 }
 
 function validateMissionDefinition(input: unknown): MissionDefinition {
