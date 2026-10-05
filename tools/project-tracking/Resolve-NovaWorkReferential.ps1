@@ -61,7 +61,7 @@ function Get-CertificationState {
     $missionId = $null
     if (-not [string]::IsNullOrWhiteSpace($certPath)) {
         $absolute = Join-Path $Repository ($certPath -replace '/', '\')
-        if (Test-Path -LiteralPath $absolute -PathType Leaf) {
+        if ((Test-Path -LiteralPath $absolute -PathType Leaf) -and $certPath.EndsWith('.json', [StringComparison]::OrdinalIgnoreCase)) {
             $cert = Get-Content -LiteralPath $absolute -Raw | ConvertFrom-Json
             $status = [string]$cert.Status
             $missionId = [string]$cert.MissionId
