@@ -11,6 +11,8 @@ $ReportsRoot = Join-Path $Repository '.nova-data\execution\reports'
 $CerebrauReportsRoot = Join-Path $Repository 'tools\cerebrau\reports\missions'
 $CertificationRegistryPath = Join-Path $Repository 'Docs\12_CERTIFICATION\certification-registry.json'
 $TrackerPath = Join-Path $Repository 'Docs\00_GOVERNANCE\PROJECT_TRACKING\NOVA_MISSION_PROGRESS_REPORT.md'
+$WorkReferentialReconcilerPath = Join-Path $Repository 'tools\project-tracking\Resolve-NovaWorkReferential.ps1'
+$WorkReferentialStatePath = Join-Path $Repository '.nova-data\project-tracking\NOVA_WORK_REFERENTIAL_CURRENT_STATE.json'
 
 if ([string]::IsNullOrWhiteSpace($ExcelPath)) {
     $ExcelPath = Join-Path $Repository 'Docs\00_GOVERNANCE\PROJECT_TRACKING\NOVA_ROADMAP_GANTT_2026-09-29.xlsx'
@@ -29,6 +31,13 @@ if (-not (Test-Path -LiteralPath $TrackerPath -PathType Leaf)) {
 if (-not (Test-Path -LiteralPath $CertificationRegistryPath -PathType Leaf)) {
     throw "CERTIFICATION_REGISTRY_NOT_FOUND:$CertificationRegistryPath"
 }
+if (-not (Test-Path -LiteralPath $WorkReferentialReconcilerPath -PathType Leaf)) {
+    throw "WORK_REFERENTIAL_RECONCILER_NOT_FOUND:$WorkReferentialReconcilerPath"
+}
+
+# Reconcile WORK legacy/current state before projecting mission status. This projection never mutates certifications.
+& $WorkReferentialReconcilerPath -Repository $Repository -OutputPath $WorkReferentialStatePath
+if ($LASTEXITCODE -ne 0) { throw 'WORK_REFERENTIAL_RECONCILIATION_FAILED' }
 
 $CertificationRegistry = Get-Content -LiteralPath $CertificationRegistryPath -Raw | ConvertFrom-Json
 
