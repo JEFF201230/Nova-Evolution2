@@ -1,4 +1,4 @@
-﻿# NOVA — MISSION PROGRESS REPORT
+# NOVA — MISSION PROGRESS REPORT
 
 ## Objet
 
@@ -80,6 +80,8 @@ Règle canonique : Work Overview nécessite WCF-001 à WCF-008 et la disponibili
 | NOVA-R06-WORK-PLAN-REAL-PATH-001 | PARTIAL | REJECTED | REJECTED | `tools\cerebrau\reports\missions\NOVA-R06-WORK-PLAN-REAL-PATH-001\bootstrap-20261001T212409980\official-report.json` |
 | NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001 | READY_FOR_REVIEW | ACCEPTED | ACCEPTED | `tools\cerebrau\reports\missions\NOVA-R06-WORK-PLAN-REAL-PATH-CERTIFICATION-001\bootstrap-20261002T122236181\official-report.json` |
 | NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001 | NO_CHANGE | REJECTED | REJECTED | `tools\cerebrau\reports\missions\NOVA-R06-WORK-PLAN-REAL-PATH-REMEDIATION-001\bootstrap-20261002T093635544\official-report.json` |
+| NOVA-R08-WORK-PEOPLE-REAL-PATH-001 | PARTIAL | REJECTED | REJECTED | `tools\cerebrau\reports\missions\NOVA-R08-WORK-PEOPLE-REAL-PATH-001\bootstrap-20261003T180129549\official-report.json` |
+| NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001 | READY_FOR_REVIEW | ACCEPTED | ACCEPTED | `tools\cerebrau\reports\missions\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\bootstrap-20261004T113052217\official-report.json` |
 | NOVA-SUPER-WAVE-RT12-PROVENANCE-CLOSURE-001 | READY_FOR_REVIEW | PENDING_REVIEW | READY_FOR_REVIEW | `.nova-data\execution\reports\PROGRAM-003\NOVA-SUPER-WAVE-RT12-PROVENANCE-CLOSURE-001\bootstrap-20260917T160907003\official-report.json` |
 | NOVA-WORK-CERTIFICATION-FINAL-CLOSURE-001 | READY_FOR_REVIEW | PENDING_REVIEW | READY_FOR_REVIEW | `.nova-data\execution\reports\PROGRAM-003\NOVA-WORK-CERTIFICATION-FINAL-CLOSURE-001\bootstrap-20260919T162258742\official-report.json` |
 | NOVA-WORK-WCF008-C19-RED-TEAM-REVALIDATION-001 | READY_FOR_REVIEW | PENDING_REVIEW | READY_FOR_REVIEW | `.nova-data\execution\reports\PROGRAM-003\NOVA-WORK-WCF008-C19-RED-TEAM-REVALIDATION-001\bootstrap-20260928T141436900\official-report.json` |
@@ -116,12 +118,3 @@ Règle canonique : Work Overview nécessite WCF-001 à WCF-008 et la disponibili
 ## Point de reprise
 
 À générer à partir des sources officielles après rattachement des missions à la roadmap globale.
-
-
-
-
-
-
-
-
-

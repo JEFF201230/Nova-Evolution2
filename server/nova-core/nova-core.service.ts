@@ -62,6 +62,7 @@ import { FileSynthesisJournal, SynthesisAuthority, SynthesisQueries } from "../d
 import { PeopleAggregatePersistenceStore } from "../domain/people/people-persistence-aggregate-store.js";
 import { PeopleQueryService } from "../domain/people/people-query-service.js";
 import { WorkCoreFoundation, WorkDecisionsService, WorkDeliverablesQuery, WorkPeopleQuery } from "../runtime/work/work-core.js";
+import type { WorkPeopleReadResult } from "../runtime/work/work-people.types.js";
 import { WorkOverviewQuery, type WorkOverviewQueryResult } from "./work-overview.query.js";
 
 const DEFAULT_AGENTS: RuntimeAgent[] = [
@@ -101,6 +102,7 @@ export class NovaCoreService {
     private readonly projectExecutionTargets: ReadonlyMap<string, NovaCoreProjectExecutionTarget>,
     readonly actionsInternalAccess: ActionsInternalAccess,
     private readonly workPlanning: WorkPlanningQuery,
+    private readonly workPeople: WorkPeopleQuery,
     private readonly workConfidence: WorkConfidenceQuery,
     private readonly workOverview: WorkOverviewQuery,
   ) {}
@@ -181,6 +183,7 @@ export class NovaCoreService {
       configuredTargets,
       actionsInternalAccess,
       planning,
+      people,
       confidence,
       overview,
     );
@@ -496,6 +499,10 @@ export class NovaCoreService {
 
   getWorkPlanning(projectId: string, workId: string): WorkPlanningReadResult {
     return this.workPlanning.get({ projectId, workId });
+  }
+
+  getWorkPeople(projectId: string, workId: string, qualifiedAt = new Date()): WorkPeopleReadResult {
+    return this.workPeople.get({ projectId, workId }, qualifiedAt);
   }
 
   getWorkConfidence(projectId: string, workId: string): WorkConfidenceReadResult {

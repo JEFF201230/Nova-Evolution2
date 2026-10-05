@@ -1,0 +1,37 @@
+{
+    "Created":  [
+                    "apps/nova-web/dist/assets/index-aMAn_aXH.js",
+                    "apps/nova-web/dist/assets/index-MU3gD0pQ.css",
+                    "apps/nova-web/src/features/work/useWorkPeople.ts",
+                    "apps/nova-web/src/features/work/workPeople.service.ts",
+                    "contracts/work-people.contract.ts",
+                    "server/nova-bff/work-people.gateway.port.ts",
+                    "server/nova-bff/work-people.gateway.ts",
+                    "server/nova-bff/work-people.route.test.ts",
+                    "server/nova-bff/work-people.route.ts",
+                    "server/nova-core/work-people.http.test.ts",
+                    "server/nova-core/work-people.integration.test.ts"
+                ],
+    "Modified":  [
+                     "apps/nova-web/dist/index.html",
+                     "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                     "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                     "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                     "server/nova-bff/nova-bff.app.ts",
+                     "server/nova-bff/nova-bff.boundary.test.ts",
+                     "server/nova-bff/nova-bff.server.ts",
+                     "server/nova-core/nova-core.http.ts",
+                     "server/nova-core/nova-core.service.ts"
+                 ],
+    "Deleted":  [
+                    "apps/nova-web/dist/assets/index-Czqz2fVL.css",
+                    "apps/nova-web/dist/assets/index-lmoOEJD5.js"
+                ],
+    "Renamed":  [
+
+                ],
+    "Insertions":  745,
+    "Deletions":  285,
+    "BranchChanged":  false,
+    "HeadChanged":  false
+}

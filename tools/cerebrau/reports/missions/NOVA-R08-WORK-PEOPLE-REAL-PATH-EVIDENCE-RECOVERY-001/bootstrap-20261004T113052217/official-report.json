@@ -1,0 +1,360 @@
+{
+    "SchemaVersion":  "2.0.0",
+    "Mission":  {
+                    "MissionId":  "NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001",
+                    "MissionType":  "REMEDIATION",
+                    "ChangesExpected":  true,
+                    "Program":  "NOVA-AS-BUILT-COMPLETION",
+                    "Lot":  "NOVA-R08-RECOVERY",
+                    "Title":  "R08 Work People Real Path Evidence Recovery"
+                },
+    "AgenticProfileRequested":  "ARCHITECTURE",
+    "AgenticProfileResolved":  "ARCHITECTURE",
+    "ModelResolved":  "gpt-5.6-sol",
+    "ReasoningLevelResolved":  "high",
+    "SandboxResolved":  "workspace-write",
+    "ApprovalPolicyResolved":  "on-request",
+    "CodexVersion":  "0.153.4",
+    "ProfileResolutionSource":  "Resolve-CerebrauProfile.ps1",
+    "RoutingDecision":  "RESOLVED",
+    "RoutingJustification":  "Profil ARCHITECTURE resolu par le registre CEREBRAU vers ARCHITECTURE.",
+    "RuntimeStartedAt":  "\/Date(1791106252819)\/",
+    "Environment":  {
+                        "Branch":  "feature/nova-runtime-foundation",
+                        "Head":  "52c9f7662b10655315b473275f63ff056e3e0d8c",
+                        "CodexVersion":  "0.153.4",
+                        "Model":  "gpt-5.6-sol",
+                        "Sandbox":  "workspace-write",
+                        "Approval":  "on-request"
+                    },
+    "Codex":  {
+                  "Status":  "SUCCESS",
+                  "ExitCode":  0,
+                  "StartedAt":  "\/Date(1791106252819)\/",
+                  "FinishedAt":  "\/Date(1791106553641)\/",
+                  "DurationMs":  300814,
+                  "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-transcript.txt",
+                  "TranscriptAuthoritative":  false,
+                  "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-stdout.log",
+                  "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-stderr.log",
+                  "TranscriptSource":  "OUTPUT_LAST_MESSAGE",
+                  "OutputLastMessageEmpty":  false,
+                  "StdoutLength":  1038626,
+                  "StderrLength":  0,
+                  "TranscriptLength":  204,
+                  "DiagnosticSummary":  "[Open the R08 Evidence Recovery Report](\u003c/C:/DEV/NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)/nova-core-mvp/Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md\u003e)",
+                  "DiagnosticSummaryTruncated":  false,
+                  "TerminalEventDetected":  true,
+                  "TerminalSucceeded":  true,
+                  "TerminationForced":  false
+              },
+    "Git":  {
+                "Created":  [
+                                "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                            ],
+                "Modified":  [
+
+                             ],
+                "Deleted":  [
+
+                            ],
+                "Renamed":  [
+
+                            ],
+                "Insertions":  136,
+                "Deletions":  0,
+                "BranchChanged":  false,
+                "HeadChanged":  false
+            },
+    "Validations":  [
+                        {
+                            "Type":  "gitDiffCheck",
+                            "Name":  "repository-diff-check",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  "warning: in the working copy of \u0027apps/nova-web/dist/index.html\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPeoplePage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPeoplePage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.service.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                            "DurationMs":  55.3187
+                        },
+                        {
+                            "Type":  "expectedFile",
+                            "Name":  "expected:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        },
+                        {
+                            "Type":  "pathScope",
+                            "Name":  "scope:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                            "Passed":  true,
+                            "Required":  true,
+                            "Message":  null,
+                            "DurationMs":  0
+                        }
+                    ],
+    "InputEvidence":  {
+                          "evidenceClass":  "INPUT_EVIDENCE",
+                          "capturedBeforeExecution":  true,
+                          "contextAssemblyRequested":  false,
+                          "admission":  {
+                                            "mode":  "RECOVERY",
+                                            "recoveryLaneClass":  "EVIDENCE_PRODUCTION",
+                                            "authority":  "PROGRAM_DIRECTOR",
+                                            "blockedRule":  "PATH_SCOPE_VIOLATION",
+                                            "reason":  "Produce controlled evidence for the already implemented R08 after the original mission was rejected by six PATH_SCOPE_VIOLATION findings.",
+                                            "authorizedScope":  [
+                                                                    "Docs/00_GOVERNANCE/PROJECT_TRACKING/**"
+                                                                ],
+                                            "authorizedFiles":  [
+                                                                    "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                                                                ],
+                                            "forbiddenFiles":  [
+                                                                   "contracts/**",
+                                                                   "server/**",
+                                                                   "apps/nova-web/src/**",
+                                                                   "apps/nova-web/dist/**",
+                                                                   ".git/**"
+                                                               ],
+                                            "inputFingerprint":  "330487254576F51D8E7774137DB77249E9521C185E0CCF6468A7C3961B3D7324",
+                                            "nonSelfBlockingException":  true,
+                                            "directProductionReleaseAuthorized":  false,
+                                            "freeze":  {
+                                                           "active":  false,
+                                                           "mode":  null,
+                                                           "exceptionApplied":  false,
+                                                           "source":  null,
+                                                           "authority":  null
+                                                       },
+                                            "admittedAt":  "2026-10-04T09:30:52.3347518+00:00"
+                                        },
+                          "entries":  [
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "MISSION_MANIFEST",
+                                              "kind":  "MANIFEST",
+                                              "path":  null,
+                                              "sha256":  "2021987A982939507092D04FAA1BE565B681F6351F5B9D5684F42D50C9BB0D81",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-04T09:31:28.1950276+00:00"
+                                          },
+                                          {
+                                              "evidenceClass":  "INPUT_EVIDENCE",
+                                              "evidenceId":  "GIT_BASELINE",
+                                              "kind":  "GIT_STATE",
+                                              "path":  null,
+                                              "sha256":  "A0485A77AFA0FDFB8E66A82299500ABA7AEF748F4A8E8AF31D65DE97E3A4C613",
+                                              "status":  "VALID",
+                                              "observedAt":  "2026-10-04T09:31:30.3153098+00:00"
+                                          }
+                                      ],
+                          "status":  "VALID",
+                          "registryFingerprint":  "4F1B107777140F2D944A8BB875563DB6F8B0E5CAA57C8BEDEE901BCC5BE6A854"
+                      },
+    "OutputEvidence":  {
+                           "evidenceClass":  "OUTPUT_EVIDENCE",
+                           "capturedAfterExecution":  true,
+                           "entries":  [
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "CREATED:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                               "kind":  "CREATED",
+                                               "path":  "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                               "sha256":  "4629C72E1C46943A9A1BB010B1B7C2D64A4AA6E411FBCD7778871FBB3B0AD0C7",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:repository-diff-check",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "01C51D8FF3BBD2A1482CC4EB168B7D22B5885AB67816D09F413C37F698958FE3",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:expected:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "866CB461168408B6CCF6727D5B2B8011128CD504DF729CE705E20C5F42E01B26",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "VALIDATION:scope:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                               "kind":  "VALIDATION_RESULT",
+                                               "path":  null,
+                                               "sha256":  "EEFDB8D05CCE62E6C44CEED7F27C83BEE72AA7864700525A0952A6F370DA23AD",
+                                               "status":  "VALID"
+                                           },
+                                           {
+                                               "evidenceClass":  "OUTPUT_EVIDENCE",
+                                               "evidenceId":  "OFFICIAL_REPORT",
+                                               "kind":  "OFFICIAL_REPORT",
+                                               "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\official-report.json",
+                                               "sha256":  null,
+                                               "fingerprintReference":  "ReportFingerprint",
+                                               "status":  "VALID"
+                                           }
+                                       ],
+                           "status":  "VALID",
+                           "registryFingerprint":  "6B9EBE617BA84A30467A76E504D31520485E4D5972F650AF9EBCE1A3FF654362"
+                       },
+    "Admission":  {
+                      "mode":  "RECOVERY",
+                      "recoveryLaneClass":  "EVIDENCE_PRODUCTION",
+                      "authority":  "PROGRAM_DIRECTOR",
+                      "blockedRule":  "PATH_SCOPE_VIOLATION",
+                      "reason":  "Produce controlled evidence for the already implemented R08 after the original mission was rejected by six PATH_SCOPE_VIOLATION findings.",
+                      "authorizedScope":  [
+                                              "Docs/00_GOVERNANCE/PROJECT_TRACKING/**"
+                                          ],
+                      "authorizedFiles":  [
+                                              "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                                          ],
+                      "forbiddenFiles":  [
+                                             "contracts/**",
+                                             "server/**",
+                                             "apps/nova-web/src/**",
+                                             "apps/nova-web/dist/**",
+                                             ".git/**"
+                                         ],
+                      "inputFingerprint":  "330487254576F51D8E7774137DB77249E9521C185E0CCF6468A7C3961B3D7324",
+                      "nonSelfBlockingException":  true,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-10-04T09:30:52.3347518+00:00"
+                  },
+    "MissionLock":  {
+                        "schemaVersion":  "1.0.0",
+                        "missionId":  "NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001",
+                        "programId":  "NOVA-AS-BUILT-COMPLETION",
+                        "processId":  20696,
+                        "host":  "JEFFTCHE1200974",
+                        "startedAt":  "2026-10-04T09:30:52.3949070+00:00",
+                        "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+                        "branch":  "feature/nova-runtime-foundation",
+                        "inputFingerprint":  "330487254576F51D8E7774137DB77249E9521C185E0CCF6468A7C3961B3D7324",
+                        "scopeFingerprint":  "823B6603B59A0B0BED30EB9F2BBD8330B11F800E01135B548AC38F3CE452AC41",
+                        "acquired":  true
+                    },
+    "Warnings":  [
+
+                 ],
+    "Errors":  [
+
+               ],
+    "Diagnostics":  [
+                        {
+                            "Step":  "CODEX_EXECUTION",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex a retourne ExitCode 0.",
+                            "Consequence":  "L execution technique est terminee.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Poursuivre les validations autoritatives."
+                        },
+                        {
+                            "Step":  "WORKSPACE_DELTA",
+                            "Severity":  "INFO",
+                            "Fact":  "1 changement(s) attribue(s) a la mission.",
+                            "Consequence":  "Le perimetre mesure est disponible pour validation.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Verifier les controles de perimetre avant certification."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation repository-diff-check reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation expected:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "VALIDATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Validation scope:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md reussie.",
+                            "Consequence":  "Cette exigence est satisfaite.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Aucune action corrective."
+                        },
+                        {
+                            "Step":  "CLASSIFICATION",
+                            "Severity":  "INFO",
+                            "Fact":  "Statut officiel calcule: READY_FOR_REVIEW.",
+                            "Consequence":  "Ce statut gouverne le rapport officiel.",
+                            "Hypothesis":  "",
+                            "CorrectiveAction":  "Appliquer la revue requise."
+                        },
+                        {
+                            "Step":  "CODEX_DIAGNOSTIC_CAPTURE",
+                            "Severity":  "INFO",
+                            "Fact":  "Codex execution streams persisted; ExitCode 0; output-last-message empty: False.",
+                            "Consequence":  "Complete non-authoritative execution diagnostics are available at the recorded paths.",
+                            "Hypothesis":  null,
+                            "CorrectiveAction":  "No corrective action.",
+                            "CodexStdoutPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-stdout.log",
+                            "CodexStderrPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-stderr.log",
+                            "TranscriptPath":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\codex-transcript.txt"
+                        }
+                    ],
+    "TechnicalClassification":  "READY_FOR_REVIEW",
+    "FinalAuthority":  {
+                           "technicalClassification":  "READY_FOR_REVIEW",
+                           "validationResults":  [
+                                                     {
+                                                         "Type":  "gitDiffCheck",
+                                                         "Name":  "repository-diff-check",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  "warning: in the working copy of \u0027apps/nova-web/dist/index.html\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/components/routes/WorkSurface.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPeoplePage.test.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027apps/nova-web/src/features/work/WorkPeoplePage.tsx\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.app.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.boundary.test.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-bff/nova-bff.server.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.http.ts\u0027, LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of \u0027server/nova-core/nova-core.service.ts\u0027, LF will be replaced by CRLF the next time Git touches it",
+                                                         "DurationMs":  55.3187
+                                                     },
+                                                     {
+                                                         "Type":  "expectedFile",
+                                                         "Name":  "expected:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     },
+                                                     {
+                                                         "Type":  "pathScope",
+                                                         "Name":  "scope:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                                                         "Passed":  true,
+                                                         "Required":  true,
+                                                         "Message":  null,
+                                                         "DurationMs":  0
+                                                     }
+                                                 ],
+                           "evidenceStatus":  "VALID",
+                           "reviewRequirement":  "HUMAN_REVIEW_REQUIRED",
+                           "authorityDecision":  "PENDING_REVIEW",
+                           "finalMissionState":  "READY_FOR_REVIEW",
+                           "decidedBy":  "RUNTIME",
+                           "decidedAt":  "2026-10-04T09:35:58.6786314+00:00",
+                           "reasonCode":  "HUMAN_REVIEW_REQUIRED",
+                           "transcriptUsed":  false
+                       },
+    "AuthorityDecision":  "PENDING_REVIEW",
+    "FinalMissionState":  "READY_FOR_REVIEW",
+    "ReportFingerprint":  "D2A060F8AC39D1E000FB48D39CFC740401FEB566AC2AD625D94373CEDA999D8F",
+    "Status":  "READY_FOR_REVIEW",
+    "ResumePoint":  {
+                        "MissionId":  "NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001",
+                        "Status":  "READY_FOR_REVIEW",
+                        "ReportGeneratedAt":  "\/Date(1791106558692)\/"
+                    }
+}

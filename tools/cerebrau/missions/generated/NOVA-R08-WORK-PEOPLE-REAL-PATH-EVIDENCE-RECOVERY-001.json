@@ -1,0 +1,91 @@
+{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001",
+    "program":  "NOVA-AS-BUILT-COMPLETION",
+    "lot":  "NOVA-R08-RECOVERY",
+    "title":  "R08 Work People Real Path Evidence Recovery",
+    "missionType":  "REMEDIATION",
+    "executionMode":  "DOCUMENTARY_WRITE",
+    "profile":  "ARCHITECTURE",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\missions\\generated\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001.prompt.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001",
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "reviewRequired":  true,
+    "enabled":  true,
+    "dependsOn":  [
+                      "NOVA-R08-WORK-PEOPLE-REAL-PATH-001"
+                  ],
+    "scopes":  {
+                   "readOnly":  [
+                                    "contracts/work-people.contract.ts",
+                                    "server/nova-core/**",
+                                    "server/nova-bff/**",
+                                    "server/runtime/work/work-people.*",
+                                    "server/domain/people/**",
+                                    "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                                    "apps/nova-web/src/features/work/**",
+                                    "apps/nova-web/dist/**",
+                                    "tools/cerebrau/reports/missions/NOVA-R08-WORK-PEOPLE-REAL-PATH-001/**"
+                                ],
+                   "write":  [
+                                 "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                             ]
+               },
+    "resourceScopes":  [
+                           "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                       ],
+    "allowedPaths":  [
+                         "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "contracts/**",
+                           "server/**",
+                           "apps/nova-web/src/**",
+                           "apps/nova-web/dist/**"
+                       ],
+    "deliverables":  [
+                         "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                     ],
+    "expectedFiles":  [
+                          "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                      ],
+    "validations":  [
+                        {
+                            "name":  "repository-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "architecturalDecision":  "Recover documentary evidence for the already implemented R08 Work People real runtime path after the prior mission was rejected solely by PATH_SCOPE_VIOLATION. No functional implementation change is authorized.",
+    "recoveryLane":  {
+                         "recoveryLaneClass":  "EVIDENCE_PRODUCTION",
+                         "recoveryReason":  "Produce controlled evidence for the already implemented R08 after the original mission was rejected by six PATH_SCOPE_VIOLATION findings.",
+                         "blockedRule":  "PATH_SCOPE_VIOLATION",
+                         "requiredEvidence":  [
+                                                  "tools/cerebrau/reports/missions/NOVA-R08-WORK-PEOPLE-REAL-PATH-001/bootstrap-20261003T180129549/official-report.json"
+                                              ],
+                         "authorizedScope":  [
+                                                 "Docs/00_GOVERNANCE/PROJECT_TRACKING/**"
+                                             ],
+                         "authorizedFiles":  [
+                                                 "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                                             ],
+                         "forbiddenFiles":  [
+                                                "contracts/**",
+                                                "server/**",
+                                                "apps/nova-web/src/**",
+                                                "apps/nova-web/dist/**",
+                                                ".git/**"
+                                            ],
+                         "authority":  "PROGRAM_DIRECTOR",
+                         "expirationOrAttemptLimit":  {
+                                                          "attemptLimit":  1
+                                                      },
+                         "inputFingerprint":  "330487254576F51D8E7774137DB77249E9521C185E0CCF6468A7C3961B3D7324"
+                     }
+}

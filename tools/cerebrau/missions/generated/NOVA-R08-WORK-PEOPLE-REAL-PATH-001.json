@@ -1,0 +1,131 @@
+{
+    "schemaVersion":  "1.0.0",
+    "missionId":  "NOVA-R08-WORK-PEOPLE-REAL-PATH-001",
+    "program":  "NOVA-AS-BUILT-COMPLETION",
+    "lot":  "NOVA-R08",
+    "title":  "Connect Work People to authoritative PEOPLE runtime path",
+    "missionType":  "IMPLEMENTATION",
+    "executionMode":  "RUNTIME_MUTATION",
+    "profile":  "BUILD",
+    "repository":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "expectedBranch":  "feature/nova-runtime-foundation",
+    "promptFile":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\missions\\generated\\NOVA-R08-WORK-PEOPLE-REAL-PATH-001.prompt.md",
+    "workingDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp",
+    "reportDirectory":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-001",
+    "changesExpected":  true,
+    "humanReviewRequired":  true,
+    "reviewRequired":  true,
+    "enabled":  true,
+    "dependsOn":  [
+
+                  ],
+    "scopes":  {
+                   "readOnly":  [
+
+                                ],
+                   "write":  [
+                                 "contracts/work-people.contract.ts",
+                                 "server/nova-core/nova-core.service.ts",
+                                 "server/nova-core/nova-core.http.ts",
+                                 "server/nova-core/work-people.http.test.ts",
+                                 "server/nova-bff/nova-bff.app.ts",
+                                 "server/nova-bff/nova-bff.boundary.test.ts",
+                                 "server/nova-bff/nova-bff.server.ts",
+                                 "server/nova-bff/work-people.gateway.port.ts",
+                                 "server/nova-bff/work-people.gateway.ts",
+                                 "server/nova-bff/work-people.route.ts",
+                                 "server/nova-bff/work-people.route.test.ts",
+                                 "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                                 "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                                 "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                                 "apps/nova-web/src/features/work/workPeople.service.ts",
+                                 "apps/nova-web/src/features/work/useWorkPeople.ts"
+                             ]
+               },
+    "resourceScopes":  [
+                           "contracts/work-people.contract.ts",
+                           "server/nova-core/nova-core.service.ts",
+                           "server/nova-core/nova-core.http.ts",
+                           "server/nova-core/work-people.http.test.ts",
+                           "server/nova-bff/nova-bff.app.ts",
+                           "server/nova-bff/nova-bff.boundary.test.ts",
+                           "server/nova-bff/nova-bff.server.ts",
+                           "server/nova-bff/work-people.gateway.port.ts",
+                           "server/nova-bff/work-people.gateway.ts",
+                           "server/nova-bff/work-people.route.ts",
+                           "server/nova-bff/work-people.route.test.ts",
+                           "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                           "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                           "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                           "apps/nova-web/src/features/work/workPeople.service.ts",
+                           "apps/nova-web/src/features/work/useWorkPeople.ts"
+                       ],
+    "allowedPaths":  [
+                         "contracts/work-people.contract.ts",
+                         "server/nova-core/nova-core.service.ts",
+                         "server/nova-core/nova-core.http.ts",
+                         "server/nova-core/work-people.http.test.ts",
+                         "server/nova-bff/nova-bff.app.ts",
+                         "server/nova-bff/nova-bff.boundary.test.ts",
+                         "server/nova-bff/nova-bff.server.ts",
+                         "server/nova-bff/work-people.gateway.port.ts",
+                         "server/nova-bff/work-people.gateway.ts",
+                         "server/nova-bff/work-people.route.ts",
+                         "server/nova-bff/work-people.route.test.ts",
+                         "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                         "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                         "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                         "apps/nova-web/src/features/work/workPeople.service.ts",
+                         "apps/nova-web/src/features/work/useWorkPeople.ts"
+                     ],
+    "forbiddenPaths":  [
+                           ".git/**",
+                           "server/domain/people/**",
+                           "server/runtime/work/work-people.query.ts",
+                           "server/runtime/work/work-people.types.ts",
+                           "server/runtime/work/work-people.test.ts",
+                           "apps/nova-web/src/features/work/workPeopleFixture.ts"
+                       ],
+    "deliverables":  [
+                         "contracts/work-people.contract.ts",
+                         "server/nova-core/nova-core.service.ts",
+                         "server/nova-core/nova-core.http.ts",
+                         "server/nova-core/work-people.http.test.ts",
+                         "server/nova-bff/nova-bff.app.ts",
+                         "server/nova-bff/nova-bff.server.ts",
+                         "server/nova-bff/work-people.gateway.port.ts",
+                         "server/nova-bff/work-people.gateway.ts",
+                         "server/nova-bff/work-people.route.ts",
+                         "server/nova-bff/work-people.route.test.ts",
+                         "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                         "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                         "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                         "apps/nova-web/src/features/work/workPeople.service.ts",
+                         "apps/nova-web/src/features/work/useWorkPeople.ts"
+                     ],
+    "expectedFiles":  [
+                          "contracts/work-people.contract.ts",
+                          "server/nova-core/nova-core.service.ts",
+                          "server/nova-core/nova-core.http.ts",
+                          "server/nova-core/work-people.http.test.ts",
+                          "server/nova-bff/nova-bff.app.ts",
+                          "server/nova-bff/nova-bff.server.ts",
+                          "server/nova-bff/work-people.gateway.port.ts",
+                          "server/nova-bff/work-people.gateway.ts",
+                          "server/nova-bff/work-people.route.ts",
+                          "server/nova-bff/work-people.route.test.ts",
+                          "apps/nova-web/src/components/routes/WorkSurface.tsx",
+                          "apps/nova-web/src/features/work/WorkPeoplePage.tsx",
+                          "apps/nova-web/src/features/work/WorkPeoplePage.test.tsx",
+                          "apps/nova-web/src/features/work/workPeople.service.ts",
+                          "apps/nova-web/src/features/work/useWorkPeople.ts"
+                      ],
+    "validations":  [
+                        {
+                            "name":  "repository-diff-check",
+                            "type":  "gitDiffCheck",
+                            "required":  true
+                        }
+                    ],
+    "architecturalDecision":  "WORK_PEOPLE_REAL_PATH"
+}

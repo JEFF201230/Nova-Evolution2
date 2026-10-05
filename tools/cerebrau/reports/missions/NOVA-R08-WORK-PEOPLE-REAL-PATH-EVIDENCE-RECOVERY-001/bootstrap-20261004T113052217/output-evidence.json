@@ -1,0 +1,49 @@
+{
+    "evidenceClass":  "OUTPUT_EVIDENCE",
+    "capturedAfterExecution":  true,
+    "entries":  [
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "CREATED:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                        "kind":  "CREATED",
+                        "path":  "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                        "sha256":  "4629C72E1C46943A9A1BB010B1B7C2D64A4AA6E411FBCD7778871FBB3B0AD0C7",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:repository-diff-check",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "01C51D8FF3BBD2A1482CC4EB168B7D22B5885AB67816D09F413C37F698958FE3",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:expected:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "866CB461168408B6CCF6727D5B2B8011128CD504DF729CE705E20C5F42E01B26",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "VALIDATION:scope:Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md",
+                        "kind":  "VALIDATION_RESULT",
+                        "path":  null,
+                        "sha256":  "EEFDB8D05CCE62E6C44CEED7F27C83BEE72AA7864700525A0952A6F370DA23AD",
+                        "status":  "VALID"
+                    },
+                    {
+                        "evidenceClass":  "OUTPUT_EVIDENCE",
+                        "evidenceId":  "OFFICIAL_REPORT",
+                        "kind":  "OFFICIAL_REPORT",
+                        "path":  "C:\\DEV\\NOVA_CORE_MVP_RUNTIME_AUTONOME_2026-07-24(1)\\nova-core-mvp\\tools\\cerebrau\\reports\\missions\\NOVA-R08-WORK-PEOPLE-REAL-PATH-EVIDENCE-RECOVERY-001\\bootstrap-20261004T113052217\\official-report.json",
+                        "sha256":  null,
+                        "fingerprintReference":  "ReportFingerprint",
+                        "status":  "VALID"
+                    }
+                ],
+    "status":  "VALID",
+    "registryFingerprint":  "6B9EBE617BA84A30467A76E504D31520485E4D5972F650AF9EBCE1A3FF654362"
+}

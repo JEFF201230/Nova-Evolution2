@@ -14,6 +14,7 @@ import { HttpWorkActivityGateway } from "./work-activity.gateway.js";
 import { HttpGlobalDeliverablesGateway } from "./global-deliverables.gateway.js";
 import { HttpWorkOverviewGateway } from "./work-overview.gateway.js";
 import { HttpWorkPlanGateway } from "./work-plan.gateway.js";
+import { HttpWorkPeopleGateway } from "./work-people.gateway.js";
 import { HttpMissionRuntimeGateway } from "./mission-runtime.gateway.js";
 
 export async function createNovaBffServer(
@@ -32,6 +33,8 @@ export async function createNovaBffServer(
       ?? new HttpWorkOverviewGateway(config.runtimeOrigin),
     workPlanGateway: dependencies.workPlanGateway
       ?? new HttpWorkPlanGateway(config.runtimeOrigin),
+    workPeopleGateway: dependencies.workPeopleGateway
+      ?? new HttpWorkPeopleGateway(config.runtimeOrigin),
     missionRuntimeGateway: dependencies.missionRuntimeGateway
       ?? new HttpMissionRuntimeGateway(config.runtimeOrigin),
   });

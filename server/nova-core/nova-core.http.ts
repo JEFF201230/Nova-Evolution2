@@ -18,6 +18,11 @@ import {
   type WorkPlanResponse,
 } from "../../contracts/work-plan.contract.js";
 import type { WorkPlanningReadResult } from "../domain/work/index.js";
+import {
+  parseWorkPeopleResponse,
+  type WorkPeopleResponse,
+} from "../../contracts/work-people.contract.js";
+import type { WorkPeopleReadResult } from "../runtime/work/work-people.types.js";
 
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -158,6 +163,14 @@ async function route(
       throw new NovaCoreError(404, "WORK_NOT_FOUND", "Le Work demande n'existe pas.");
     }
     sendJson(response, 200, workPlanResponse(core.getWorkPlanning(projectId, missionId)));
+    return;
+  }
+
+  if (request.method === "GET" && parts[5] === "people" && parts.length === 6) {
+    if (!core.getMission(projectId, missionId)) {
+      throw new NovaCoreError(404, "WORK_NOT_FOUND", "Le Work demande n'existe pas.");
+    }
+    sendJson(response, 200, workPeopleResponse(core.getWorkPeople(projectId, missionId)));
     return;
   }
 
@@ -338,6 +351,16 @@ function workPlanResponse(result: WorkPlanningReadResult): WorkPlanResponse {
       },
     };
   return parseWorkPlanResponse(response);
+}
+
+function workPeopleResponse(result: WorkPeopleReadResult): WorkPeopleResponse {
+  const workIdentity = { projectId: result.projectId, workId: result.workId };
+  const people: WorkPeopleResponse["people"] = result.status === "PARTICIPANTS_AVAILABLE"
+    ? { workIdentity, state: "AVAILABLE", participants: result.participants, qualification: result.qualification }
+    : result.status === "NO_ACTIVE_PARTICIPANTS"
+      ? { workIdentity, state: "EMPTY", participants: result.participants, qualification: result.qualification }
+      : { workIdentity, state: result.status === "WORK_PEOPLE_ABSENT" ? "ABSENT" : "UNAVAILABLE" };
+  return parseWorkPeopleResponse({ people });
 }
 
 function validateMissionDefinition(input: unknown): MissionDefinition {

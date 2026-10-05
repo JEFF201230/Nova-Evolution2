@@ -62,6 +62,13 @@ test("BFF routing declares the authorized technical and capability-specific read
   const workOverviewPathPrefix = workOverviewContract.match(
     /WORK_OVERVIEW_PATH_PREFIX\s*=\s*"([^"]+)"/,
   )?.[1];
+  const workPeopleContract = await readFile(
+    new URL("../../contracts/work-people.contract.ts", BFF_ROOT),
+    "utf8",
+  );
+  const workPeoplePathPrefix = workPeopleContract.match(
+    /WORK_PEOPLE_PATH_PREFIX\s*=\s*"([^"]+)"/,
+  )?.[1];
   const missionRuntimeContract = await readFile(
     new URL("mission-runtime.contract.ts", BFF_ROOT),
     "utf8",
@@ -77,6 +84,7 @@ test("BFF routing declares the authorized technical and capability-specific read
   assert.ok(workPathPrefix);
   assert.ok(globalDeliverablesPath);
   assert.ok(workOverviewPathPrefix);
+  assert.ok(workPeoplePathPrefix);
   assert.ok(missionRuntimePath);
   assert.ok(missionRuntimeProjectsPath);
   declaredPaths.push(runtimePath);
@@ -84,6 +92,7 @@ test("BFF routing declares the authorized technical and capability-specific read
   declaredPaths.push(`${workPathPrefix}/:workId/activity`);
   declaredPaths.push(globalDeliverablesPath);
   declaredPaths.push(`${workOverviewPathPrefix}/:workId/overview`);
+  declaredPaths.push(`${workPeoplePathPrefix}/:workId/people`);
   declaredPaths.push(missionRuntimePath);
   declaredPaths.push(missionRuntimeProjectsPath);
   declaredPaths.push(`${missionRuntimePath}/:projectId/:missionId/execute`);
@@ -99,6 +108,7 @@ test("BFF routing declares the authorized technical and capability-specific read
     "/api/work/:workId/activity",
     "/api/global/deliverables",
     "/api/work/:workId/overview",
+    "/api/work/:workId/people",
     "/api/mission-runtime/missions",
     "/api/mission-runtime/projects",
     "/api/mission-runtime/missions/:projectId/:missionId/execute",
@@ -139,6 +149,7 @@ test("only dedicated Gateways access Runtime entrypoints or transport", async ()
     "mission-runtime.gateway.ts",
     "work-activity.gateway.ts",
     "work-overview.gateway.ts",
+    "work-people.gateway.ts",
     "work-plan.gateway.ts",
   ]);
   const adapter = await readFile(

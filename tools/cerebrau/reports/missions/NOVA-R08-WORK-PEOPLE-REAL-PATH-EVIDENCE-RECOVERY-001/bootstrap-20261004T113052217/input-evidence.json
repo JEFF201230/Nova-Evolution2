@@ -1,0 +1,58 @@
+{
+    "evidenceClass":  "INPUT_EVIDENCE",
+    "capturedBeforeExecution":  true,
+    "contextAssemblyRequested":  false,
+    "admission":  {
+                      "mode":  "RECOVERY",
+                      "recoveryLaneClass":  "EVIDENCE_PRODUCTION",
+                      "authority":  "PROGRAM_DIRECTOR",
+                      "blockedRule":  "PATH_SCOPE_VIOLATION",
+                      "reason":  "Produce controlled evidence for the already implemented R08 after the original mission was rejected by six PATH_SCOPE_VIOLATION findings.",
+                      "authorizedScope":  [
+                                              "Docs/00_GOVERNANCE/PROJECT_TRACKING/**"
+                                          ],
+                      "authorizedFiles":  [
+                                              "Docs/00_GOVERNANCE/PROJECT_TRACKING/NOVA_R08_WORK_PEOPLE_REAL_PATH_EVIDENCE_RECOVERY_REPORT.md"
+                                          ],
+                      "forbiddenFiles":  [
+                                             "contracts/**",
+                                             "server/**",
+                                             "apps/nova-web/src/**",
+                                             "apps/nova-web/dist/**",
+                                             ".git/**"
+                                         ],
+                      "inputFingerprint":  "330487254576F51D8E7774137DB77249E9521C185E0CCF6468A7C3961B3D7324",
+                      "nonSelfBlockingException":  true,
+                      "directProductionReleaseAuthorized":  false,
+                      "freeze":  {
+                                     "active":  false,
+                                     "mode":  null,
+                                     "exceptionApplied":  false,
+                                     "source":  null,
+                                     "authority":  null
+                                 },
+                      "admittedAt":  "2026-10-04T09:30:52.3347518+00:00"
+                  },
+    "entries":  [
+                    {
+                        "evidenceClass":  "INPUT_EVIDENCE",
+                        "evidenceId":  "MISSION_MANIFEST",
+                        "kind":  "MANIFEST",
+                        "path":  null,
+                        "sha256":  "2021987A982939507092D04FAA1BE565B681F6351F5B9D5684F42D50C9BB0D81",
+                        "status":  "VALID",
+                        "observedAt":  "2026-10-04T09:31:28.1950276+00:00"
+                    },
+                    {
+                        "evidenceClass":  "INPUT_EVIDENCE",
+                        "evidenceId":  "GIT_BASELINE",
+                        "kind":  "GIT_STATE",
+                        "path":  null,
+                        "sha256":  "A0485A77AFA0FDFB8E66A82299500ABA7AEF748F4A8E8AF31D65DE97E3A4C613",
+                        "status":  "VALID",
+                        "observedAt":  "2026-10-04T09:31:30.3153098+00:00"
+                    }
+                ],
+    "status":  "VALID",
+    "registryFingerprint":  "4F1B107777140F2D944A8BB875563DB6F8B0E5CAA57C8BEDEE901BCC5BE6A854"
+}

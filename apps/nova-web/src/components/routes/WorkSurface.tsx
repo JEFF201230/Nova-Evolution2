@@ -10,7 +10,7 @@ import { getWorkDeliverablesFixture } from '../../features/work/workDeliverables
 import { getWorkOverviewFixture } from '../../features/work/workOverviewFixture';
 import { useWorkOverview } from '../../features/work/useWorkOverview';
 import { useWorkPlan } from '../../features/work/useWorkPlan';
-import { getWorkPeopleFixture } from '../../features/work/workPeopleFixture';
+import { useWorkPeople } from '../../features/work/useWorkPeople';
 import { getWorkSourcesFixture } from '../../features/work/workSourcesFixture';
 import { usePathParams, useWorkTab } from '../../hooks/useRouteParams';
 
@@ -19,6 +19,7 @@ export function WorkSurface() {
   const activeTab = useWorkTab() ?? 'overview';
   const overview = useWorkOverview(workId, activeTab === 'overview');
   const plan = useWorkPlan(workId, activeTab === 'plan');
+  const people = useWorkPeople(workId, activeTab === 'people');
 
   if (activeTab === 'overview') {
     return <WorkOverviewPage activeTab="overview" state={overview.state} work={overview.work} />;
@@ -45,13 +46,11 @@ export function WorkSurface() {
   }
 
   if (activeTab === 'people') {
-    const people = workId ? getWorkPeopleFixture(workId) : undefined;
-
     return (
       <WorkPeoplePage
-        people={people}
-        state={work && people ? 'ready' : 'empty'}
-        work={work}
+        people={people.state === 'ready' ? people.people : undefined}
+        state={people.state}
+        workId={workId}
       />
     );
   }
